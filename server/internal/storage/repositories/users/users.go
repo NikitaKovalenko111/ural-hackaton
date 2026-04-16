@@ -3,9 +3,9 @@ package users_storage
 import (
 	"database/sql"
 
+	usersDto "ural-hackaton/internal/dto/users"
 	"ural-hackaton/internal/models"
 	"ural-hackaton/internal/storage"
-	user_storage_dto "ural-hackaton/internal/storage/repositories/users/dto"
 	"ural-hackaton/internal/types"
 
 	"github.com/gofiber/fiber/v2"
@@ -21,7 +21,7 @@ func Init(db *storage.Storage) *UserRepo {
 	}
 }
 
-func (r *UserRepo) CreateUser(user *user_storage_dto.CreateUserDto) (*types.RequestStatus, *fiber.Error) {
+func (r *UserRepo) CreateUser(user *usersDto.CreateUserDto) (*types.RequestStatus, *fiber.Error) {
 	_, err := r.db.Db.Exec(
 		`INSERT INTO users (fullname, user_role) VALUES ($1, $2)`,
 		user.Fullname,

@@ -9,7 +9,7 @@ import (
 
 type Repositories struct {
 	UserRepository  *user_storage.UserRepo
-	HubRepository   *hub_storage.HubRepo
+	HubRepository   *hub_storage.HubsRepo
 	AdminRepository *admin_storage.AdminRepo
 }
 
