@@ -2234,6 +2234,22 @@ textarea,
   color: #33691E;
   font-size: 14px;
 }
+.auth-card__error {
+  margin-top: 15px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #fff1f0;
+  color: #9e1f1f;
+  font-size: 14px;
+}
+.auth-card__info {
+  margin-top: 15px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #eef7ff;
+  color: #1c4f7d;
+  font-size: 14px;
+}
 .auth-card__links {
   margin-top: 15px;
   display: flex;

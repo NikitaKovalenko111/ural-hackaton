@@ -5,6 +5,25 @@ const api = axios.create({
   baseURL: "http://localhost:3000/api",
 })
 
+const authApiClient = axios.create({
+    baseURL: import.meta.env.VITE_API_BASE_URL ?? "http://localhost:3000",
+    withCredentials: true,
+})
+
+type RequestMagicLinkResponse = {
+    message: string
+}
+
+type VerifyMagicLinkResponse = {
+    message: string
+    user: {
+        id: number
+        fullname: string
+        email: string
+        role?: string
+    }
+}
+
 export interface IEvensApi {
     getEvents: () => Promise<IEvent[]>
     saveEvent: (event: any) => Promise<string>
@@ -88,4 +107,18 @@ export const mentorsApi = {
         const response = await api.delete(`/mentors/${id}`)
         return response.data
     }
+}
+
+export const authApi = {
+    requestMagicLink: async (email: string): Promise<RequestMagicLinkResponse> => {
+        const response = await authApiClient.post("/auth/request", { email })
+        return response.data
+    },
+
+    verifyMagicLink: async (token: string): Promise<VerifyMagicLinkResponse> => {
+        const response = await authApiClient.get("/auth/verify", {
+            params: { token },
+        })
+        return response.data
+    },
 }

@@ -10,8 +10,9 @@ export interface IUser {
     id: number
     fullname: string
     email: string
-    telegram: string
-    phone: string
+    telegram?: string
+    phone?: string
+    role?: string
 }
 
 export interface IRequest {

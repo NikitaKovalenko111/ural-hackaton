@@ -51,6 +51,24 @@
         @include font-small;
     }
 
+    &__error {
+        margin-top: $spacing-lg;
+        padding: $spacing-md;
+        border-radius: $radius-sm;
+        background: #fff1f0;
+        color: #9e1f1f;
+        @include font-small;
+    }
+
+    &__info {
+        margin-top: $spacing-lg;
+        padding: $spacing-md;
+        border-radius: $radius-sm;
+        background: #eef7ff;
+        color: #1c4f7d;
+        @include font-small;
+    }
+
     &__links {
         margin-top: $spacing-lg;
         @include flex-column;

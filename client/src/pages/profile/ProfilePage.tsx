@@ -1,12 +1,8 @@
 import type React from "react"
 import type { JSX } from "react/jsx-dev-runtime"
-import { Link, Navigate } from "react-router-dom"
-import { useSelector } from "react-redux"
-import type { RootState } from "../../redux/store"
+import { Link } from "react-router-dom"
 
 const ProfilePage: React.FC = (): JSX.Element => {
-    const user = useSelector((state: RootState) => state.users.user)
-
     /*if (!user) {
         return <Navigate to="/login" replace />
     }*/

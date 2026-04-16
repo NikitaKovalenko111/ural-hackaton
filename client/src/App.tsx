@@ -9,6 +9,7 @@ import ProfilePage from "./pages/profile/ProfilePage"
 import HubsPage from "./pages/hubs/HubsPage"
 import NotFound from "./pages/notfound/NotFound"
 import LoginPage from "./pages/login/LoginPage"
+import AuthVerifyPage from "./pages/authVerify/AuthVerifyPage"
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/events" element={<EventsPage />} />
         <Route path="/mentors" element={<MentorsPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/auth/verify" element={<AuthVerifyPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
