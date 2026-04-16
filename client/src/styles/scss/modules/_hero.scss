@@ -1,0 +1,224 @@
+// ============================================================================
+// Hero Section Component
+// ============================================================================
+
+.hero {
+    background-color: $color-bg-yellow;
+    padding: $spacing-3xl 0;
+
+    &__card {
+        background: $color-bg;
+        border-radius: $radius-lg;
+        padding: $spacing-2xl;
+        display: flex;
+        gap: $spacing-2xl;
+        box-shadow: $shadow-md;
+    }
+
+    &__info {
+        flex: 1;
+    }
+
+    &__image-wrapper {
+        flex: 1;
+        border-radius: $radius-md;
+        overflow: hidden;
+        position: relative;
+        min-height: 350px;
+    }
+
+    &__image {
+        width: 100%;
+        height: 100%;
+        background-image: url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+        background-size: cover;
+        background-position: center;
+        position: relative;
+    }
+}
+
+// STATUS HEADER
+// ============================================================================
+
+.status-header {
+    @include flex-start;
+    gap: $spacing-lg;
+    margin-bottom: $spacing-3xl;
+
+    &__icon {
+        background: $color-bg;
+        padding: $spacing-md;
+        border-radius: 12px;
+        border: 1px solid $color-border;
+        @include flexbox-center;
+        font-size: $font-size-2xl;
+        flex-shrink: 0;
+    }
+
+    &__title {
+        font-size: $font-size-4xl;
+        font-weight: $font-weight-bold;
+        margin-bottom: $spacing-sm;
+    }
+
+    &__schedule {
+        color: $color-text-secondary;
+        font-size: $font-size-md;
+    }
+}
+
+.badge--open {
+    background: $color-success-bg;
+    color: $color-success-text;
+    padding: $spacing-sm $spacing-md;
+    border-radius: 20px;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    margin-left: auto;
+}
+
+// STATS
+// ============================================================================
+
+.stats {
+    &__container {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: $spacing-lg;
+        margin-bottom: $spacing-lg;
+    }
+
+    &__box {
+        @include card-style;
+        padding: $spacing-lg;
+        text-align: center;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    &__label {
+        @include font-label;
+        margin-bottom: 0;
+        margin-top: 15px;
+    }
+
+    &__value {
+        font-size: $font-size-5xl;
+        font-weight: $font-weight-bold;
+        line-height: 1;
+    }
+
+    &__unit {
+        @include font-label;
+    }
+
+    &__update-text {
+        position: absolute;
+        top: $spacing-md;
+        right: $spacing-md;
+        font-size: $font-size-xs;
+        color: $color-text-secondary;
+        text-align: right;
+    }
+}
+
+// EVENT BOX
+// ============================================================================
+
+.event-box {
+    @include card-style;
+    padding: $spacing-lg;
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        font-size: $font-size-base;
+        color: $color-text-secondary;
+        margin-bottom: $spacing-md;
+    }
+
+    &__details {
+        margin-bottom: $spacing-lg;
+
+        h3 {
+            font-size: $font-size-lg;
+            margin-bottom: $spacing-sm;
+        }
+
+        p {
+            font-size: $font-size-base;
+            color: $color-text-secondary;
+        }
+    }
+
+    &__status {
+        font-size: $font-size-base;
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+        margin-top: 10px;
+    }
+}
+
+// IMAGE OVERLAY
+// ============================================================================
+
+.image-overlay {
+    position: absolute;
+    bottom: $spacing-lg;
+    left: $spacing-lg;
+    color: white;
+    font-size: $font-size-base;
+    line-height: 1.4;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+    max-width: 70%;
+}
+
+.wifi-badge {
+    position: absolute;
+    bottom: $spacing-lg;
+    right: $spacing-lg;
+    background: $color-bg;
+    padding: $spacing-sm $spacing-md;
+    border-radius: 20px;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+}
+
+// HERO RESPONSIVE
+// ============================================================================
+
+@include responsive-md {
+    .hero {
+        padding: $spacing-2xl 0;
+    }
+
+    .hero__card {
+        flex-direction: column;
+        gap: $spacing-lg;
+        padding: $spacing-lg;
+    }
+
+    .stats__container {
+        grid-template-columns: 1fr;
+    }
+
+    .stats__label {
+        margin-bottom: 0;
+        margin-top: 15px;
+    }
+
+    .status-header {
+        flex-direction: column;
+        gap: $spacing-md;
+    }
+
+    .badge--open {
+        margin-left: 0;
+    }
+}

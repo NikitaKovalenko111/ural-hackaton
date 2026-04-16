@@ -1,0 +1,226 @@
+// ============================================================================
+// Buttons & Links
+// ============================================================================
+
+// BUTTON BASE
+// ============================================================================
+
+.btn {
+    display: inline-block;
+    padding: $spacing-md $spacing-xl;
+    border-radius: $radius-md;
+    font-weight: $font-weight-semibold;
+    font-size: $font-size-md;
+    cursor: pointer;
+    text-decoration: none;
+    border: none;
+    transition: background $transition-fast;
+    text-align: center;
+    font-family: $font-family;
+
+    &:active {
+        transform: scale(0.98);
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+}
+
+// BUTTON VARIANTS
+// ============================================================================
+
+.btn--primary {
+    @include button-primary;
+}
+
+.btn--outline {
+    @include button-outline;
+}
+
+.btn--ghost {
+    background: transparent;
+    color: $color-text-main;
+    border: none;
+
+    &:hover {
+        background: $color-bg-light;
+    }
+}
+
+.btn--danger {
+    background-color: $color-danger;
+    color: white;
+
+    &:hover {
+        background-color: darken($color-danger, 10%);
+    }
+}
+
+.btn--success {
+    background-color: $color-success-text;
+    color: white;
+
+    &:hover {
+        background-color: darken($color-success-text, 10%);
+    }
+}
+
+// BUTTON SIZES
+// ============================================================================
+
+.btn--xs {
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-xs;
+}
+
+.btn--sm {
+    padding: $spacing-sm $spacing-md;
+    font-size: $font-size-sm;
+}
+
+.btn--md {
+    padding: $spacing-md $spacing-lg;
+    font-size: $font-size-base;
+}
+
+.btn--lg {
+    padding: $spacing-lg $spacing-xl;
+    font-size: $font-size-md;
+}
+
+.btn--xl {
+    padding: $spacing-xl $spacing-2xl;
+    font-size: $font-size-lg;
+}
+
+// BUTTON FULL WIDTH
+// ============================================================================
+
+.btn--block {
+    display: block;
+    width: 100%;
+}
+
+// BUTTON WITH ICON
+// ============================================================================
+
+.btn--icon {
+    @include flexbox-center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: $radius-md;
+
+    &.btn--sm {
+        width: 32px;
+        height: 32px;
+    }
+
+    &.btn--lg {
+        width: 48px;
+        height: 48px;
+    }
+}
+
+// BUTTON GROUP
+// ============================================================================
+
+.btn-group {
+    display: flex;
+    gap: $spacing-sm;
+
+    .btn {
+        flex: 1;
+    }
+}
+
+.btn-group--vertical {
+    flex-direction: column;
+}
+
+// LINK STYLES
+// ============================================================================
+
+.link {
+    color: $color-text-main;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color $transition-fast;
+
+    &:hover {
+        color: $color-text-secondary;
+    }
+}
+
+.link--primary {
+    color: $color-primary-yellow;
+
+    &:hover {
+        color: $color-primary-yellow-hover;
+    }
+}
+
+.link--secondary {
+    color: $color-text-secondary;
+
+    &:hover {
+        color: $color-text-main;
+    }
+}
+
+.link--success {
+    color: $color-success-text;
+
+    &:hover {
+        opacity: 0.7;
+    }
+}
+
+.link--danger {
+    color: $color-danger;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.link--underline {
+    text-decoration: underline;
+}
+
+.link--no-underline {
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.link--small {
+    font-size: $font-size-sm;
+}
+
+.link--text {
+    font-size: $font-size-sm;
+    margin-left: $spacing-md;
+}
+
+// LINK ICON
+// ============================================================================
+
+.link-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-sm;
+
+    &::after {
+        content: '→';
+        transition: transform $transition-fast;
+    }
+
+    &:hover::after {
+        transform: translateX(4px);
+    }
+}

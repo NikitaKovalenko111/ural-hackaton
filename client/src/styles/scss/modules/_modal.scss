@@ -1,0 +1,162 @@
+// ============================================================================
+// Registration Modal
+// ============================================================================
+
+.registration-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    background: rgba(10, 10, 15, 0.55);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-xl;
+    animation: fade-in 0.3s $ease-smooth;
+}
+
+.registration-modal__card {
+    @include card-style;
+    width: min(560px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: $spacing-xl;
+    background: linear-gradient(180deg, #fff 0%, #fffdf1 100%);
+    position: relative;
+    box-shadow: $shadow-lg;
+    animation: fade-in-up 0.4s $ease-smooth;
+}
+
+.registration-modal__close {
+    position: absolute;
+    top: $spacing-md;
+    right: $spacing-md;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid $color-border;
+    background: $color-bg;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 1;
+    color: #000;
+    transition: all $transition-fast $ease-smooth;
+
+    &:hover {
+        background: $color-primary-yellow;
+        border-color: $color-primary-yellow;
+    }
+}
+
+.registration-modal__title {
+    margin-bottom: $spacing-sm;
+}
+
+.registration-modal__subtitle {
+    color: $color-text-secondary;
+    margin-bottom: $spacing-lg;
+    @include font-base;
+}
+
+.registration-modal__form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+}
+
+.registration-modal__label {
+    @include font-label;
+    font-weight: $font-weight-semibold;
+}
+
+.registration-modal__student-toggle {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-sm;
+    margin: $spacing-xs 0;
+    color: $color-text-main;
+    cursor: pointer;
+    user-select: none;
+    @include font-small;
+}
+
+.registration-modal__student-input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+}
+
+.registration-modal__student-box {
+    width: 18px;
+    height: 18px;
+    border: 2px solid $color-border;
+    border-radius: 5px;
+    background: #fff;
+    box-sizing: border-box;
+    display: inline-block;
+    transition: all $transition-fast $ease-smooth;
+}
+
+.registration-modal__student-text {
+    color: $color-text-main;
+}
+
+.registration-modal__student-toggle:hover .registration-modal__student-box {
+    border-color: $color-primary-yellow;
+}
+
+.registration-modal__student-input:checked + .registration-modal__student-box {
+    background: $color-primary-yellow;
+    border-color: $color-primary-yellow;
+    box-shadow: inset 0 0 0 4px #111;
+}
+
+.registration-modal__student-input:focus-visible + .registration-modal__student-box {
+    outline: 2px solid rgba(255, 214, 0, 0.35);
+    outline-offset: 2px;
+}
+
+.registration-modal__error {
+    margin: 0;
+    color: #b42318;
+    background: #fee4e2;
+    border-radius: $radius-sm;
+    padding: $spacing-sm;
+    @include font-small;
+}
+
+.registration-modal__form textarea {
+    min-height: 90px;
+}
+
+.registration-modal__form .btn[disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.registration-modal__success {
+    margin-top: $spacing-md;
+    padding: $spacing-md;
+    border-radius: $radius-sm;
+    background: $color-success-bg;
+    color: $color-success-text;
+    @include font-small;
+}
+
+@include responsive-sm {
+    .registration-modal {
+        padding: $spacing-sm;
+    }
+
+    .registration-modal__card {
+        padding: $spacing-lg;
+    }
+}

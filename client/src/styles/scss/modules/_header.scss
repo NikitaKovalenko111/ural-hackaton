@@ -1,0 +1,69 @@
+// ============================================================================
+// Header Component
+// ============================================================================
+
+.header {
+    background: $color-bg;
+    padding: $spacing-md 0;
+    border-bottom: 1px solid $color-border;
+    position: sticky;
+    top: 0;
+    z-index: $z-index-header;
+
+    &__content {
+        @include flexbox-between;
+    }
+
+    &__logo {
+        font-weight: $font-weight-bold;
+        font-size: $font-size-xl;
+        @include flexbox-center;
+        gap: $spacing-sm;
+        min-width: fit-content;
+    }
+
+    &__nav {
+        display: flex;
+        gap: $spacing-2xl;
+        align-items: center;
+
+        a:not(.btn) {
+            text-decoration: none;
+            color: $color-text-main;
+            font-weight: $font-weight-medium;
+            transition: color $transition-fast;
+
+            &:hover {
+                color: $color-primary-yellow;
+            }
+        }
+    }
+}
+
+// HEADER RESPONSIVE
+// ============================================================================
+
+@include responsive-md {
+    .header__nav {
+        gap: $spacing-lg;
+        font-size: $font-size-sm;
+    }
+}
+
+@include responsive-sm {
+    .header__content {
+        flex-direction: column;
+        gap: $spacing-md;
+    }
+
+    .header__logo {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .header__nav {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}

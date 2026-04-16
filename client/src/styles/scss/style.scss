@@ -1,0 +1,72 @@
+// ============================================================================
+// Студент и Т - Main Style File
+// BEM Architecture with Modular SCSS
+// ============================================================================
+
+// CORE
+// ============================================================================
+// 1. Variables & Design Tokens
+@import 'modules/variables';
+
+// 2. Mixins & Functions
+@import 'modules/mixins';
+
+// 3. Normalize & Reset
+@import 'modules/normalize';
+
+// 4. Global & Base Styles
+@import 'modules/globals';
+
+// 5. Fonts & Typography
+@import 'modules/fonts';
+
+// 6. Utilities
+@import 'modules/utils';
+
+// COMPONENTS
+// ============================================================================
+// 7. Header
+@import 'modules/header';
+
+// 8. Buttons & Links
+@import 'modules/buttons';
+
+// 9. Hero Section
+@import 'modules/hero';
+
+// 10. Cards (Events & Mentors)
+@import 'modules/cards';
+
+// 11. Contacts
+@import 'modules/contacts';
+
+// 12. Profile Page
+@import 'modules/profile';
+
+// 13. Notifications
+@import 'modules/notifications';
+
+// 14. Hubs
+@import 'modules/hubs';
+
+// 15. Booking Forms
+@import 'modules/booking';
+
+// 16. Motion & Animations
+@import 'modules/animations';
+
+// 17. Not Found
+@import 'modules/notfound';
+
+// 18. Auth
+@import 'modules/auth';
+
+// 19. Modal
+@import 'modules/modal';
+
+// 20. Footer & Toast
+@import 'modules/footer';
+
+// ============================================================================
+// End of Main Style File
+// ============================================================================

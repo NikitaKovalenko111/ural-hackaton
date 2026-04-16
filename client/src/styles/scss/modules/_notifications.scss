@@ -1,0 +1,104 @@
+// ============================================================================
+// Notifications Component
+// ============================================================================
+
+.notifications {
+    &__section {
+        @include card-style;
+        padding: $spacing-2xl;
+    }
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $spacing-lg;
+        gap: $spacing-lg;
+
+        h2 {
+            margin: 0;
+        }
+    }
+
+    &__list {
+        @include flex-column;
+        gap: $spacing-md;
+    }
+
+    &__item {
+        display: flex;
+        gap: $spacing-lg;
+        padding: $spacing-lg;
+        border-radius: $radius-sm;
+        @include card-style;
+        cursor: pointer;
+        position: relative;
+        transition: all $transition-fast;
+
+        &:hover {
+            background: $color-bg-light;
+            transform: translateY(-2px);
+        }
+
+        &--unread {
+            background: $color-bg-yellow;
+            border-color: $color-primary-yellow;
+
+            &::before {
+                content: '';
+                position: absolute;
+                top: 18px;
+                left: -6px;
+                width: 8px;
+                height: 8px;
+                background: $color-primary-yellow;
+                border-radius: 50%;
+            }
+        }
+    }
+
+    &__icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: $color-bg-tag;
+        @include flexbox-center;
+        font-size: $font-size-lg;
+        flex-shrink: 0;
+    }
+
+    &__content {
+        flex: 1;
+    }
+
+    &__title {
+        font-weight: $font-weight-semibold;
+        margin-bottom: $spacing-sm;
+    }
+
+    &__description {
+        @include font-small;
+        color: $color-text-secondary;
+        margin-bottom: $spacing-sm;
+        line-height: 1.4;
+    }
+
+    &__time {
+        font-size: $font-size-xs;
+        color: $color-text-secondary;
+    }
+}
+
+// NOTIFICATIONS RESPONSIVE
+// ============================================================================
+
+@include responsive-sm {
+    .notifications__header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .notifications__item {
+        flex-direction: column;
+    }
+}

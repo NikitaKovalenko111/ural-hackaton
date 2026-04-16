@@ -1,0 +1,210 @@
+// ============================================================================
+// Motion & Animations
+// ============================================================================
+
+$ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes reveal-scale {
+    from {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes slide-down {
+    from {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes floating-soft {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-4px);
+    }
+}
+
+// GLOBAL INTERACTION SMOOTHNESS
+// ============================================================================
+
+a,
+button,
+.btn,
+input,
+select,
+textarea,
+.tag,
+.event-card,
+.mentor-card,
+.booking-card,
+.notifications__item,
+.stats__box,
+.event-box,
+.contacts__info,
+.profile__card,
+.toast--checklist {
+    transition: transform $transition-base $ease-smooth,
+        box-shadow $transition-base $ease-smooth,
+        border-color $transition-fast ease,
+        background-color $transition-fast ease,
+        color $transition-fast ease,
+        opacity $transition-fast ease;
+}
+
+// PAGE-LOAD ENTRANCE ANIMATIONS
+// ============================================================================
+
+.header {
+    animation: slide-down 0.45s $ease-smooth both;
+}
+
+.hero__card,
+.section__header,
+.profile__card,
+.notifications__section,
+.contacts__wrapper,
+.booking {
+    animation: fade-in-up 0.7s $ease-smooth both;
+}
+
+.hero__image-wrapper,
+.map-placeholder {
+    animation: reveal-scale 0.8s $ease-smooth both;
+}
+
+.footer {
+    animation: fade-in 0.7s ease both;
+}
+
+// STAGGERED REVEAL FOR LISTS & GRIDS
+// ============================================================================
+
+.events-grid > *,
+.mentors-grid > *,
+.notifications__list > *,
+.booking__grid > * {
+    opacity: 0;
+    animation: fade-in-up 0.65s $ease-smooth forwards;
+}
+
+.events-grid > *:nth-child(1),
+.mentors-grid > *:nth-child(1),
+.notifications__list > *:nth-child(1),
+.booking__grid > *:nth-child(1) {
+    animation-delay: 0.08s;
+}
+
+.events-grid > *:nth-child(2),
+.mentors-grid > *:nth-child(2),
+.notifications__list > *:nth-child(2),
+.booking__grid > *:nth-child(2) {
+    animation-delay: 0.14s;
+}
+
+.events-grid > *:nth-child(3),
+.mentors-grid > *:nth-child(3),
+.notifications__list > *:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.events-grid > *:nth-child(4),
+.mentors-grid > *:nth-child(4),
+.notifications__list > *:nth-child(4) {
+    animation-delay: 0.26s;
+}
+
+.events-grid > *:nth-child(5),
+.mentors-grid > *:nth-child(5),
+.notifications__list > *:nth-child(5) {
+    animation-delay: 0.32s;
+}
+
+.events-grid > *:nth-child(6),
+.mentors-grid > *:nth-child(6) {
+    animation-delay: 0.38s;
+}
+
+.events-grid > *:nth-child(7) {
+    animation-delay: 0.44s;
+}
+
+.events-grid > *:nth-child(8) {
+    animation-delay: 0.5s;
+}
+
+.events-grid > *:nth-child(9) {
+    animation-delay: 0.56s;
+}
+
+// SUBTLE DECORATIVE MOTION
+// ============================================================================
+
+.badge--open,
+.wifi-badge {
+    animation: floating-soft 3.2s ease-in-out infinite;
+}
+
+.hero__image,
+.map-placeholder {
+    transform-origin: center;
+}
+
+.hero__image-wrapper:hover .hero__image,
+.contacts__map:hover .map-placeholder {
+    transform: scale(1.03);
+}
+
+// ACCESSIBILITY: REDUCED MOTION
+// ============================================================================
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition-duration: 0.01ms !important;
+        transition-delay: 0ms !important;
+    }
+
+    html {
+        scroll-behavior: auto;
+    }
+}

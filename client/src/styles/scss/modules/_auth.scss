@@ -1,0 +1,112 @@
+// ============================================================================
+// Auth Page
+// ============================================================================
+
+.auth-layout {
+    min-height: calc(100vh - 170px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-4xl 0;
+    background: radial-gradient(circle at top right, #fff4b0 0%, #fff 45%);
+}
+
+.auth-card {
+    @include card-style;
+    max-width: 520px;
+    margin: 0 auto;
+    padding: $spacing-2xl;
+    box-shadow: $shadow-md;
+
+    &__header {
+        text-align: center;
+        margin-bottom: $spacing-xl;
+    }
+
+    &__badge {
+        display: inline-block;
+        margin-bottom: $spacing-sm;
+        padding: $spacing-xs $spacing-md;
+        border-radius: 20px;
+        background: $color-bg-yellow;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-semibold;
+    }
+
+    &__title {
+        margin-bottom: $spacing-sm;
+    }
+
+    &__subtitle {
+        color: $color-text-secondary;
+        @include font-base;
+    }
+
+    &__success {
+        margin-top: $spacing-lg;
+        padding: $spacing-md;
+        border-radius: $radius-sm;
+        background: $color-success-bg;
+        color: $color-success-text;
+        @include font-small;
+    }
+
+    &__error {
+        margin-top: $spacing-lg;
+        padding: $spacing-md;
+        border-radius: $radius-sm;
+        background: #fff1f0;
+        color: #9e1f1f;
+        @include font-small;
+    }
+
+    &__info {
+        margin-top: $spacing-lg;
+        padding: $spacing-md;
+        border-radius: $radius-sm;
+        background: #eef7ff;
+        color: #1c4f7d;
+        @include font-small;
+    }
+
+    &__links {
+        margin-top: $spacing-lg;
+        @include flex-column;
+        gap: $spacing-sm;
+        align-items: center;
+    }
+}
+
+.auth-form {
+    @include flex-column;
+    gap: $spacing-sm;
+
+    &__label {
+        @include font-label;
+        font-weight: $font-weight-semibold;
+    }
+
+    &__checkbox {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        margin: $spacing-sm 0;
+        @include font-small;
+
+        input {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+    }
+}
+
+@include responsive-sm {
+    .auth-layout {
+        padding: $spacing-2xl 0;
+    }
+
+    .auth-card {
+        padding: $spacing-lg;
+    }
+}
