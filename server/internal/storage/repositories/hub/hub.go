@@ -18,7 +18,7 @@ func Init(db *storage.Storage) *HubRepo {
 
 func (r *HubRepo) GetAllHubs() ([]models.Hub, error) {
 	rows, err := r.db.Db.Query(
-		`SELECT hub_id, hub_name FROM hubs`,
+		`SELECT hub_id, hub_name, address, status FROM hubs`,
 	)
 
 	if err != nil {
@@ -32,7 +32,7 @@ func (r *HubRepo) GetAllHubs() ([]models.Hub, error) {
 	for rows.Next() {
 		var hub models.Hub
 
-		err = rows.Scan(&hub.Id, &hub.HubName)
+		err = rows.Scan(&hub.Id, &hub.HubName, &hub.Address, &hub.Status)
 
 		if err != nil {
 			return nil, err
@@ -48,9 +48,9 @@ func (r *HubRepo) GetHubById(id uint64) (*models.Hub, error) {
 	var hub models.Hub
 
 	err := r.db.Db.QueryRow(
-		`SELECT hub_id, hub_name FROM hubs WHERE hub_id = $1`,
+		`SELECT hub_id, hub_name, address, status FROM hubs WHERE hub_id = $1`,
 		id,
-	).Scan(&hub.Id, &hub.HubName)
+	).Scan(&hub.Id, &hub.HubName, &hub.Address, &hub.Status)
 
 	if err != nil {
 		return nil, err
@@ -63,9 +63,11 @@ func (r *HubRepo) CreateHub(hub *hubsStorageDto.CreateHubDto) (*models.Hub, erro
 	var createdHub models.Hub
 
 	err := r.db.Db.QueryRow(
-		`INSERT INTO hubs (hub_name) VALUES ($1) RETURNING hub_id, hub_name`,
+		`INSERT INTO hubs (hub_name, address, status) VALUES ($1, $2, $3) RETURNING hub_id, hub_name, address, status`,
 		hub.Name,
-	).Scan(&createdHub.Id, &createdHub.HubName)
+		hub.Address,
+		"opened",
+	).Scan(&createdHub.Id, &createdHub.HubName, &createdHub.Address, &createdHub.Status)
 
 	if err != nil {
 		return nil, err
@@ -78,9 +80,9 @@ func (r *HubRepo) UpdateHub(hub *models.Hub) (*models.Hub, error) {
 	var updatedHub models.Hub
 
 	err := r.db.Db.QueryRow(
-		`UPDATE hubs SET hub_name = $1 WHERE hub_id = $2 RETURNING hub_id, hub_name`,
-		hub.HubName, hub.Id,
-	).Scan(&updatedHub.Id, &updatedHub.HubName)
+		`UPDATE hubs SET hub_name = $1, address = $2, status = $3 WHERE hub_id = $4 RETURNING hub_id, hub_name, address, status`,
+		hub.HubName, hub.Address, hub.Status, hub.Id,
+	).Scan(&updatedHub.Id, &updatedHub.HubName, &updatedHub.Address, &updatedHub.Status)
 
 	if err != nil {
 		return nil, err

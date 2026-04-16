@@ -20,12 +20,12 @@ func Init(service *event_service.EventService) *EventController {
 }
 
 func (c *EventController) RegisterRoutes(router fiber.Router) {
-	hubs := router.Group("/events")
-	hubs.Get("/", c.GetAllEvents)
-	hubs.Get("/:id", c.GetEventById)
-	hubs.Post("/", c.CreateEvent)
-	hubs.Put("/", c.UpdateEvent)
-	hubs.Delete("/:id", c.DeleteEvent)
+	events := router.Group("/events")
+	events.Get("/", c.GetAllEvents)
+	events.Get("/:id", c.GetEventById)
+	events.Post("/", c.CreateEvent)
+	events.Put("/", c.UpdateEvent)
+	events.Delete("/:id", c.DeleteEvent)
 }
 
 func serviceNotReady(entity string) error {

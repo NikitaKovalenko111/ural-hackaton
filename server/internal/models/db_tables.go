@@ -53,8 +53,8 @@ const (
 		event_id SERIAL PRIMARY KEY,
 		name VARCHAR(20) UNIQUE NOT NULL,
 		description VARCHAR(256) NOT NULL,
-		start_time TIME NOT NULL,
-		end_time TIME NOT NULL,
+		start_time TIMESTAMPTZ NOT NULL,
+		end_time TIMESTAMPTZ NOT NULL,
 		hub_id INT,
 
 

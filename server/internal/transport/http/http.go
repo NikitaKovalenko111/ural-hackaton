@@ -26,4 +26,6 @@ func (h *Http) Start() {
 	h.controllers.MentorController.RegisterRoutes(h.router)
 	h.controllers.UserController.RegisterRoutes(h.router)
 	h.controllers.RequestController.RegisterRoutes(h.router)
+	h.controllers.HubController.RegisterRoutes(h.router)
+	h.controllers.EventController.RegisterRoutes(h.router)
 }

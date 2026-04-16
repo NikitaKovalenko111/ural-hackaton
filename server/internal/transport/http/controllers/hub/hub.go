@@ -86,7 +86,7 @@ func (c *HubController) CreateHub(ctx *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "invalid hub payload")
 	}
 
-	hub, err := c.service.CreateHub(payload.Name)
+	hub, err := c.service.CreateHub(payload.Name, payload.Address)
 	if err != nil {
 		return err
 	}
@@ -104,7 +104,7 @@ func (c *HubController) UpdateHub(ctx *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "invalid hub payload")
 	}
 
-	hub, err := c.service.UpdateHub(payload.HubName, payload.Id)
+	hub, err := c.service.UpdateHub(payload.HubName, payload.Address, payload.Status, payload.Id)
 	if err != nil {
 		return err
 	}

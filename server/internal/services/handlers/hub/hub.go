@@ -19,9 +19,10 @@ func Init(hubRepo *hub_storage.HubRepo, cfg *config.Config) *HubService {
 	}
 }
 
-func (s *HubService) CreateHub(name string) (*models.Hub, error) {
+func (s *HubService) CreateHub(name string, address string) (*models.Hub, error) {
 	hubDto := &hub_dto.CreateHubDto{
-		Name: name,
+		Name:    name,
+		Address: address,
 	}
 
 	model, err := s.repo.CreateHub(hubDto)
@@ -50,10 +51,12 @@ func (s *HubService) GetHubById(id uint64) (*models.Hub, error) {
 	return model, nil
 }
 
-func (s *HubService) UpdateHub(hubName string, id uint64) (*models.Hub, error) {
+func (s *HubService) UpdateHub(hubName string, address string, status string, id uint64) (*models.Hub, error) {
 	hubDto := &models.Hub{
 		Id:      id,
 		HubName: hubName,
+		Address: address,
+		Status:  status,
 	}
 
 	model, err := s.repo.UpdateHub(hubDto)
