@@ -2,7 +2,7 @@ package admins_service
 
 import (
 	"ural-hackaton/internal/config"
-	admins_storage "ural-hackaton/internal/storage/repositories/admins"
+	admins_storage "ural-hackaton/internal/storage/repositories/admin"
 )
 
 type AdminService struct {
@@ -10,7 +10,7 @@ type AdminService struct {
 	cfg  *config.Config
 }
 
-func Init(adminRepo *admins_storage.UserRepo, cfg *config.Config) *AdminService {
+func Init(adminRepo *admins_storage.AdminRepo, cfg *config.Config) *AdminService {
 	return &AdminService{
 		repo: adminRepo,
 		cfg:  cfg,
