@@ -1,0 +1,274 @@
+// ============================================================================
+// SCSS Mixins & Functions
+// ============================================================================
+
+// FLEXBOX MIXINS
+// ============================================================================
+
+@mixin flexbox-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin flexbox-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@mixin flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+@mixin flex-start {
+    display: flex;
+    align-items: flex-start;
+}
+
+// CARD MIXINS
+// ============================================================================
+
+@mixin card-style {
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    background: $color-bg;
+}
+
+@mixin card-hover {
+    transition: transform $transition-fast, box-shadow $transition-fast;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: $shadow-lg;
+    }
+}
+
+@mixin card-interactive {
+    @include card-hover;
+    cursor: pointer;
+}
+
+// FONT MIXINS
+// ============================================================================
+
+@mixin font-label {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+}
+
+@mixin font-small {
+    font-size: $font-size-base;
+}
+
+@mixin font-base {
+    font-size: $font-size-md;
+}
+
+@mixin font-heading {
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+}
+
+@mixin font-large-heading {
+    font-size: $font-size-4xl;
+    font-weight: $font-weight-bold;
+}
+
+// DISPLAY MIXINS
+// ============================================================================
+
+@mixin text-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@mixin text-multiline-truncate($lines: 2) {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+@mixin sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+// BUTTON MIXINS
+// ============================================================================
+
+@mixin button-reset {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font: inherit;
+
+    &:hover {
+        opacity: 0.8;
+    }
+}
+
+@mixin button-primary {
+    background-color: $color-primary-yellow;
+    color: $color-text-main;
+
+    &:hover {
+        background-color: $color-primary-yellow-hover;
+    }
+}
+
+@mixin button-outline {
+    background: transparent;
+    border: 1px solid $color-border;
+    color: $color-text-main;
+
+    &:hover {
+        background: $color-bg-tag;
+        border-color: $color-text-secondary;
+    }
+}
+
+// SPACING MIXINS
+// ============================================================================
+
+@mixin margin-bottom($size: md) {
+    margin-bottom: map-get((xs: $spacing-xs,
+                sm: $spacing-sm,
+                md: $spacing-md,
+                lg: $spacing-lg,
+                xl: $spacing-xl,
+            ),
+            $size );
+}
+
+@mixin padding($size: md) {
+    padding: map-get((xs: $spacing-xs,
+                sm: $spacing-sm,
+                md: $spacing-md,
+                lg: $spacing-lg,
+                xl: $spacing-xl,
+            ),
+            $size );
+}
+
+@mixin gap($size: md) {
+    gap: map-get((xs: $spacing-xs,
+                sm: $spacing-sm,
+                md: $spacing-md,
+                lg: $spacing-lg,
+                xl: $spacing-xl,
+                2xl: $spacing-2xl,
+            ),
+            $size );
+}
+
+// GRADIENT MIXINS
+// ============================================================================
+
+@mixin gradient($from, $to, $direction: to right) {
+    background: linear-gradient($direction, $from, $to);
+}
+
+// ANIMATION MIXINS
+// ============================================================================
+
+@mixin transition($property: all, $duration: $transition-fast) {
+    transition: $property $duration;
+}
+
+@mixin smooth-transition {
+    transition: all $transition-base cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// ACCESSIBILITY MIXINS
+// ============================================================================
+
+@mixin focus-outline($color: $color-primary-yellow) {
+    outline: 2px solid $color;
+    outline-offset: 2px;
+}
+
+@mixin focus-visible {
+    &:focus-visible {
+        @include focus-outline;
+    }
+}
+
+// RESPONSIVE MIXINS
+// ============================================================================
+
+@mixin media-query($breakpoint) {
+    @if $breakpoint =='sm' {
+        @media (max-width: 600px) {
+            @content;
+        }
+    }
+
+    @else if $breakpoint =='md' {
+        @media (max-width: 768px) {
+            @content;
+        }
+    }
+
+    @else if $breakpoint =='lg' {
+        @media (max-width: 900px) {
+            @content;
+        }
+    }
+
+    @else if $breakpoint =='xl' {
+        @media (max-width: 1200px) {
+            @content;
+        }
+    }
+}
+
+@mixin responsive-sm {
+    @media (max-width: 600px) {
+        @content;
+    }
+}
+
+@mixin responsive-md {
+    @media (max-width: 768px) {
+        @content;
+    }
+}
+
+@mixin responsive-lg {
+    @media (max-width: 900px) {
+        @content;
+    }
+}
+
+@mixin responsive-xl {
+    @media (max-width: 1200px) {
+        @content;
+    }
+}
+
+// LAYOUT MIXINS
+// ============================================================================
+
+@mixin container {
+    max-width: $container-max-width;
+    margin: 0 auto;
+    padding: 0 $container-padding;
+}
+
+@mixin grid($columns: 3, $gap: $spacing-lg) {
+    display: grid;
+    grid-template-columns: repeat($columns, 1fr);
+    gap: $gap;
+}

@@ -1,0 +1,204 @@
+// ============================================================================
+// Card Components (Event & Mentor)
+// ============================================================================
+
+// SECTION LAYOUT
+// ============================================================================
+
+.section {
+
+    &--events,
+    &--mentors,
+    &--contacts {
+        padding: $spacing-4xl 0;
+    }
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: $spacing-2xl;
+        gap: $spacing-lg;
+    }
+
+    &__title {
+        @include font-heading;
+        margin-bottom: $spacing-sm;
+    }
+
+    &__subtitle {
+        color: $color-text-secondary;
+        @include font-base;
+    }
+}
+
+// GRIDS
+// ============================================================================
+
+.events-grid,
+.mentors-grid {
+    @include grid(3, $spacing-lg);
+}
+
+// EVENT CARD
+// ============================================================================
+
+.event-card {
+    @include card-style;
+    @include card-hover;
+    padding: $spacing-lg;
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $spacing-lg;
+    }
+
+    &__time {
+        background: $color-bg-yellow;
+        padding: $spacing-sm $spacing-md;
+        border-radius: 20px;
+        @include font-small;
+        font-weight: $font-weight-semibold;
+    }
+
+    &__date {
+        font-size: $font-size-sm;
+        color: $color-text-secondary;
+    }
+
+    &__title {
+        font-size: $font-size-lg;
+        margin-bottom: $spacing-sm;
+        font-weight: $font-weight-semibold;
+    }
+
+    &__description {
+        @include font-small;
+        color: $color-text-secondary;
+    }
+
+    &__role {
+        @include font-small;
+        color: $color-text-secondary;
+        margin-top: $spacing-md;
+    }
+}
+
+// MENTOR CARD
+// ============================================================================
+
+.mentor-card {
+    @include card-style;
+    @include card-hover;
+    padding: $spacing-lg;
+    @include flex-column;
+
+    &__top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $spacing-md;
+    }
+
+    &__image {
+        height: 180px;
+        border-radius: $radius-sm;
+        margin-bottom: $spacing-lg;
+        background-size: cover;
+        background-position: center;
+        background-color: $color-bg-light;
+    }
+
+    &__info {
+        flex: 1;
+    }
+
+    &__title {
+        font-size: $font-size-lg;
+        margin-bottom: $spacing-sm;
+        font-weight: $font-weight-semibold;
+    }
+
+    &__role {
+        @include font-small;
+        color: $color-text-secondary;
+        margin-bottom: $spacing-lg;
+    }
+
+    &__actions {
+        margin-top: auto;
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+    }
+}
+
+// TAG & RATING
+// ============================================================================
+
+.tag {
+    background: $color-bg-tag;
+    padding: $spacing-sm $spacing-md;
+    border-radius: 20px;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    display: inline-block;
+
+    &--stack {
+        margin: 0 $spacing-sm $spacing-sm 0;
+    }
+}
+
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+    margin: $spacing-lg 0;
+}
+
+.rating {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+}
+
+// CARDS RESPONSIVE
+// ============================================================================
+
+@include responsive-md {
+    .section__header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: $spacing-md;
+    }
+
+    .events-grid,
+    .mentors-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mentor-card__actions {
+        flex-wrap: wrap;
+
+        .btn {
+            flex: 1;
+            min-width: 150px;
+        }
+    }
+}
+
+@include responsive-sm {
+    .section {
+
+        &--events,
+        &--mentors,
+        &--contacts {
+            padding: $spacing-2xl 0;
+        }
+    }
+
+    .mentor-card__image {
+        height: 150px;
+    }
+}

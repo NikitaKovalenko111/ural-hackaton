@@ -1,0 +1,71 @@
+// ============================================================================
+// Variables & Design Tokens
+// ============================================================================
+
+// Colors
+$color-primary-yellow: #FFD600;
+$color-primary-yellow-hover: #E6C200;
+$color-bg-yellow: #FFF9C4;
+$color-text-main: #1D1D1F;
+$color-text-secondary: #86868B;
+$color-border: #E5E5E5;
+$color-bg: #fff;
+$color-bg-light: #fafafa;
+$color-bg-tag: #F5F5F5;
+
+$color-success-bg: #F1F8E9;
+$color-success-text: #33691E;
+$color-danger: #d32f2f;
+$color-toast-bg: #7B61FF;
+
+// Radius
+$radius-lg: 24px;
+$radius-md: 16px;
+$radius-sm: 8px;
+
+// Font
+$font-family: 'Inter', system-ui, -apple-system, sans-serif;
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+// Font Sizes
+$font-size-xs: 12px;
+$font-size-sm: 13px;
+$font-size-base: 14px;
+$font-size-md: 15px;
+$font-size-lg: 18px;
+$font-size-xl: 20px;
+$font-size-2xl: 24px;
+$font-size-3xl: 28px;
+$font-size-4xl: 32px;
+$font-size-5xl: 40px;
+
+// Z-index
+$z-index-header: 100;
+$z-index-toast: 1000;
+
+// Spacing
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 15px;
+$spacing-xl: 20px;
+$spacing-2xl: 30px;
+$spacing-3xl: 40px;
+$spacing-4xl: 60px;
+
+// Container
+$container-max-width: 1200px;
+$container-padding: 20px;
+
+// Shadows
+$shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 4px 20px rgba(0, 0, 0, 0.05);
+$shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.05);
+
+// Transitions
+$transition-fast: 0.2s;
+$transition-base: 0.3s;
+$transition-slow: 0.5s;

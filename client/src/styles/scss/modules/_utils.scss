@@ -1,0 +1,468 @@
+// ============================================================================
+// Utility Classes
+// ============================================================================
+
+// DISPLAY
+// ============================================================================
+
+.display-none {
+    display: none;
+}
+
+.display-block {
+    display: block;
+}
+
+.display-inline {
+    display: inline;
+}
+
+.display-inline-block {
+    display: inline-block;
+}
+
+.display-flex {
+    display: flex;
+}
+
+.display-grid {
+    display: grid;
+}
+
+.display-contents {
+    display: contents;
+}
+
+// POSITIONING
+// ============================================================================
+
+.position-static {
+    position: static;
+}
+
+.position-relative {
+    position: relative;
+}
+
+.position-absolute {
+    position: absolute;
+}
+
+.position-fixed {
+    position: fixed;
+}
+
+.position-sticky {
+    position: sticky;
+}
+
+// OVERFLOW
+// ============================================================================
+
+.overflow-auto {
+    overflow: auto;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.overflow-visible {
+    overflow: visible;
+}
+
+.overflow-x-auto {
+    overflow-x: auto;
+}
+
+.overflow-y-auto {
+    overflow-y: auto;
+}
+
+// VISIBILITY
+// ============================================================================
+
+.visible {
+    visibility: visible;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+.sr-only {
+    @include sr-only;
+}
+
+// OPACITY
+// ============================================================================
+
+.opacity-0 {
+    opacity: 0;
+}
+
+.opacity-25 {
+    opacity: 0.25;
+}
+
+.opacity-50 {
+    opacity: 0.5;
+}
+
+.opacity-75 {
+    opacity: 0.75;
+}
+
+.opacity-100 {
+    opacity: 1;
+}
+
+// CURSOR
+// ============================================================================
+
+.cursor-auto {
+    cursor: auto;
+}
+
+.cursor-default {
+    cursor: default;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.cursor-wait {
+    cursor: wait;
+}
+
+.cursor-not-allowed {
+    cursor: not-allowed;
+}
+
+// SPACING - MARGIN
+// ============================================================================
+
+.m-0 {
+    margin: 0;
+}
+
+.m-xs {
+    margin: $spacing-xs;
+}
+
+.m-sm {
+    margin: $spacing-sm;
+}
+
+.m-md {
+    margin: $spacing-md;
+}
+
+.m-lg {
+    margin: $spacing-lg;
+}
+
+.m-xl {
+    margin: $spacing-xl;
+}
+
+.mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.my-auto {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.mt-0 {
+    margin-top: 0;
+}
+
+.mt-xs {
+    margin-top: $spacing-xs;
+}
+
+.mt-sm {
+    margin-top: $spacing-sm;
+}
+
+.mt-md {
+    margin-top: $spacing-md;
+}
+
+.mt-lg {
+    margin-top: $spacing-lg;
+}
+
+.mt-xl {
+    margin-top: $spacing-xl;
+}
+
+.mb-0 {
+    margin-bottom: 0;
+}
+
+.mb-xs {
+    margin-bottom: $spacing-xs;
+}
+
+.mb-sm {
+    margin-bottom: $spacing-sm;
+}
+
+.mb-md {
+    margin-bottom: $spacing-md;
+}
+
+.mb-lg {
+    margin-bottom: $spacing-lg;
+}
+
+.mb-xl {
+    margin-bottom: $spacing-xl;
+}
+
+// SPACING - PADDING
+// ============================================================================
+
+.p-0 {
+    padding: 0;
+}
+
+.p-xs {
+    padding: $spacing-xs;
+}
+
+.p-sm {
+    padding: $spacing-sm;
+}
+
+.p-md {
+    padding: $spacing-md;
+}
+
+.p-lg {
+    padding: $spacing-lg;
+}
+
+.p-xl {
+    padding: $spacing-xl;
+}
+
+.pt-lg {
+    padding-top: $spacing-lg;
+}
+
+.pb-lg {
+    padding-bottom: $spacing-lg;
+}
+
+// SIZING
+// ============================================================================
+
+.w-full {
+    width: 100%;
+}
+
+.h-auto {
+    height: auto;
+}
+
+.h-full {
+    height: 100%;
+}
+
+.min-h-screen {
+    min-height: 100vh;
+}
+
+// BORDER RADIUS
+// ============================================================================
+
+.rounded-none {
+    border-radius: 0;
+}
+
+.rounded-sm {
+    border-radius: $radius-sm;
+}
+
+.rounded-md {
+    border-radius: $radius-md;
+}
+
+.rounded-lg {
+    border-radius: $radius-lg;
+}
+
+.rounded-full {
+    border-radius: 999px;
+}
+
+// FLEXBOX UTILITIES
+// ============================================================================
+
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.flex-row {
+    flex-direction: row;
+}
+
+.items-start {
+    align-items: flex-start;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.items-end {
+    align-items: flex-end;
+}
+
+.justify-start {
+    justify-content: flex-start;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.justify-around {
+    justify-content: space-around;
+}
+
+.gap-xs {
+    gap: $spacing-xs;
+}
+
+.gap-sm {
+    gap: $spacing-sm;
+}
+
+.gap-md {
+    gap: $spacing-md;
+}
+
+.gap-lg {
+    gap: $spacing-lg;
+}
+
+.gap-xl {
+    gap: $spacing-xl;
+}
+
+// GRID UTILITIES
+// ============================================================================
+
+.grid {
+    display: grid;
+}
+
+.grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+// BACKGROUND
+// ============================================================================
+
+.bg-white {
+    background-color: $color-bg;
+}
+
+.bg-light {
+    background-color: $color-bg-light;
+}
+
+.bg-yellow {
+    background-color: $color-bg-yellow;
+}
+
+.bg-tag {
+    background-color: $color-bg-tag;
+}
+
+// BORDERS
+// ============================================================================
+
+.border {
+    border: 1px solid $color-border;
+}
+
+.border-top {
+    border-top: 1px solid $color-border;
+}
+
+.border-bottom {
+    border-bottom: 1px solid $color-border;
+}
+
+// SHADOWS
+// ============================================================================
+
+.shadow-none {
+    box-shadow: none;
+}
+
+.shadow-sm {
+    box-shadow: $shadow-sm;
+}
+
+.shadow-md {
+    box-shadow: $shadow-md;
+}
+
+.shadow-lg {
+    box-shadow: $shadow-lg;
+}
+
+// TRANSITIONS
+// ============================================================================
+
+.transition-fast {
+    transition: all $transition-fast;
+}
+
+.transition-base {
+    transition: all $transition-base;
+}
+
+.transition-slow {
+    transition: all $transition-slow;
+}
+
+// TRUNCATE
+// ============================================================================
+
+.truncate {
+    @include text-truncate;
+}
+
+.line-clamp-2 {
+    @include text-multiline-truncate(2);
+}
+
+.line-clamp-3 {
+    @include text-multiline-truncate(3);
+}
