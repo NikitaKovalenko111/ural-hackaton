@@ -13,24 +13,8 @@ type Config struct {
 	Env        string `yaml:"env" env-default:"local"`
 	Storage    `yaml:"storage"`
 	HTTPServer `yaml:"http_server"`
-	SMTP       `yaml:"smtp"`
-	JWT        `yaml:"jwt"`
-	Redis      `yaml:"redis"`
-	Parser     `yaml:"parser"`
-}
-
-type Redis struct {
-	Address     string        `yaml:"redis_address" env-required:"true"`
-	Password    string        `yaml:"redis_password"`
-	User        string        `yaml:"redis_user" env-required:"true"`
-	Db          int           `yaml:"redis_db" env-default:"0"`
-	MaxRetries  int           `yaml:"redis_maxRetries" env-required:"true"`
-	DialTimeout time.Duration `yaml:"redis_dialTimeout" env-required:"true"`
-	Timeout     time.Duration `yaml:"redis_timeout" env-required:"true"`
-}
-
-type Parser struct {
-	Path string `yaml:"parser_path" env-required:"true"`
+	// SMTP       `yaml:"smtp"`
+	// JWT        `yaml:"jwt"`
 }
 
 type Storage struct {
@@ -41,13 +25,13 @@ type Storage struct {
 	DbName string `yaml:"db_name" env-required:"true"`
 }
 
-type SMTP struct {
-	Host     string `yaml:"smtp_host" env-required:"true"`
-	Port     int    `yaml:"smtp_port" env-required:"true"`
-	Username string `yaml:"username" env-required:"true"`
-	Password string `yaml:"password" env-required:"true"`
-	AppHost  string `yaml:"app_host" env-required:"true"`
-}
+// type SMTP struct {
+// 	Host     string `yaml:"smtp_host" env-required:"true"`
+// 	Port     int    `yaml:"smtp_port" env-required:"true"`
+// 	Username string `yaml:"username" env-required:"true"`
+// 	Password string `yaml:"password" env-required:"true"`
+// 	AppHost  string `yaml:"app_host" env-required:"true"`
+// }
 
 type HTTPServer struct {
 	Address     string        `yaml:"address" env-default:"localhost:8080"`
@@ -55,10 +39,10 @@ type HTTPServer struct {
 	IdleTimeout time.Duration `yaml:"idle_timeout" env-default:"60s"`
 }
 
-type JWT struct {
-	JWT_ACCESS_SECRET  string `yaml:"jwt_access_secret" env-required:"true"`
-	JWT_REFRESH_SECRET string `yaml:"jwt_refresh_secret" env-required:"true"`
-}
+// type JWT struct {
+// 	JWT_ACCESS_SECRET  string `yaml:"jwt_access_secret" env-required:"true"`
+// 	JWT_REFRESH_SECRET string `yaml:"jwt_refresh_secret" env-required:"true"`
+// }
 
 func MustLoad() *Config {
 	err := godotenv.Load()
