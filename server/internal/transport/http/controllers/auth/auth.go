@@ -47,10 +47,7 @@ func (c *AuthController) RequestMagicLink(ctx *fiber.Ctx) error {
 	// Вызываем сервис.
 	// Важно: даже если пользователя нет, мы возвращаем 200, чтобы не светить базу (защита от enum)
 	if err := c.service.RequestMagicLink(payload.Email); err != nil {
-		// Логируем реальную ошибку внутри, но пользователю показываем "успех"
-		// Если произошла критическая ошибка БД, можно вернуть 500, но для "не найден" — всегда 200
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		_ = err
+		return fiber.NewError(fiber.StatusInternalServerError, "failed to send magic link")
 	}
 
 	// Всегда одинаковый ответ для безопасности

@@ -116,10 +116,10 @@ func (r *UserRepo) GetUserByEmail(email string) (*models.User, error) {
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("User with this fullname not found!")
+			return nil, sql.ErrNoRows
 		}
 
-		return nil, fmt.Errorf("Couldn't get user by fullname!")
+		return nil, fmt.Errorf("couldn't get user by email: %w", err)
 	}
 
 	return &user, nil

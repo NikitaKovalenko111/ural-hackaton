@@ -47,7 +47,7 @@ func (s *AuthService) RequestMagicLink(email string) error {
 	if errors.Is(err, sql.ErrNoRows) {
 		// Не раскрываем, что пользователя нет (защита от перебора)
 		// Просто возвращаем nil, контроллер скажет "Отправлено"
-		return sql.ErrNoRows
+		return nil
 	}
 	if err != nil {
 		return fmt.Errorf("get user by email: %w", err)
@@ -66,14 +66,11 @@ func (s *AuthService) RequestMagicLink(email string) error {
 		return fmt.Errorf("save token: %w", err)
 	}
 
-	// 4. Отправляем письмо (в горутине, чтобы не блокировать ответ)
-	// В реальном проекте лучше использовать очередь задач (RabbitMQ/Redis)
-	go func() {
-		if err := s.emailSrv.SendMagicLink(usr.Email, token); err != nil {
-			// Логируем ошибку отправки, но не прерываем основной поток
-			// log.Printf("failed to send magic link to %s: %v", emailStr, err)
-		}
-	}()
+	// 4. Отправляем письмо синхронно, чтобы вернуть клиенту реальную ошибку SMTP,
+	// если доставка не удалась.
+	if err := s.emailSrv.SendMagicLink(usr.Email, token); err != nil {
+		return fmt.Errorf("send magic link: %w", err)
+	}
 
 	return nil
 }
