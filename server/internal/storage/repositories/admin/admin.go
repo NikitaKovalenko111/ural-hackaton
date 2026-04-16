@@ -41,18 +41,12 @@ func (r *AdminRepo) GetAdminById(id uint64) (*admin_dto.AdminJoinUserDto, error)
 	var admin admin_dto.AdminJoinUserDto
 
 	err := r.db.Db.QueryRow(
-<<<<<<< HEAD
-		`SELECT admin_id FROM admins WHERE admin_id = $1`,
-		id,
-	).Scan(&admin.AdminId)
-=======
 		`SELECT admins.admin_id, users.user_id, users.fullname, users.user_role, users.email, users.telegram, users.phone
 		 FROM admins
 		 JOIN users ON admins.user_id = users.user_id
 		 WHERE admins.admin_id = $1`,
 		id,
 	).Scan(&admin.AdminId, &admin.Id, &admin.FullName, &admin.Role, &admin.Email, &admin.Telegram, &admin.Phone)
->>>>>>> 99e69862683c0673a6a86170ad35b8c424f1a8d0
 
 	if err != nil {
 		return nil, err
