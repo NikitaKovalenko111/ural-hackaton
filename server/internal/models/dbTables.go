@@ -2,12 +2,14 @@ package models
 
 const (
 	HUB_TABLE = `
-		CREATE TABLE hubs (
-		hub_id SERIAL PRIMARY KEY,
-		hub_name VARCHAR(50) NOT NULL UNIQUE,
-		address VARCHAR(100) NOT NULL UNIQUE,
-		status VARCHAR(32) NOT NULL
-	);
+		CREATE TABLE users (
+		user_id SERIAL PRIMARY KEY,
+		user_fullname VARCHAR(50) UNIQUE NOT NULL,
+		user_role VARCHAR(6) NOT NULL
+		hub_id INT
+
+		FOREIGN KEY (hub_id) REFERENCES hubs(hub_id)
+	) ;
 		`
 
 	USERS_TABLE = `
