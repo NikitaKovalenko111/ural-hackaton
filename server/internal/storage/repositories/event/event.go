@@ -132,7 +132,7 @@ func (r *EventRepo) UpdateEvent(event *models.Event) (*models.Event, error) {
 	var updatedEvent models.Event
 
 	err := r.db.Db.QueryRow(
-		`UPDATE events SET name = $1, description = $2, start_time = $3, end_time = $4, hub_id = $5 WHERE event_id = $6 RETURNING event_id, name, description, start, end, hub_id`,
+		`UPDATE events SET name = $1, description = $2, start_time = $3, end_time = $4, hub_id = $5 WHERE event_id = $6 RETURNING event_id, name, description, start_time, end_time, hub_id`,
 		event.EventName, event.Description, event.StartTime, event.EndTime, event.HubId, event.Id,
 	).Scan(&updatedEvent.Id, &updatedEvent.EventName, &updatedEvent.Description, &updatedEvent.StartTime, &updatedEvent.EndTime, &updatedEvent.HubId)
 

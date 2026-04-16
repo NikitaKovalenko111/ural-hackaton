@@ -68,7 +68,7 @@ func (c *EventController) GetEventById(ctx *fiber.Ctx) error {
 	event, err := c.service.GetEventById(id)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return fiber.NewError(fiber.StatusNotFound, "hub not found")
+			return fiber.NewError(fiber.StatusNotFound, "event not found")
 		}
 		return err
 	}
@@ -83,7 +83,7 @@ func (c *EventController) CreateEvent(ctx *fiber.Ctx) error {
 
 	var payload event_dto.CreateEventDto
 	if err := ctx.BodyParser(&payload); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, "invalid hub payload")
+		return fiber.NewError(fiber.StatusBadRequest, "invalid event payload")
 	}
 
 	err := c.service.CreateEvent(payload.Name, payload.Description, payload.StartTime, payload.EndTime, payload.HubId)
@@ -101,7 +101,7 @@ func (c *EventController) UpdateEvent(ctx *fiber.Ctx) error {
 
 	var payload models.Event
 	if err := ctx.BodyParser(&payload); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, "invalid hub payload")
+		return fiber.NewError(fiber.StatusBadRequest, "invalid event payload")
 	}
 
 	event, err := c.service.UpdateEvent(payload.EventName, payload.Description, payload.StartTime, payload.EndTime, payload.HubId, payload.Id)
