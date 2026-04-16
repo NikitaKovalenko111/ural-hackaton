@@ -1,8 +1,31 @@
+import { useState } from "react"
 import type { JSX } from "react"
 import type React from "react"
-import { Link } from "react-router-dom"
+import { useSelector } from "react-redux"
+import { Link, Navigate } from "react-router-dom"
+import { useParams } from "react-router-dom"
+import RegistrationModal from "../../components/registrationModal/RegistrationModal"
+import type { RootState } from "../../redux/store"
+import { selectHubs } from "../../redux/features/hubs/hubSlice"
 
 const IndexPage: React.FC = (): JSX.Element => {
+    const { hubId } = useParams<{ hubId: string }>()
+    const hubs = useSelector((state: RootState) => selectHubs(state))
+    const [isRegistrationOpen, setIsRegistrationOpen] = useState<boolean>(false)
+    const [selectedEventTitle, setSelectedEventTitle] = useState<string>("Ближайшее событие хаба")
+    const hub = hubs.find((hubItem) => hubItem.id === parseInt(hubId as string)) ?? hubs[0]
+
+    if (!hub) {
+        return <Navigate to="/hubs" replace />
+    }
+
+    const openRegistrationModal = (eventTitle: string): void => {
+        setSelectedEventTitle(eventTitle)
+        setIsRegistrationOpen(true)
+    }
+
+    const statusText = hub.status === "open" ? "● Открыт" : hub.status === "busy" ? "● Высокая загрузка" : "● Закрыт"
+
     return (
         <main>
             <section className="hero">
@@ -11,15 +34,15 @@ const IndexPage: React.FC = (): JSX.Element => {
                         <div className="status-header">
                             <div className="status-header__icon">🕒</div>
                             <div>
-                                <h1 className="status-header__title">Статус хаба</h1>
-                                <p className="status-header__schedule">График сегодня: 9:00–21:00</p>
+                                <h1 className="status-header__title">{hub.name}</h1>
+                                <p className="status-header__schedule">График сегодня: {hub.schedule}</p>
                             </div>
-                            <span className="badge--open">● Открыт</span>
+                            <span className="badge--open">{statusText}</span>
                         </div>
                         <div className="stats__container">
                             <div className="stats__box">
                                 <div className="stats__label">Количество людей сейчас</div>
-                                <div className="stats__value">12-25</div>
+                                <div className="stats__value">{hub.occupancy}</div>
                                 <div className="stats__unit">чел.</div>
                                 <div className="stats__update-text">Обн. 5 мин</div>
                             </div>
@@ -28,19 +51,48 @@ const IndexPage: React.FC = (): JSX.Element => {
                                     <span>Ближайшее событие</span>
                                     <Link to="/events" className="link--small">Все события</Link>
                                 </div>
-                                <div className="event-box__details">
-                                    <h3>Мастер-класс: Веб-дизайн</h3>
-                                    <p>Начало: 19:00</p>
-                                </div>
-                                <Link to="/events" className="btn btn--primary">Записаться</Link>
-                                <div className="event-box__status">🕒 Сейчас 9:00–21:00 → открыт</div>
+                                {/*<div className="event-box__details">
+                                    <h3>{hub.nearestEvent.title}</h3>
+                                    <p>Начало: {hub.nearestEvent.time}</p>
+                                </div>*/}
+                                <button
+                                    type="button"
+                                    className="btn btn--primary"
+                                    onClick={() => openRegistrationModal("Ближайшее событие хаба")}
+                                >
+                                    Записаться
+                                </button>
+                                <div className="event-box__status">🕒 Сейчас {hub.schedule} → {hub.status === "closed" ? "закрыт" : "открыт"}</div>
                             </div>
                         </div>
                     </div>
                     <div className="hero__image-wrapper">
                         <div className="hero__image"></div>
-                        <div className="image-overlay">Пространство для обучения, нетворкинга и развития</div>
-                        <div className="wifi-badge">📶 Wi-Fi: Open</div>
+                        <div className="image-overlay">description</div>
+                        <div className="wifi-badge">📶 Wi-Fi: free</div>
+                    </div>
+                </div>
+            </section>
+
+            <section className="section section--hubs-overview">
+                <div className="container">
+                    <div className="section__header">
+                        <div>
+                            <h2 className="section__title">О хабе</h2>
+                            <p className="section__subtitle">{hub.desription}</p>
+                        </div>
+                        <Link to="/hubs" className="btn btn--outline btn--sm">Все хабы</Link>
+                    </div>
+                    <div className="contacts__wrapper">
+                        <div className="contacts__info">
+                            <div className="contacts__item">📍 {hub.address}</div>
+                            {/*<div className="contacts__item">📞 {hub.contacts.phone}</div>
+                            <div className="contacts__item">✉️ {hub.contacts.email}</div>
+                            <div className="contacts__item">✈️ {hub.contacts.telegram}</div>*/}
+                        </div>
+                        <div className="contacts__map">
+                            <div className="map-placeholder"></div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -155,6 +207,12 @@ const IndexPage: React.FC = (): JSX.Element => {
                     </div>
                 </div>
             </section>
+
+            <RegistrationModal
+                isOpen={isRegistrationOpen}
+                onClose={() => setIsRegistrationOpen(false)}
+                eventTitle={selectedEventTitle}
+            />
         </main>
     )
 }

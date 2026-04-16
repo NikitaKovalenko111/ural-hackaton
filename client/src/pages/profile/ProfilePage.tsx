@@ -1,8 +1,16 @@
 import type React from "react"
 import type { JSX } from "react/jsx-dev-runtime"
-import { Link } from "react-router-dom"
+import { Link, Navigate } from "react-router-dom"
+import { useSelector } from "react-redux"
+import type { RootState } from "../../redux/store"
 
 const ProfilePage: React.FC = (): JSX.Element => {
+    const user = useSelector((state: RootState) => state.users.user)
+
+    /*if (!user) {
+        return <Navigate to="/login" replace />
+    }*/
+
     return (
         <main className="container">
             <div className="profile__layout">
@@ -37,10 +45,10 @@ const ProfilePage: React.FC = (): JSX.Element => {
                             <span className="info-item__label">Город</span>
                             <span className="info-item__value">Москва</span>
                         </div>
-                        <div className="info-item">
+                        {/* <div className="info-item">
                             <span className="info-item__label">Дата регистрации</span>
                             <span className="info-item__value">12.03.2025</span>
-                        </div>
+                        </div> */}
                     </div>
 
                     <h4 className="profile__section-title">О себе</h4>
@@ -49,14 +57,14 @@ const ProfilePage: React.FC = (): JSX.Element => {
                         оптимизации рендеринга.
                     </p>
 
-                    <h4 className="profile__section-title">Интересы и стек</h4>
+                    {/*<h4 className="profile__section-title">Интересы и стек</h4>
                     <div className="tags-container">
                         <span className="tag tag--stack">JavaScript</span>
                         <span className="tag tag--stack">React</span>
                         <span className="tag tag--stack">TypeScript</span>
                         <span className="tag tag--stack">UI/UX</span>
                         <span className="tag tag--stack">Figma</span>
-                    </div>
+                    </div>*/}
 
                     <div className="actions-row">
                         <Link to="/profile" className="btn btn--primary btn--sm">Редактировать профиль</Link>

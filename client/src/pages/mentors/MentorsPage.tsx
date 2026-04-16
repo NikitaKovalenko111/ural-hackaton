@@ -1,5 +1,7 @@
-import type { CSSProperties, JSX } from "react"
+import { useState } from "react"
+import type { CSSProperties, JSX, MouseEvent } from "react"
 import { Link } from "react-router-dom"
+import RegistrationModal from "../../components/registrationModal/RegistrationModal"
 
 const statsContainerStyle: CSSProperties = {
     flexWrap: "wrap",
@@ -24,6 +26,17 @@ const mentorImageStyle = (imageUrl: string): CSSProperties => ({
 })
 
 const MentorsPage = (): JSX.Element => {
+    const [isRegistrationOpen, setIsRegistrationOpen] = useState<boolean>(false)
+    const [selectedMentorName, setSelectedMentorName] = useState<string>("Выбранный наставник")
+
+    const handleMentorRegistrationClick = (event: MouseEvent<HTMLAnchorElement>): void => {
+        event.preventDefault()
+        const mentorCard = event.currentTarget.closest(".mentor-card")
+        const titleElement = mentorCard?.querySelector(".mentor-card__title")
+        setSelectedMentorName(titleElement?.textContent ?? "Выбранный наставник")
+        setIsRegistrationOpen(true)
+    }
+
     return (
         <main>
             <section className="section section--mentors">
@@ -67,7 +80,7 @@ const MentorsPage = (): JSX.Element => {
                                 <p className="mentor-card__role">Backend, Django, FastAPI, архитектура сервисов.</p>
                             </div>
                             <div className="mentor-card__actions">
-                                <Link to="/profile" className="btn btn--primary btn--sm">Записаться</Link>
+                                <Link to="/profile" onClick={handleMentorRegistrationClick} className="btn btn--primary btn--sm">Записаться</Link>
                             </div>
                         </div>
                         <div className="mentor-card">
@@ -82,7 +95,7 @@ const MentorsPage = (): JSX.Element => {
                                 <p className="mentor-card__role">Highload, Kafka, PostgreSQL, DevOps-практики.</p>
                             </div>
                             <div className="mentor-card__actions">
-                                <Link to="/profile" className="btn btn--primary btn--sm">Записаться</Link>
+                                <Link to="/profile" onClick={handleMentorRegistrationClick} className="btn btn--primary btn--sm">Записаться</Link>
                             </div>
                         </div>
                         <div className="mentor-card">
@@ -97,7 +110,7 @@ const MentorsPage = (): JSX.Element => {
                                 <p className="mentor-card__role">.NET, ASP.NET Core, микросервисы, Azure.</p>
                             </div>
                             <div className="mentor-card__actions">
-                                <Link to="/profile" className="btn btn--primary btn--sm">Записаться</Link>
+                                <Link to="/profile" onClick={handleMentorRegistrationClick} className="btn btn--primary btn--sm">Записаться</Link>
                             </div>
                         </div>
                         <div className="mentor-card">
@@ -112,7 +125,7 @@ const MentorsPage = (): JSX.Element => {
                                 <p className="mentor-card__role">DDD, CQRS, gRPC, оптимизация EF Core.</p>
                             </div>
                             <div className="mentor-card__actions">
-                                <Link to="/profile" className="btn btn--primary btn--sm">Записаться</Link>
+                                <Link to="/profile" onClick={handleMentorRegistrationClick} className="btn btn--primary btn--sm">Записаться</Link>
                             </div>
                         </div>
                         <div className="mentor-card">
@@ -127,7 +140,7 @@ const MentorsPage = (): JSX.Element => {
                                 <p className="mentor-card__role">Go, gRPC, Kubernetes, наблюдаемость.</p>
                             </div>
                             <div className="mentor-card__actions">
-                                <Link to="/profile" className="btn btn--primary btn--sm">Записаться</Link>
+                                <Link to="/profile" onClick={handleMentorRegistrationClick} className="btn btn--primary btn--sm">Записаться</Link>
                             </div>
                         </div>
                         <div className="mentor-card">
@@ -142,7 +155,7 @@ const MentorsPage = (): JSX.Element => {
                                 <p className="mentor-card__role">Производительность, устойчивость, очереди.</p>
                             </div>
                             <div className="mentor-card__actions">
-                                <Link to="/profile" className="btn btn--primary btn--sm">Записаться</Link>
+                                <Link to="/profile" onClick={handleMentorRegistrationClick} className="btn btn--primary btn--sm">Записаться</Link>
                             </div>
                         </div>
                         <div className="mentor-card">
@@ -157,7 +170,7 @@ const MentorsPage = (): JSX.Element => {
                                 <p className="mentor-card__role">React, TypeScript, дизайн-системы.</p>
                             </div>
                             <div className="mentor-card__actions">
-                                <Link to="/profile" className="btn btn--primary btn--sm">Записаться</Link>
+                                <Link to="/profile" onClick={handleMentorRegistrationClick} className="btn btn--primary btn--sm">Записаться</Link>
                             </div>
                         </div>
                         <div className="mentor-card">
@@ -172,7 +185,7 @@ const MentorsPage = (): JSX.Element => {
                                 <p className="mentor-card__role">Node.js, Nest, Next.js, БД и облака.</p>
                             </div>
                             <div className="mentor-card__actions">
-                                <Link to="/profile" className="btn btn--primary btn--sm">Записаться</Link>
+                                <Link to="/profile" onClick={handleMentorRegistrationClick} className="btn btn--primary btn--sm">Записаться</Link>
                             </div>
                         </div>
                         <div className="mentor-card">
@@ -187,7 +200,7 @@ const MentorsPage = (): JSX.Element => {
                                 <p className="mentor-card__role">Data/ML, продакшн-пайплайны.</p>
                             </div>
                             <div className="mentor-card__actions">
-                                <Link to="/profile" className="btn btn--primary btn--sm">Записаться</Link>
+                                <Link to="/profile" onClick={handleMentorRegistrationClick} className="btn btn--primary btn--sm">Записаться</Link>
                             </div>
                         </div>
                         <div className="mentor-card">
@@ -202,7 +215,7 @@ const MentorsPage = (): JSX.Element => {
                                 <p className="mentor-card__role">Архитектура, интеграции, безопасность.</p>
                             </div>
                             <div className="mentor-card__actions">
-                                <Link to="/profile" className="btn btn--primary btn--sm">Записаться</Link>
+                                <Link to="/profile" onClick={handleMentorRegistrationClick} className="btn btn--primary btn--sm">Записаться</Link>
                             </div>
                         </div>
                         <div className="mentor-card">
@@ -217,12 +230,19 @@ const MentorsPage = (): JSX.Element => {
                                 <p className="mentor-card__role">gRPC/REST, resiliency, мониторинг.</p>
                             </div>
                             <div className="mentor-card__actions">
-                                <Link to="/profile" className="btn btn--primary btn--sm">Записаться</Link>
+                                <Link to="/profile" onClick={handleMentorRegistrationClick} className="btn btn--primary btn--sm">Записаться</Link>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
+
+            <RegistrationModal
+                isOpen={isRegistrationOpen}
+                onClose={() => setIsRegistrationOpen(false)}
+                eventTitle={selectedMentorName}
+                registrationType="mentor"
+            />
         </main>
     )
 }
