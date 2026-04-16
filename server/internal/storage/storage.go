@@ -29,6 +29,17 @@ func Connect(cfg *config.Config) *sql.DB {
 }
 
 func (storage *Storage) Prepare() {
+
+	if _, err := storage.Db.Exec("DROP SCHEMA public CASCADE"); err != nil {
+		panic(fmt.Sprintf("Couldn't clear tables(1)! Error: %s", err.Error()))
+	}
+	if _, err := storage.Db.Exec("CREATE SCHEMA public"); err != nil {
+		panic(fmt.Sprintf("Couldn't clear tables(2)! Error: %s", err.Error()))
+	}
+	if _, err := storage.Db.Exec("GRANT ALL ON SCHEMA public TO public"); err != nil {
+		panic(fmt.Sprintf("Couldn't clear tables(3)! Error: %s", err.Error()))
+	}
+
 	_, err := storage.Db.Exec(
 		models.HUB_TABLE,
 	)

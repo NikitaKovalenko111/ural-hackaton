@@ -20,7 +20,7 @@ func Init(db *storage.Storage) *EventRepo {
 
 func (r *EventRepo) CreateEvent(event *event_dto.CreateEventDto) error {
 	_, err := r.db.Db.Exec(
-		`INSERT INTO events (name, description, start, end, hub_id) VALUES ($1, $2, $3, $4, $5)`,
+		`INSERT INTO events (name, description, start_time, end_time, hub_id) VALUES ($1, $2, $3, $4, $5)`,
 		event.Name,
 		event.Description,
 		event.StartTime,
@@ -39,7 +39,7 @@ func (r *EventRepo) GetEventById(id uint64) (*models.Event, error) {
 	var event models.Event
 
 	err := r.db.Db.QueryRow(
-		`SELECT event_id, name, description, start, end, hub_id FROM events WHERE event_id = $1`,
+		`SELECT event_id, name, description, start_time, end_time, hub_id FROM events WHERE event_id = $1`,
 		id,
 	).Scan(&event.Id, &event.EventName, &event.Description, &event.StartTime, &event.EndTime, &event.HubId)
 
@@ -58,7 +58,7 @@ func (r *EventRepo) GetEventByName(name string) (*models.Event, error) {
 	var event models.Event
 
 	err := r.db.Db.QueryRow(
-		`SELECT event_id, name, description, start, end, hub_id FROM events WHERE name = $1`,
+		`SELECT event_id, name, description, start_time, end_time, hub_id FROM events WHERE name = $1`,
 		name,
 	).Scan(&event.Id, &event.EventName, &event.Description, &event.StartTime, &event.EndTime, &event.HubId)
 
@@ -77,7 +77,7 @@ func (r *EventRepo) GetEventsByHubId(hubId uint64) ([]models.Event, error) {
 	var events []models.Event
 
 	rows, err := r.db.Db.Query(
-		`SELECT event_id, name, description, start, end, hub_id FROM events WHERE hub_id = $1`,
+		`SELECT event_id, name, description, start_time, end_time, hub_id FROM events WHERE hub_id = $1`,
 		hubId,
 	)
 
@@ -102,7 +102,7 @@ func (r *EventRepo) GetEventsByHubId(hubId uint64) ([]models.Event, error) {
 
 func (r *EventRepo) GetAllEvents() ([]models.Event, error) {
 	rows, err := r.db.Db.Query(
-		`SELECT event_id, name, description, start, end, hub_id FROM events`,
+		`SELECT event_id, name, description, start_time, end_time, hub_id FROM events`,
 	)
 
 	if err != nil {
@@ -132,7 +132,7 @@ func (r *EventRepo) UpdateEvent(event *models.Event) (*models.Event, error) {
 	var updatedEvent models.Event
 
 	err := r.db.Db.QueryRow(
-		`UPDATE events SET name = $1, description = $2, start = $3, end = $4, hub_id = $5 WHERE event_id = $6 RETURNING event_id, name, description, start, end, hub_id`,
+		`UPDATE events SET name = $1, description = $2, start_time = $3, end_time = $4, hub_id = $5 WHERE event_id = $6 RETURNING event_id, name, description, start, end, hub_id`,
 		event.EventName, event.Description, event.StartTime, event.EndTime, event.HubId, event.Id,
 	).Scan(&updatedEvent.Id, &updatedEvent.EventName, &updatedEvent.Description, &updatedEvent.StartTime, &updatedEvent.EndTime, &updatedEvent.HubId)
 

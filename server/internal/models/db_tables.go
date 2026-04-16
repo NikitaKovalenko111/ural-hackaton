@@ -14,8 +14,8 @@ const (
 	CREATE TABLE IF NOT EXISTS users (
 		user_id SERIAL PRIMARY KEY,
 		fullname VARCHAR(50) UNIQUE NOT NULL,
-		user_role VARCHAR(20) NOT NULL
-		email VARCHAR(50) NOT NULL
+		user_role VARCHAR(20) NOT NULL,
+		email VARCHAR(50) NOT NULL,
 		telegram VARCHAR(30) NOT NULL
 	);
 		`
@@ -51,14 +51,14 @@ const (
 	EVENT_TABLE = `
 	CREATE TABLE IF NOT EXISTS events (
 		event_id SERIAL PRIMARY KEY,
-		name VARCHAR(20) UNIQUE NOT NULL
-		description VARCHAR(256) NOT NULL
-		start TIME NOT NULL
-		end TIME NOT NULL
+		name VARCHAR(20) UNIQUE NOT NULL,
+		description VARCHAR(256) NOT NULL,
+		start_time TIME NOT NULL,
+		end_time TIME NOT NULL,
 		hub_id INT,
 
 
-		FOREIGN KEY (hub_id) REFERENCES hub(hub_id)
+		FOREIGN KEY (hub_id) REFERENCES hubs(hub_id)
 	);
 	`
 )
