@@ -1,4 +1,4 @@
-package users_service
+package user_service
 
 import (
 	"ural-hackaton/internal/config"
@@ -19,13 +19,13 @@ func Init(userRepo *user_storage.UserRepo, cfg *config.Config) *UserService {
 	}
 }
 
-func (s *UserService) CreateUser(fullname string, role string, email string, phone string) error {
+func (s *UserService) CreateUser(fullname string, role string, email string, telegram string) error {
 
 	userDto := &user_dto.CreateUserDto{
 		Fullname: fullname,
 		Role:     role,
 		Email:    email,
-		Phone:    phone,
+		Telegram: telegram,
 	}
 
 	err := s.repo.CreateUser(userDto)

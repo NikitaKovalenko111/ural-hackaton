@@ -1,4 +1,4 @@
-package hubs_service
+package hub_service
 
 import (
 	"ural-hackaton/internal/config"

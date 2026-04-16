@@ -1,4 +1,4 @@
-package admins_service
+package admin_service
 
 import (
 	"ural-hackaton/internal/config"

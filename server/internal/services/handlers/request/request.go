@@ -1,4 +1,4 @@
-package requests_service
+package request_service
 
 import (
 	"ural-hackaton/internal/config"
