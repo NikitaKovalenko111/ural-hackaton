@@ -32,7 +32,7 @@ func (s *HubService) CreateHub(name string) (*models.Hub, error) {
 	return model, nil
 }
 
-func (s *HubService) GetAllHubs() ([]*models.Hub, error) {
+func (s *HubService) GetAllHubs() ([]models.Hub, error) {
 	model, err := s.repo.GetAllHubs()
 
 	if err != nil {
