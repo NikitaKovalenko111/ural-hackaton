@@ -15,6 +15,8 @@ const (
 		user_id SERIAL PRIMARY KEY,
 		fullname VARCHAR(50) UNIQUE NOT NULL,
 		user_role VARCHAR(20) NOT NULL
+		email VARCHAR(50) NOT NULL
+		phone VARCHAR(12) NOT NULL
 	);
 		`
 
@@ -45,4 +47,17 @@ const (
 		FOREIGN KEY (user_id) REFERENCES users(user_id)
 	);
 		`
+	EVENT_TABLE = `
+	CREATE TABLE IF NOT EXISTS events (
+		event_id SERIAL PRIMARY KEY,
+		name VARCHAR(20) UNIQUE NOT NULL
+		title VARCHAR(256) NOT NULL
+		start TIME NOT NULL
+		end TIME NOT NULL
+		hub_id INT,
+
+
+		FOREIGN KEY (hub_id) REFERENCES hub(hub_id)
+	);
+	`
 )

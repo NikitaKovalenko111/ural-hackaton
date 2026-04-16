@@ -58,7 +58,7 @@ func (storage *Storage) Prepare() {
 	)
 
 	if err != nil {
-		panic(fmt.Sprintf("Couldn't create reauests table! Error: %s", err.Error()))
+		panic(fmt.Sprintf("Couldn't create admins table! Error: %s", err.Error()))
 	}
 
 	_, err = storage.Db.Exec(
@@ -66,9 +66,16 @@ func (storage *Storage) Prepare() {
 	)
 
 	if err != nil {
-		panic(fmt.Sprintf("Couldn't create reauests table! Error: %s", err.Error()))
+		panic(fmt.Sprintf("Couldn't create mantors table! Error: %s", err.Error()))
 	}
 
+	_, err = storage.Db.Exec(
+		models.EVENT_TABLE,
+	)
+
+	if err != nil {
+		panic(fmt.Sprintf("Couldn't create events table! Error: %s", err.Error()))
+	}
 }
 
 func Init(db *sql.DB) *Storage {

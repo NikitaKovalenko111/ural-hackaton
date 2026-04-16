@@ -22,9 +22,11 @@ func Init(db *storage.Storage) *UserRepo {
 
 func (r *UserRepo) CreateUser(user *usersDto.CreateUserDto) error {
 	_, err := r.db.Db.Exec(
-		`INSERT INTO users (fullname, user_role) VALUES ($1, $2)`,
+		`INSERT INTO users (fullname, user_role, email, phone) VALUES ($1, $2, $3, $4)`,
 		user.Fullname,
 		user.Role,
+		user.Email,
+		user.Phone,
 	)
 
 	if err != nil {

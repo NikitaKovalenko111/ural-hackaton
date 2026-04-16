@@ -19,11 +19,13 @@ func Init(userRepo *user_storage.UserRepo, cfg *config.Config) *UserService {
 	}
 }
 
-func (s *UserService) CreateUser(fullname string, role string) error {
+func (s *UserService) CreateUser(fullname string, role string, email string, phone string) error {
 
 	userDto := &user_dto.CreateUserDto{
 		Fullname: fullname,
 		Role:     role,
+		Email:    email,
+		Phone:    phone,
 	}
 
 	err := s.repo.CreateUser(userDto)
