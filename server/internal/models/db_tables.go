@@ -29,4 +29,22 @@ const (
 		FOREIGN KEY (user_id) REFERENCES users(user_id)
 	);
 		`
+
+	ADMINS_TABLE = `
+		CREATE TABLE admins (
+		admin_id SERIAL PRIMARY KEY,
+		user_id INT,
+
+		FOREIGN KEY (user_id) REFERENCES users(user_id)
+	);
+		`
+
+	MENTORS_TABLE = `
+		CREATE TABLE mentors (
+		mentor_id SERIAL PRIMARY KEY,
+		user_id INT,
+
+		FOREIGN KEY (user_id) REFERENCES users(user_id)
+	);
+		`
 )
