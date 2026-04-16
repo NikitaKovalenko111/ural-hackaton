@@ -40,8 +40,8 @@ func (s *MentorService) GetMentorById(id uint64) (*mentor_dto.MentorJoinUserDto,
 	return mentor, nil
 }
 
-func (s *MentorService) GetMentorsByFullname(fullname string) (*mentor_dto.MentorJoinUserDto, error) {
-	mentor, err := s.repo.GetMentorsByFullname(fullname)
+func (s *MentorService) GetMentorByFullname(fullname string) (*mentor_dto.MentorJoinUserDto, error) {
+	mentor, err := s.repo.GetMentorByFullname(fullname)
 
 	if err != nil {
 		return nil, err
