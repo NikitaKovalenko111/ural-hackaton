@@ -53,6 +53,22 @@ func (storage *Storage) Prepare() {
 		panic(fmt.Sprintf("Couldn't create reauests table! Error: %s", err.Error()))
 	}
 
+	_, err = storage.Db.Exec(
+		models.ADMINS_TABLE,
+	)
+
+	if err != nil {
+		panic(fmt.Sprintf("Couldn't create reauests table! Error: %s", err.Error()))
+	}
+
+	_, err = storage.Db.Exec(
+		models.MENTORS_TABLE,
+	)
+
+	if err != nil {
+		panic(fmt.Sprintf("Couldn't create reauests table! Error: %s", err.Error()))
+	}
+
 }
 
 func Init(db *sql.DB) *Storage {

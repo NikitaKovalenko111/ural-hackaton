@@ -1,6 +1,6 @@
 package user_dto
 
 type CreateUserDto struct {
-	Fullname string
-	Role     string
+	Fullname string `json:"user_fullname"`
+	Role     string `json:"user_role"`
 }

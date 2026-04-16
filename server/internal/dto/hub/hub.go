@@ -1,6 +1,6 @@
 package hubs_dto
 
 type CreateHubDto struct {
-	Name    string
-	Address string
+	Name    string `json:"hub_name"`
+	Address string `json:"address"`
 }
