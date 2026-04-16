@@ -13,7 +13,7 @@ const (
 	USERS_TABLE = `
 		CREATE TABLE users (
 		user_id SERIAL PRIMARY KEY,
-		fullname VARCHAR(50) UNIQUE NOT NULL,
+		user_fullname VARCHAR(50) UNIQUE NOT NULL,
 		user_role VARCHAR(6) NOT NULL
 	);	
 		`
@@ -21,7 +21,7 @@ const (
 	REQUESTS_TABLE = `
 		CREATE TABLE requests (
 		request_id SERIAL PRIMARY KEY,
-		request_message TEXT NOT NULL,
+		request_message TEXT NOT NULL,HU
 		user_id INT,
 
 		FOREIGN KEY (user_id) REFERENCES users(user_id)
