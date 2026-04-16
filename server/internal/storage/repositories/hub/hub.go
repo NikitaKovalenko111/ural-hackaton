@@ -16,7 +16,7 @@ func Init(db *storage.Storage) *HubRepo {
 	}
 }
 
-func (r *HubRepo) GetAllHubs() ([]*models.Hub, error) {
+func (r *HubRepo) GetAllHubs() ([]models.Hub, error) {
 	rows, err := r.db.Db.Query(
 		`SELECT hub_id, hub_name FROM hubs`,
 	)
@@ -27,7 +27,7 @@ func (r *HubRepo) GetAllHubs() ([]*models.Hub, error) {
 
 	defer rows.Close()
 
-	var hubs []*models.Hub
+	var hubs []models.Hub
 
 	for rows.Next() {
 		var hub models.Hub
@@ -38,7 +38,7 @@ func (r *HubRepo) GetAllHubs() ([]*models.Hub, error) {
 			return nil, err
 		}
 
-		hubs = append(hubs, &hub)
+		hubs = append(hubs, hub)
 	}
 
 	return hubs, nil
