@@ -7,6 +7,10 @@ const (
 )
 
 type HTTPError struct {
-	message string
-	error   string
+	Message   string
+	ErrorCode int
+}
+
+type RequestStatus struct {
+	Status int `json:"status_code"`
 }
