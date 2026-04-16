@@ -86,7 +86,7 @@ func (c *AdminController) GetAdminsByFullname(ctx *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "fullname query is required")
 	}
 
-	admins, err := c.service.GetAdminsByFullname(fullname)
+	admins, err := c.service.GetAdminByFullname(fullname)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return fiber.NewError(fiber.StatusNotFound, "admins not found")
