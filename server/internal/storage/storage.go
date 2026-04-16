@@ -3,7 +3,8 @@ package storage
 import (
 	"database/sql"
 	"fmt"
-	"ural-hackaton/server/internal/config"
+	"ural-hackaton/internal/config"
+	"ural-hackaton/internal/models"
 
 	_ "github.com/lib/pq"
 )
@@ -49,24 +50,7 @@ func (storage *Storage) Prepare() {
 	}
 
 	_, err = storage.Db.Exec(
-		`
-		CREATE TABLE IF NOT EXISTS debtor
-		(
-			debtor_id SERIAL NOT NULL,
-			debtor_inn character varying(64),
-			debtor_ogrnip character varying(64),
-			debtor_name character varying(128),
-			debtor_category character varying(256) NOT NULL,
-			debtor_snils character varying(64),
-			debtor_region character varying(256) NOT NULL,
-			debtor_address character varying(256) NOT NULL,
-			CONSTRAINT debtor_pkey PRIMARY KEY (debtor_id),
-			CONSTRAINT debtor_debtor_inn_key UNIQUE (debtor_inn),
-			CONSTRAINT debtor_debtor_key UNIQUE (debtor_name),
-			CONSTRAINT debtor_debtor_ogrnip_key UNIQUE (debtor_ogrnip),
-			CONSTRAINT debtor_debtor_snils_key UNIQUE (debtor_snils)
-		)	
-		`,
+		models.HUB_TABLE,
 	)
 
 	if err != nil {

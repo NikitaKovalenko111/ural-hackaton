@@ -1,8 +1,8 @@
 package app
 
 import (
-	"ural-hackaton/server/internal/config"
-	"ural-hackaton/server/internal/logger/sl"
+	"ural-hackaton/internal/config"
+	"ural-hackaton/internal/logger/sl"
 )
 
 // @securityDefinitions.apikey ApiKeyAuth

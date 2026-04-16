@@ -3,7 +3,7 @@ package sl
 import (
 	"log/slog"
 	"os"
-	"ural-hackaton/server/internal/types"
+	"ural-hackaton/internal/types"
 
 	"github.com/lmittmann/tint"
 )
