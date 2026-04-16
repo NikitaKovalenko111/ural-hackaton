@@ -1,22 +1,22 @@
 package hubs_storage
 
 import (
+	hubsStorageDto "ural-hackaton/internal/dto/hubs"
 	"ural-hackaton/internal/models"
 	"ural-hackaton/internal/storage"
-	hubsStorageDto "ural-hackaton/internal/storage/repositories/hubs/dto"
 )
 
-type HubsRepository struct {
+type HubsRepo struct {
 	db *storage.Storage
 }
 
-func Init(db *storage.Storage) *HubsRepository {
-	return &HubsRepository{
+func Init(db *storage.Storage) *HubsRepo {
+	return &HubsRepo{
 		db: db,
 	}
 }
 
-func (r *HubsRepository) GetAllHubs() ([]*models.Hub, error) {
+func (r *HubsRepo) GetAllHubs() ([]*models.Hub, error) {
 	rows, err := r.db.Db.Query(
 		`SELECT hub_id, hub_name FROM hubs`,
 	)
@@ -44,7 +44,7 @@ func (r *HubsRepository) GetAllHubs() ([]*models.Hub, error) {
 	return hubs, nil
 }
 
-func (r *HubsRepository) GetHubById(id uint64) (*models.Hub, error) {
+func (r *HubsRepo) GetHubById(id uint64) (*models.Hub, error) {
 	var hub models.Hub
 
 	err := r.db.Db.QueryRow(
@@ -59,7 +59,7 @@ func (r *HubsRepository) GetHubById(id uint64) (*models.Hub, error) {
 	return &hub, nil
 }
 
-func (r *HubsRepository) CreateHub(hub *hubsStorageDto.CreateHubDto) (*models.Hub, error) {
+func (r *HubsRepo) CreateHub(hub *hubsStorageDto.CreateHubDto) (*models.Hub, error) {
 	var createdHub models.Hub
 
 	err := r.db.Db.QueryRow(
@@ -74,7 +74,7 @@ func (r *HubsRepository) CreateHub(hub *hubsStorageDto.CreateHubDto) (*models.Hu
 	return &createdHub, nil
 }
 
-func (r *HubsRepository) UpdateHub(hub *models.Hub) (*models.Hub, error) {
+func (r *HubsRepo) UpdateHub(hub *models.Hub) (*models.Hub, error) {
 	var updatedHub models.Hub
 
 	err := r.db.Db.QueryRow(
@@ -89,7 +89,7 @@ func (r *HubsRepository) UpdateHub(hub *models.Hub) (*models.Hub, error) {
 	return &updatedHub, nil
 }
 
-func (r *HubsRepository) DeleteHub(id uint64) error {
+func (r *HubsRepo) DeleteHub(id uint64) error {
 	_, err := r.db.Db.Exec(
 		`DELETE FROM hubs WHERE hub_id = $1`,
 		id,

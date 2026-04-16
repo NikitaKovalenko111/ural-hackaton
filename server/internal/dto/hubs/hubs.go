@@ -1,4 +1,4 @@
-package hubs_storage_dto
+package hubs_dto
 
 type CreateHubDto struct {
 	Name    string
