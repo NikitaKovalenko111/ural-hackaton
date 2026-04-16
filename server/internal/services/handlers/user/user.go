@@ -8,11 +8,11 @@ import (
 )
 
 type UserService struct {
-	repo *user_storage.UserRepo
+	repo user_storage.UserRepoI
 	cfg  *config.Config
 }
 
-func Init(userRepo *user_storage.UserRepo, cfg *config.Config) *UserService {
+func Init(userRepo user_storage.UserRepoI, cfg *config.Config) *UserService {
 	return &UserService{
 		repo: userRepo,
 		cfg:  cfg,

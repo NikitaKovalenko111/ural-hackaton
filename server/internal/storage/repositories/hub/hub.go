@@ -16,6 +16,15 @@ func Init(db *storage.Storage) *HubRepo {
 	}
 }
 
+// HubRepoI defines repository interface for hubs (used in services and tests)
+type HubRepoI interface {
+	GetAllHubs() ([]models.Hub, error)
+	GetHubById(id uint64) (*models.Hub, error)
+	CreateHub(hub *hubsStorageDto.CreateHubDto) (*models.Hub, error)
+	UpdateHub(hub *models.Hub) (*models.Hub, error)
+	DeleteHub(id uint64) error
+}
+
 func (r *HubRepo) GetAllHubs() ([]models.Hub, error) {
 	rows, err := r.db.Db.Query(
 		`SELECT hub_id, hub_name FROM hubs`,

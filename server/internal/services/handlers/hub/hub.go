@@ -8,11 +8,11 @@ import (
 )
 
 type HubService struct {
-	repo *hub_storage.HubRepo
+	repo hub_storage.HubRepoI
 	cfg  *config.Config
 }
 
-func Init(hubRepo *hub_storage.HubRepo, cfg *config.Config) *HubService {
+func Init(hubRepo hub_storage.HubRepoI, cfg *config.Config) *HubService {
 	return &HubService{
 		repo: hubRepo,
 		cfg:  cfg,

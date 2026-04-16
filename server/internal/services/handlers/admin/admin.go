@@ -7,11 +7,11 @@ import (
 )
 
 type AdminService struct {
-	repo *admin_storage.AdminRepo
+	repo admin_storage.AdminRepoI
 	cfg  *config.Config
 }
 
-func Init(adminRepo *admin_storage.AdminRepo, cfg *config.Config) *AdminService {
+func Init(adminRepo admin_storage.AdminRepoI, cfg *config.Config) *AdminService {
 	return &AdminService{
 		repo: adminRepo,
 		cfg:  cfg,

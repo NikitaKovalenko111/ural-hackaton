@@ -20,6 +20,14 @@ func Init(db *storage.Storage) *UserRepo {
 	}
 }
 
+// UserRepoI defines repository interface for users
+type UserRepoI interface {
+	CreateUser(user *usersDto.CreateUserDto) error
+	GetUserById(id uint64) (*models.User, error)
+	GetUserByFullname(fullname string) (*models.User, error)
+	GetUsersByRole(role string) ([]models.User, error)
+}
+
 func (r *UserRepo) CreateUser(user *usersDto.CreateUserDto) error {
 	_, err := r.db.Db.Exec(
 		`INSERT INTO users (fullname, user_role) VALUES ($1, $2)`,

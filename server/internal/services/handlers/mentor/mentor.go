@@ -7,11 +7,11 @@ import (
 )
 
 type MentorService struct {
-	repo *mentor_storage.MentorRepo
+	repo mentor_storage.MentorRepoI
 	cfg  *config.Config
 }
 
-func Init(hubRepo *mentor_storage.MentorRepo, cfg *config.Config) *MentorService {
+func Init(hubRepo mentor_storage.MentorRepoI, cfg *config.Config) *MentorService {
 	return &MentorService{
 		repo: hubRepo,
 		cfg:  cfg,

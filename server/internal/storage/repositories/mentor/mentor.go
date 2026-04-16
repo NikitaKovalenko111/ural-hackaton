@@ -15,6 +15,13 @@ func Init(db *storage.Storage) *MentorRepo {
 	}
 }
 
+// MentorRepoI defines interface for mentor repository
+type MentorRepoI interface {
+	CreateMentor(mentor mentor_dto.CreateMentorDto) (*mentor_dto.MentorJoinUserDto, error)
+	GetMentorById(id uint64) (*mentor_dto.MentorJoinUserDto, error)
+	GetMentorByFullname(fullname string) (*mentor_dto.MentorJoinUserDto, error)
+}
+
 func (r *MentorRepo) CreateMentor(mentor mentor_dto.CreateMentorDto) (*mentor_dto.MentorJoinUserDto, error) {
 	var createdMentor mentor_dto.MentorJoinUserDto
 

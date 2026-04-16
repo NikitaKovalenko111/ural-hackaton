@@ -13,6 +13,16 @@ func Init(db *storage.Storage) *AdminRepo {
 	return &AdminRepo{db: db}
 }
 
+// AdminRepoI defines the repository interface implemented by AdminRepo.
+// Это позволяет в тестах подставлять мок-реализации.
+type AdminRepoI interface {
+	GetAllAdmins() ([]admin_dto.AdminJoinUserDto, error)
+	GetAdminById(id uint64) (*admin_dto.AdminJoinUserDto, error)
+	CreateAdmin(admin admin_dto.CreateAdminDto) (*admin_dto.AdminJoinUserDto, error)
+	DeleteAdmin(id uint64) error
+	GetAdminByFullname(fullname string) (*admin_dto.AdminJoinUserDto, error)
+}
+
 func (r *AdminRepo) GetAllAdmins() ([]admin_dto.AdminJoinUserDto, error) {
 	rows, err := r.db.Db.Query(`SELECT admin_id, fullname FROM admins JOIN users ON admins.user_id = users.user_id`)
 	if err != nil {
@@ -73,17 +83,14 @@ func (r *AdminRepo) DeleteAdmin(id uint64) error {
 }
 
 func (r *AdminRepo) GetAdminByFullname(fullname string) (*admin_dto.AdminJoinUserDto, error) {
-	rows, err := r.db.Db.Query(
+	var admin admin_dto.AdminJoinUserDto
+
+	err := r.db.Db.QueryRow(
 		`SELECT admin_id, fullname FROM admins WHERE fullname = $1`,
 		fullname,
-	)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
+	).Scan(&admin.AdminId, &admin.FullName)
 
-	var admin admin_dto.AdminJoinUserDto
-	if err := rows.Scan(&admin.AdminId, &admin.FullName); err != nil {
+	if err != nil {
 		return nil, err
 	}
 

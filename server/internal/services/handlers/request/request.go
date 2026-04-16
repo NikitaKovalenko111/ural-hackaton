@@ -7,11 +7,11 @@ import (
 )
 
 type RequestService struct {
-	repo *request_storage.RequestRepo
+	repo request_storage.RequestRepoI
 	cfg  *config.Config
 }
 
-func Init(requestRepo *request_storage.RequestRepo, cfg *config.Config) *RequestService {
+func Init(requestRepo request_storage.RequestRepoI, cfg *config.Config) *RequestService {
 	return &RequestService{
 		repo: requestRepo,
 		cfg:  cfg,
