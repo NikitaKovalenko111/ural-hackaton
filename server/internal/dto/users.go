@@ -1,4 +1,4 @@
-package user_storage_dto
+package dto
 
 type CreateUserDto struct {
 }

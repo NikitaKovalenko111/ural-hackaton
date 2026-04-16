@@ -1,4 +1,4 @@
-package requests_storage_dto
+package dto
 
 type CreateRequestDto struct {
 	Message string
