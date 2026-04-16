@@ -38,7 +38,7 @@ func (r *UserRepo) GetUserById(id uint64) (*models.User, error) {
 	var user models.User
 
 	err := r.db.Db.QueryRow(
-		`SELECT user_id, user_fullname, user_role FROM users WHERE user_id = $1`,
+		`SELECT user_id, fullname, user_role FROM users WHERE user_id = $1`,
 		id,
 	).Scan(&user.Id, &user.FullName, &user.Role)
 
@@ -57,7 +57,7 @@ func (r *UserRepo) GetUserByFullname(fullname string) (*models.User, error) {
 	var user models.User
 
 	err := r.db.Db.QueryRow(
-		`SELECT user_id, user_fullname, user_role FROM users WHERE user_fullname = $1`,
+		`SELECT user_id, fullname, user_role FROM users WHERE fullname = $1`,
 		fullname,
 	).Scan(&user.Id, &user.FullName, &user.Role)
 
@@ -74,7 +74,7 @@ func (r *UserRepo) GetUserByFullname(fullname string) (*models.User, error) {
 
 func (r *UserRepo) GetUsersByRole(role string) ([]models.User, error) {
 	rows, err := r.db.Db.Query(
-		`SELECT user_id, user_fullname, user_role FROM users WHERE user_role = $1`,
+		`SELECT user_id, fullname, user_role FROM users WHERE user_role = $1`,
 		role,
 	)
 	if err != nil {

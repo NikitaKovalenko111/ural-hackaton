@@ -20,8 +20,10 @@ func Init(service *mentor_service.MentorService) *MentorController {
 
 func (c *MentorController) RegisterRoutes(router fiber.Router) {
 	router.Post("/mentors", c.CreateMentor)
-	router.Get("/mentors/:id", c.GetMentorById)
 	router.Get("/mentors/search", c.GetMentorsByFullname)
+
+	router.Get("/mentors/:id", c.GetMentorById)
+
 }
 
 func serviceNotReady(entity string) error {

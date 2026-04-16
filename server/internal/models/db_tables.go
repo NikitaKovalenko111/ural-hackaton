@@ -14,7 +14,7 @@ const (
 	CREATE TABLE IF NOT EXISTS users (
 		user_id SERIAL PRIMARY KEY,
 		fullname VARCHAR(50) UNIQUE NOT NULL,
-		user_role VARCHAR(6) NOT NULL
+		user_role VARCHAR(20) NOT NULL
 	);
 		`
 
