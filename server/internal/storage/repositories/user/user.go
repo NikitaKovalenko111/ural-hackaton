@@ -3,7 +3,7 @@ package users_storage
 import (
 	"database/sql"
 
-	usersDto "ural-hackaton/internal/dto/users"
+	usersDto "ural-hackaton/internal/dto/user"
 	"ural-hackaton/internal/models"
 	"ural-hackaton/internal/storage"
 	"ural-hackaton/internal/types"

@@ -1,8 +1,8 @@
-package hub_service
+package hubs_service
 
 import (
 	"ural-hackaton/internal/config"
-	hub_storage "ural-hackaton/internal/storage/repositories/hubs"
+	hub_storage "ural-hackaton/internal/storage/repositories/hub"
 )
 
 type HubService struct {

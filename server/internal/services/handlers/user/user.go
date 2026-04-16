@@ -1,9 +1,9 @@
-package user_service
+package users_service
 
 import (
 	"ural-hackaton/internal/config"
-	user_dto "ural-hackaton/internal/dto"
-	user_storage "ural-hackaton/internal/storage/repositories/users"
+	user_dto "ural-hackaton/internal/dto/user"
+	user_storage "ural-hackaton/internal/storage/repositories/user"
 	"ural-hackaton/internal/types"
 
 	"github.com/gofiber/fiber/v2"

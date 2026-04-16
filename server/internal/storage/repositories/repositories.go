@@ -2,15 +2,15 @@ package repositories
 
 import (
 	"ural-hackaton/internal/storage"
-	admin_storage "ural-hackaton/internal/storage/repositories/admins"
-	hub_storage "ural-hackaton/internal/storage/repositories/hubs"
-	user_storage "ural-hackaton/internal/storage/repositories/users"
+	admin_storage "ural-hackaton/internal/storage/repositories/admin"
+	hub_storage "ural-hackaton/internal/storage/repositories/hub"
+	user_storage "ural-hackaton/internal/storage/repositories/user"
 )
 
 type Repositories struct {
 	UserRepository  *user_storage.UserRepo
-	HubRepository   *hub_storage.HubsRepo
-	AdminRepository *admin_storage.AdminRepo
+	HubRepository   *hub_storage.HubRepo
+	AdminRepository *admin_storage.AdminsRepo
 }
 
 func InitRepositories(db *storage.Storage) *Repositories {

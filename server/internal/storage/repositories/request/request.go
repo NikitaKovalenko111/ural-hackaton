@@ -9,23 +9,23 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type RequestsRepo struct {
+type RequestRepo struct {
 	db *storage.Storage
 }
 
-func Init(db *storage.Storage) *RequestsRepo {
-	return &RequestsRepo{
+func Init(db *storage.Storage) *RequestRepo {
+	return &RequestRepo{
 		db: db,
 	}
 }
 
-func (r *RequestsRepo) CreateRequest(message string, userId uint64) error {
+func (r *RequestRepo) CreateRequest(message string, userId uint64) error {
 	_, err := r.db.Db.Exec("INSERT INTO requests (request_message, user_id) VALUES ($1, $2)", message, userId)
 
 	return err
 }
 
-func (r *RequestsRepo) GetRequestById(id uint64) (*models.Requests, *fiber.Error) {
+func (r *RequestRepo) GetRequestById(id uint64) (*models.Requests, *fiber.Error) {
 	var request models.Requests
 
 	err := r.db.Db.QueryRow(
@@ -44,7 +44,7 @@ func (r *RequestsRepo) GetRequestById(id uint64) (*models.Requests, *fiber.Error
 	return &request, nil
 }
 
-func (r *RequestsRepo) GetRequestsByMessage(message string) ([]models.Requests, *fiber.Error) {
+func (r *RequestRepo) GetRequestsByMessage(message string) ([]models.Requests, *fiber.Error) {
 	rows, err := r.db.Db.Query(
 		`SELECT request_id, request_message, user_id FROM requests WHERE request_message = $1`,
 		message,
@@ -76,7 +76,7 @@ func (r *RequestsRepo) GetRequestsByMessage(message string) ([]models.Requests, 
 	return requests, nil
 }
 
-func (r *RequestsRepo) GetRequestsByUserId(userId uint64) ([]models.Requests, *fiber.Error) {
+func (r *RequestRepo) GetRequestsByUserId(userId uint64) ([]models.Requests, *fiber.Error) {
 	rows, err := r.db.Db.Query(
 		`SELECT request_id, request_message, user_id FROM requests WHERE user_id = $1`,
 		userId,

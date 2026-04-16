@@ -2,9 +2,9 @@ package services
 
 import (
 	"ural-hackaton/internal/config"
-	admin_service "ural-hackaton/internal/services/handlers/admins"
-	hub_service "ural-hackaton/internal/services/handlers/hubs"
-	user_service "ural-hackaton/internal/services/handlers/users"
+	admin_service "ural-hackaton/internal/services/handlers/admin"
+	hub_service "ural-hackaton/internal/services/handlers/hub"
+	user_service "ural-hackaton/internal/services/handlers/user"
 	"ural-hackaton/internal/storage/repositories"
 )
 
