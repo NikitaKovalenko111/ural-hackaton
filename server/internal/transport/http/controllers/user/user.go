@@ -118,3 +118,24 @@ func (c *UserController) GetUsersByRole(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(users)
 }
+
+func (c *UserController) GetUserByEmail(ctx *fiber.Ctx) error {
+	if c.service == nil {
+		return serviceNotReady("user")
+	}
+
+	fullname := ctx.Query("fullname")
+	if fullname == "" {
+		return fiber.NewError(fiber.StatusBadRequest, "fullname query is required")
+	}
+
+	user, err := c.service.GetUserByFullname(fullname)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return fiber.NewError(fiber.StatusNotFound, "user not found")
+		}
+		return err
+	}
+
+	return ctx.JSON(user)
+}

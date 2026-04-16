@@ -62,3 +62,21 @@ func (s *UserService) GetUsersByRole(role string) ([]models.User, error) {
 	}
 	return user, nil
 }
+
+func (s *UserService) GetUserByEmail(email string) (*models.User, error) {
+	user, err := s.repo.GetUserByEmail(email)
+
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (s *UserService) GetUserByTelegram(telegram string) (*models.User, error) {
+	user, err := s.repo.GetUserByTelegram(telegram)
+
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}

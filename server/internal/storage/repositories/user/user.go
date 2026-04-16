@@ -104,3 +104,41 @@ func (r *UserRepo) GetUsersByRole(role string) ([]models.User, error) {
 
 	return users, nil
 }
+
+func (r *UserRepo) GetUserByEmail(email string) (*models.User, error) {
+	var user models.User
+
+	err := r.db.Db.QueryRow(
+		`SELECT user_id, fullname, user_role, email, telegram FROM users WHERE email = $1`,
+		email,
+	).Scan(&user.Id, &user.FullName, &user.Role, &user.Email, &user.Telegram)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("User with this fullname not found!")
+		}
+
+		return nil, fmt.Errorf("Couldn't get user by fullname!")
+	}
+
+	return &user, nil
+}
+
+func (r *UserRepo) GetUserByTelegram(telegram string) (*models.User, error) {
+	var user models.User
+
+	err := r.db.Db.QueryRow(
+		`SELECT user_id, fullname, user_role, email, telegram FROM users WHERE telegram = $1`,
+		telegram,
+	).Scan(&user.Id, &user.FullName, &user.Role, &user.Email, &user.Telegram)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("User with this fullname not found!")
+		}
+
+		return nil, fmt.Errorf("Couldn't get user by fullname!")
+	}
+
+	return &user, nil
+}
