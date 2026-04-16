@@ -3,6 +3,7 @@ package controllers
 import (
 	"ural-hackaton/internal/services"
 	admin_controller "ural-hackaton/internal/transport/http/controllers/admin"
+	auth_controller "ural-hackaton/internal/transport/http/controllers/auth"
 	booking_controller "ural-hackaton/internal/transport/http/controllers/booking"
 	event_controller "ural-hackaton/internal/transport/http/controllers/event"
 	hub_controller "ural-hackaton/internal/transport/http/controllers/hub"
@@ -18,6 +19,7 @@ type Controllers struct {
 	HubController     *hub_controller.HubController
 	RequestController *request_controller.RequestController
 	EventController   *event_controller.EventController
+	AuthController    *auth_controller.AuthController
 	BookingController *booking_controller.BookingController
 }
 
@@ -29,6 +31,7 @@ func Init(svc *services.Services) *Controllers {
 		HubController:     hub_controller.Init(svc.HubService),
 		RequestController: request_controller.Init(svc.RequestService),
 		EventController:   event_controller.Init(svc.EventService),
+		AuthController:    auth_controller.Init(svc.AuthService),
 		BookingController: booking_controller.Init(svc.BookingService),
 	}
 }

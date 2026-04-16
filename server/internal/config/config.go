@@ -13,7 +13,8 @@ type Config struct {
 	Env        string `yaml:"env" env-default:"local"`
 	Storage    `yaml:"storage"`
 	HTTPServer `yaml:"http_server"`
-	// SMTP       `yaml:"smtp"`
+	SMTP       `yaml:"smtp"`
+	Auth       `yaml:"auth"`
 	// JWT        `yaml:"jwt"`
 }
 
@@ -25,18 +26,27 @@ type Storage struct {
 	DbName string `yaml:"db_name" env-required:"true"`
 }
 
-// type SMTP struct {
-// 	Host     string `yaml:"smtp_host" env-required:"true"`
-// 	Port     int    `yaml:"smtp_port" env-required:"true"`
-// 	Username string `yaml:"username" env-required:"true"`
-// 	Password string `yaml:"password" env-required:"true"`
-// 	AppHost  string `yaml:"app_host" env-required:"true"`
-// }
+type SMTP struct {
+	Host      string `yaml:"smtp_host" env-required:"true"`
+	Port      int    `yaml:"smtp_port" env-required:"true"`
+	Username  string `yaml:"username" env-required:"true"`
+	Password  string `yaml:"password" env-required:"true"`
+	AppHost   string `yaml:"app_host" env-required:"true"`
+	FromEmail string `yaml:"from_email" env-required:"true"`
+	FromName  string `yaml:"from_name" env-required:"true"`
+}
 
 type HTTPServer struct {
 	Address     string        `yaml:"address" env-default:"localhost:8080"`
 	Timeout     time.Duration `yaml:"timeout" env-default:"4s"`
 	IdleTimeout time.Duration `yaml:"idle_timeout" env-default:"60s"`
+}
+
+type Auth struct {
+	SecretKey string `yaml:"secret_key" env-required:"true"`
+
+	AccessTokenTTL  time.Duration `yaml:"access_token_ttl" env-default:"15m"`
+	RefreshTokenTTL time.Duration `yaml:"refresh_token_ttl" env-default:"72h"`
 }
 
 // type JWT struct {

@@ -78,4 +78,20 @@ const (
 		FOREIGN KEY (hub_id) REFERENCES hubs(hub_id)
 	);
 	`
+
+	AUTH_TOKENS_TABLE = `
+	CREATE TABLE IF NOT EXISTS auth_tokens (
+		token_id SERIAL PRIMARY KEY,
+		user_id INT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+		token_hash VARCHAR(64) UNIQUE NOT NULL,
+		email VARCHAR(50) NOT NULL,
+		expires_at TIMESTAMPTZ NOT NULL,
+		used_at TIMESTAMPTZ,
+		created_at TIMESTAMPTZ DEFAULT NOW()
+	);
+
+	-- Индексы для быстрого поиска
+	CREATE INDEX idx_auth_tokens_email ON auth_tokens(email);
+	CREATE INDEX idx_auth_tokens_token_hash ON auth_tokens(token_hash);
+	`
 )

@@ -20,7 +20,7 @@ func Init(service *admin_service.AdminService) *AdminController {
 func (c *AdminController) RegisterRoutes(router fiber.Router) {
 	admins := router.Group("/admins")
 	admins.Get("/", c.GetAllAdmins)
-	admins.Get("/search", c.GetAdminsByFullname)
+	// admins.Get("/search", c.GetAdminsByFullname)
 	admins.Get("/:id", c.GetAdminById)
 	admins.Post("/", c.CreateAdmin)
 	admins.Delete("/:id", c.DeleteAdmin)
