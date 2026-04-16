@@ -19,10 +19,11 @@ func Init(service *user_service.UserService) *UserController {
 }
 
 func (c *UserController) RegisterRoutes(router fiber.Router) {
-	router.Post("/users", c.CreateUser)
-	router.Get("/users/search", c.GetUserByFullname)
+	users := router.Group("/users")
+	users.Post("/", c.CreateUser)
+	users.Get("/search", c.GetUserByFullname)
 
-	router.Get("/users/:id", c.GetUserById)
+	users.Get("/:id", c.GetUserById)
 }
 
 func serviceNotReady(entity string) error {

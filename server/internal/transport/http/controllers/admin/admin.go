@@ -20,7 +20,7 @@ func Init(service *admin_service.AdminService) *AdminController {
 func (c *AdminController) RegisterRoutes(router fiber.Router) {
 	admins := router.Group("/admins")
 	admins.Get("/", c.GetAllAdmins)
-	admins.Get("/search", c.GetAdminsByFullname)
+	// admins.Get("/search", c.GetAdminsByFullname)
 	admins.Get("/:id", c.GetAdminById)
 	admins.Post("/", c.CreateAdmin)
 	admins.Delete("/:id", c.DeleteAdmin)
@@ -89,19 +89,19 @@ func (c *AdminController) DeleteAdmin(ctx *fiber.Ctx) error {
 	return ctx.SendStatus(fiber.StatusNoContent)
 }
 
-func (c *AdminController) GetAdminsByFullname(ctx *fiber.Ctx) error {
-	fullname := ctx.Query("fullname")
-	if fullname == "" {
-		return fiber.NewError(fiber.StatusBadRequest, "fullname query is required")
-	}
+// func (c *AdminController) GetAdminsByFullname(ctx *fiber.Ctx) error {
+// 	fullname := ctx.Query("fullname")
+// 	if fullname == "" {
+// 		return fiber.NewError(fiber.StatusBadRequest, "fullname query is required")
+// 	}
 
-	admins, err := c.service.GetAdminByFullname(fullname)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return fiber.NewError(fiber.StatusNotFound, "admins not found")
-		}
-		return err
-	}
+// 	admins, err := c.service.GetAdminByFullname(fullname)
+// 	if err != nil {
+// 		if err == sql.ErrNoRows {
+// 			return fiber.NewError(fiber.StatusNotFound, "admins not found")
+// 		}
+// 		return err
+// 	}
 
-	return ctx.JSON(admins)
-}
+// 	return ctx.JSON(admins)
+// }

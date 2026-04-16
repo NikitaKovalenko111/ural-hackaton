@@ -29,7 +29,7 @@ func (r *UserRepo) CreateUser(user *user_dto.CreateUserDto) error {
 	)
 
 	if err != nil {
-		return fmt.Errorf("Couldn't create user!")
+		return fmt.Errorf("couldn't create user: %w", err)
 	}
 
 	return nil
