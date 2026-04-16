@@ -3,6 +3,7 @@ package repositories
 import (
 	"ural-hackaton/internal/storage"
 	admin_storage "ural-hackaton/internal/storage/repositories/admin"
+	booking_storage "ural-hackaton/internal/storage/repositories/booking"
 	event_storage "ural-hackaton/internal/storage/repositories/event"
 	hub_storage "ural-hackaton/internal/storage/repositories/hub"
 	mentor_storage "ural-hackaton/internal/storage/repositories/mentor"
@@ -17,6 +18,7 @@ type Repositories struct {
 	RequestRepository *requests_storage.RequestRepo
 	MentorRepository  *mentor_storage.MentorRepo
 	EventRepository   *event_storage.EventRepo
+	BookingRepository *booking_storage.BookingRepo
 }
 
 func InitRepositories(db *storage.Storage) *Repositories {
@@ -27,5 +29,6 @@ func InitRepositories(db *storage.Storage) *Repositories {
 		RequestRepository: requests_storage.Init(db),
 		MentorRepository:  mentor_storage.Init(db),
 		EventRepository:   event_storage.Init(db),
+		BookingRepository: booking_storage.Init(db),
 	}
 }

@@ -49,7 +49,7 @@ func (c *UserController) CreateUser(ctx *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "invalid user payload")
 	}
 
-	if err := c.service.CreateUser(payload.Fullname, payload.Role, payload.Email, payload.Telegram); err != nil {
+	if err := c.service.CreateUser(payload.Fullname, payload.Role, payload.Email, payload.Telegram, payload.Phone); err != nil {
 		return err
 	}
 

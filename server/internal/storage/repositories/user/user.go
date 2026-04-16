@@ -21,11 +21,12 @@ func Init(db *storage.Storage) *UserRepo {
 
 func (r *UserRepo) CreateUser(user *user_dto.CreateUserDto) error {
 	_, err := r.db.Db.Exec(
-		`INSERT INTO users (fullname, user_role, email, telegram) VALUES ($1, $2, $3, $4)`,
+		`INSERT INTO users (fullname, user_role, email, telegram, phone) VALUES ($1, $2, $3, $4, $5)`,
 		user.Fullname,
 		user.Role,
 		user.Email,
 		user.Telegram,
+		user.Phone,
 	)
 
 	if err != nil {
@@ -39,9 +40,9 @@ func (r *UserRepo) GetUserById(id uint64) (*models.User, error) {
 	var user models.User
 
 	err := r.db.Db.QueryRow(
-		`SELECT user_id, fullname, user_role, email, telegram FROM users WHERE user_id = $1`,
+		`SELECT user_id, fullname, user_role, email, telegram, phone FROM users WHERE user_id = $1`,
 		id,
-	).Scan(&user.Id, &user.FullName, &user.Role, &user.Email, &user.Telegram)
+	).Scan(&user.Id, &user.FullName, &user.Role, &user.Email, &user.Telegram, &user.Phone)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -58,9 +59,9 @@ func (r *UserRepo) GetUserByFullname(fullname string) (*models.User, error) {
 	var user models.User
 
 	err := r.db.Db.QueryRow(
-		`SELECT user_id, fullname, user_role, email, telegram FROM users WHERE fullname = $1`,
+		`SELECT user_id, fullname, user_role, email, telegram, phone FROM users WHERE fullname = $1`,
 		fullname,
-	).Scan(&user.Id, &user.FullName, &user.Role, &user.Email, &user.Telegram)
+	).Scan(&user.Id, &user.FullName, &user.Role, &user.Email, &user.Telegram, &user.Phone)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -75,7 +76,7 @@ func (r *UserRepo) GetUserByFullname(fullname string) (*models.User, error) {
 
 func (r *UserRepo) GetUsersByRole(role string) ([]models.User, error) {
 	rows, err := r.db.Db.Query(
-		`SELECT user_id, fullname, user_role, email, telegram FROM users WHERE user_role = $1`,
+		`SELECT user_id, fullname, user_role, email, telegram, phone FROM users WHERE user_role = $1`,
 		role,
 	)
 	if err != nil {
@@ -86,7 +87,7 @@ func (r *UserRepo) GetUsersByRole(role string) ([]models.User, error) {
 	users := make([]models.User, 0)
 	for rows.Next() {
 		var user models.User
-		err = rows.Scan(&user.Id, &user.FullName, &user.Role, &user.Email, &user.Telegram)
+		err = rows.Scan(&user.Id, &user.FullName, &user.Role, &user.Email, &user.Telegram, &user.Phone)
 		if err != nil {
 			return nil, fmt.Errorf("Couldn't parse users by role!")
 		}
@@ -109,9 +110,9 @@ func (r *UserRepo) GetUserByEmail(email string) (*models.User, error) {
 	var user models.User
 
 	err := r.db.Db.QueryRow(
-		`SELECT user_id, fullname, user_role, email, telegram FROM users WHERE email = $1`,
+		`SELECT user_id, fullname, user_role, email, telegram, phone FROM users WHERE email = $1`,
 		email,
-	).Scan(&user.Id, &user.FullName, &user.Role, &user.Email, &user.Telegram)
+	).Scan(&user.Id, &user.FullName, &user.Role, &user.Email, &user.Telegram, &user.Phone)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -128,9 +129,9 @@ func (r *UserRepo) GetUserByTelegram(telegram string) (*models.User, error) {
 	var user models.User
 
 	err := r.db.Db.QueryRow(
-		`SELECT user_id, fullname, user_role, email, telegram FROM users WHERE telegram = $1`,
+		`SELECT user_id, fullname, user_role, email, telegram, phone FROM users WHERE telegram = $1`,
 		telegram,
-	).Scan(&user.Id, &user.FullName, &user.Role, &user.Email, &user.Telegram)
+	).Scan(&user.Id, &user.FullName, &user.Role, &user.Email, &user.Telegram, &user.Phone)
 
 	if err != nil {
 		if err == sql.ErrNoRows {

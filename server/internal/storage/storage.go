@@ -57,6 +57,14 @@ func (storage *Storage) Prepare() {
 	}
 
 	_, err = storage.Db.Exec(
+		models.BOOKINGS_TABLE,
+	)
+
+	if err != nil {
+		panic(fmt.Sprintf("Couldn't create bookings table! Error: %s", err.Error()))
+	}
+
+	_, err = storage.Db.Exec(
 		models.REQUESTS_TABLE,
 	)
 
