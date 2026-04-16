@@ -83,37 +83,3 @@ func (r *MentorRepo) GetMentorsByFullname(fullname string) ([]*mentor_dto.Mentor
 
 	return mentors, nil
 }
-
-func (r *MentorRepo) GetMentorsByRole(role string) ([]*mentor_dto.MentorJoinUserDto, error) {
-	rows, err := r.db.Db.Query(
-		`SELECT mentors.mentor_id, users.user_id, users.user_fullname, users.user_role
-		 FROM mentors
-		 JOIN users ON mentors.user_id = users.user_id
-		 WHERE users.user_role = $1`,
-		role,
-	)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var mentors []*mentor_dto.MentorJoinUserDto
-	for rows.Next() {
-		var mentor mentor_dto.MentorJoinUserDto
-		err := rows.Scan(&mentor.MentorId, &mentor.Id, &mentor.FullName, &mentor.Role)
-		if err != nil {
-			return nil, err
-		}
-		mentors = append(mentors, &mentor)
-	}
-
-	if err = rows.Err(); err != nil {
-		return nil, err
-	}
-
-	if len(mentors) == 0 {
-		return nil, sql.ErrNoRows
-	}
-
-	return mentors, nil
-}
