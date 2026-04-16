@@ -1,1 +1,1 @@
-package hubControllerDto
+package hub_controller_dto

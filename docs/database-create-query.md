@@ -4,7 +4,10 @@ CREATE TABLE users (
 	user_id SERIAL PRIMARY KEY,
 	user_fullname VARCHAR(50) UNIQUE NOT NULL,
 	user_role VARCHAR(6) NOT NULL
-);
+	hub_id INT
+
+	FOREIGN KEY (hub_id) REFERENCES hubs(hub_id)
+) ;
 
 CREATE TABLE hubs (
 	hub_id SERIAL PRIMARY KEY,
