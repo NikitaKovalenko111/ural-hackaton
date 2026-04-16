@@ -58,11 +58,11 @@ func (s *AdminService) DeleteAdmin(id uint64) error {
 	return nil
 }
 
-// func (s *AdminService) GetAdminByFullname(fullname string) (*admin_dto.AdminJoinUserDto, error) {
-// 	admin, err := s.repo.GetAdminByFullname(fullname)
+func (s *AdminService) GetAdminByFullname(fullname string) (*admin_dto.AdminJoinUserDto, error) {
+	admin, err := s.repo.GetAdminByFullname(fullname)
 
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return admin, nil
-// }
+	if err != nil {
+		return nil, err
+	}
+	return admin, nil
+}

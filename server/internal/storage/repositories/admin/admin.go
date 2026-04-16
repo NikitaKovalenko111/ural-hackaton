@@ -72,20 +72,19 @@ func (r *AdminRepo) DeleteAdmin(id uint64) error {
 	return err
 }
 
-// func (r *AdminRepo) GetAdminByFullname(fullname string) (*admin_dto.AdminJoinUserDto, error) {
-// 	rows, err := r.db.Db.Query(
-// 		`SELECT admin_id FROM admins WHERE fullname = $1`,
-// 		fullname,
-// 	)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	defer rows.Close()
+func (r *AdminRepo) GetAdminByFullname(fullname string) (*admin_dto.AdminJoinUserDto, error) {
+	var admin admin_dto.AdminJoinUserDto
 
-// 	var admin admin_dto.AdminJoinUserDto
-// 	if err := rows.Scan(&admin.AdminId, &admin.FullName); err != nil {
-// 		return nil, err
-// 	}
+	err := r.db.Db.QueryRow(
+		`SELECT admins.admin_id, users.user_id, users.user_fullname, users.user_role
+		 FROM admins
+		 JOIN users ON admins.user_id = users.user_id
+		 WHERE users.user_fullname = $1`,
+		fullname,
+	).Scan(&admin.Id, &admin.User.Id, &admin.User.FullName, &admin.User.Role)
+	if err != nil {
+		return nil, err
+	}
 
-// 	return &admin, nil
-// }
+	return &admin, nil
+}

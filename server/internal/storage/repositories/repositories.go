@@ -3,6 +3,7 @@ package repositories
 import (
 	"ural-hackaton/internal/storage"
 	admin_storage "ural-hackaton/internal/storage/repositories/admin"
+	auth_storage "ural-hackaton/internal/storage/repositories/auth"
 	event_storage "ural-hackaton/internal/storage/repositories/event"
 	hub_storage "ural-hackaton/internal/storage/repositories/hub"
 	mentor_storage "ural-hackaton/internal/storage/repositories/mentor"
@@ -11,21 +12,23 @@ import (
 )
 
 type Repositories struct {
-	UserRepository    *user_storage.UserRepo
-	HubRepository     *hub_storage.HubRepo
-	AdminRepository   *admin_storage.AdminRepo
-	RequestRepository *requests_storage.RequestRepo
-	MentorRepository  *mentor_storage.MentorRepo
-	EventRepository   *event_storage.EventRepo
+	UserRepository      *user_storage.UserRepo
+	HubRepository       *hub_storage.HubRepo
+	AdminRepository     *admin_storage.AdminRepo
+	RequestRepository   *requests_storage.RequestRepo
+	MentorRepository    *mentor_storage.MentorRepo
+	EventRepository     *event_storage.EventRepo
+	AuthTokenRepository *auth_storage.AuthTokenRepo
 }
 
 func InitRepositories(db *storage.Storage) *Repositories {
 	return &Repositories{
-		UserRepository:    user_storage.Init(db),
-		HubRepository:     hub_storage.Init(db),
-		AdminRepository:   admin_storage.Init(db),
-		RequestRepository: requests_storage.Init(db),
-		MentorRepository:  mentor_storage.Init(db),
-		EventRepository:   event_storage.Init(db),
+		UserRepository:      user_storage.Init(db),
+		HubRepository:       hub_storage.Init(db),
+		AdminRepository:     admin_storage.Init(db),
+		RequestRepository:   requests_storage.Init(db),
+		MentorRepository:    mentor_storage.Init(db),
+		EventRepository:     event_storage.Init(db),
+		AuthTokenRepository: auth_storage.Init(db),
 	}
 }

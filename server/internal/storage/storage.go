@@ -87,6 +87,14 @@ func (storage *Storage) Prepare() {
 	if err != nil {
 		panic(fmt.Sprintf("Couldn't create events table! Error: %s", err.Error()))
 	}
+
+	_, err = storage.Db.Exec(
+		models.AUTH_TOKENS_TABLE,
+	)
+
+	if err != nil {
+		panic(fmt.Sprintf("Couldn't create auth table! Error: %s", err.Error()))
+	}
 }
 
 func Init(db *sql.DB) *Storage {
