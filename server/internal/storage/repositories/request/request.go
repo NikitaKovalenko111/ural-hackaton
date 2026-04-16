@@ -5,8 +5,6 @@ import (
 
 	"ural-hackaton/internal/models"
 	"ural-hackaton/internal/storage"
-
-	"github.com/gofiber/fiber/v2"
 )
 
 type RequestRepo struct {
@@ -35,10 +33,10 @@ func (r *RequestRepo) GetRequestById(id uint64) (*models.Requests, error) {
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, fiber.NewError(fiber.StatusNotFound, "Request with this id not found!")
+			return nil, err
 		}
 
-		return nil, fiber.NewError(fiber.StatusInternalServerError, "Couldn't get request by id!")
+		return nil, err
 	}
 
 	return &request, nil
@@ -50,7 +48,7 @@ func (r *RequestRepo) GetRequestsByMessage(message string) ([]models.Requests, e
 		message,
 	)
 	if err != nil {
-		return nil, fiber.NewError(fiber.StatusInternalServerError, "Couldn't get requests by message!")
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -59,18 +57,18 @@ func (r *RequestRepo) GetRequestsByMessage(message string) ([]models.Requests, e
 		var request models.Requests
 		err = rows.Scan(&request.Id, &request.Message, &request.UserId)
 		if err != nil {
-			return nil, fiber.NewError(fiber.StatusInternalServerError, "Couldn't parse requests by message!")
+			return nil, err
 		}
 
 		requests = append(requests, request)
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, fiber.NewError(fiber.StatusInternalServerError, "Couldn't read requests by message!")
+		return nil, err
 	}
 
 	if len(requests) == 0 {
-		return nil, fiber.NewError(fiber.StatusNotFound, "Requests with this message not found!")
+		return nil, err
 	}
 
 	return requests, nil
@@ -82,7 +80,7 @@ func (r *RequestRepo) GetRequestsByUserId(userId uint64) ([]models.Requests, err
 		userId,
 	)
 	if err != nil {
-		return nil, fiber.NewError(fiber.StatusInternalServerError, "Couldn't get requests by user id!")
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -91,18 +89,18 @@ func (r *RequestRepo) GetRequestsByUserId(userId uint64) ([]models.Requests, err
 		var request models.Requests
 		err = rows.Scan(&request.Id, &request.Message, &request.UserId)
 		if err != nil {
-			return nil, fiber.NewError(fiber.StatusInternalServerError, "Couldn't parse requests by user id!")
+			return nil, err
 		}
 
 		requests = append(requests, request)
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, fiber.NewError(fiber.StatusInternalServerError, "Couldn't read requests by user id!")
+		return nil, err
 	}
 
 	if len(requests) == 0 {
-		return nil, fiber.NewError(fiber.StatusNotFound, "Requests for this user not found!")
+		return nil, err
 	}
 
 	return requests, nil
