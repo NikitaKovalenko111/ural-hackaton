@@ -18,6 +18,12 @@ func Init(service *mentor_service.MentorService) *MentorController {
 	return &MentorController{service: service}
 }
 
+func (c *MentorController) RegisterRoutes(router fiber.Router) {
+	router.Post("/mentors", c.CreateMentor)
+	router.Get("/mentors/:id", c.GetMentorById)
+	router.Get("/mentors/search", c.GetMentorsByFullname)
+}
+
 func serviceNotReady(entity string) error {
 	return fiber.NewError(fiber.StatusNotImplemented, entity+" service is not wired yet")
 }

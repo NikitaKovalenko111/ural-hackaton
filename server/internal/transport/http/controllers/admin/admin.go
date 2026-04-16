@@ -17,6 +17,15 @@ func Init(service *admin_service.AdminService) *AdminController {
 	return &AdminController{service: service}
 }
 
+func (c *AdminController) RegisterRoutes(router fiber.Router) {
+	admins := router.Group("/admins")
+	admins.Get("/", c.GetAllAdmins)
+	admins.Get("/:id", c.GetAdminById)
+	admins.Post("/", c.CreateAdmin)
+	admins.Delete("/:id", c.DeleteAdmin)
+	admins.Get("/search", c.GetAdminsByFullname)
+}
+
 func parseUintParam(c *fiber.Ctx, key string) (uint64, error) {
 	value := c.Params(key)
 	parsed, err := strconv.ParseUint(value, 10, 64)

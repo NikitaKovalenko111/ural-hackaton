@@ -19,6 +19,15 @@ func Init(service *hub_service.HubService) *HubController {
 	return &HubController{service: service}
 }
 
+func (c *HubController) RegisterRoutes(router fiber.Router) {
+	hubs := router.Group("/hubs")
+	hubs.Get("/", c.GetAllHubs)
+	hubs.Get("/:id", c.GetHubById)
+	hubs.Post("/", c.CreateHub)
+	hubs.Put("/", c.UpdateHub)
+	hubs.Delete("/:id", c.DeleteHub)
+}
+
 func serviceNotReady(entity string) error {
 	return fiber.NewError(fiber.StatusNotImplemented, entity+" service is not wired yet")
 }
