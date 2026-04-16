@@ -38,7 +38,7 @@ func (s *RequestService) GetRequestById(id uint64) (*models.Requests, error) {
 	return request, nil
 }
 
-func (s *RequestService) GetRequestsByMessage(message string) (*models.Requests, error) {
+func (s *RequestService) GetRequestsByMessage(message string) ([]models.Requests, error) {
 
 	request, err := s.repo.GetRequestsByMessage(message)
 
