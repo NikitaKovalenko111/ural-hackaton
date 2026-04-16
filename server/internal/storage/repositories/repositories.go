@@ -10,7 +10,7 @@ import (
 type Repositories struct {
 	UserRepository  *user_storage.UserRepo
 	HubRepository   *hub_storage.HubRepo
-	AdminRepository *admin_storage.AdminsRepo
+	AdminRepository *admin_storage.AdminRepo
 }
 
 func InitRepositories(db *storage.Storage) *Repositories {
