@@ -6,7 +6,6 @@ import (
 	usersDto "ural-hackaton/internal/dto/user"
 	"ural-hackaton/internal/models"
 	"ural-hackaton/internal/storage"
-	"ural-hackaton/internal/types"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -21,7 +20,7 @@ func Init(db *storage.Storage) *UserRepo {
 	}
 }
 
-func (r *UserRepo) CreateUser(user *usersDto.CreateUserDto) (*types.RequestStatus, *fiber.Error) {
+func (r *UserRepo) CreateUser(user *usersDto.CreateUserDto) error {
 	_, err := r.db.Db.Exec(
 		`INSERT INTO users (fullname, user_role) VALUES ($1, $2)`,
 		user.Fullname,
@@ -29,15 +28,13 @@ func (r *UserRepo) CreateUser(user *usersDto.CreateUserDto) (*types.RequestStatu
 	)
 
 	if err != nil {
-		return nil, fiber.NewError(fiber.StatusInternalServerError, "Couldn't create user!")
+		return fiber.NewError(fiber.StatusInternalServerError, "Couldn't create user!")
 	}
 
-	return &types.RequestStatus{
-		Status: fiber.StatusCreated,
-	}, nil
+	return nil
 }
 
-func (r *UserRepo) GetUserById(id uint64) (*models.User, *fiber.Error) {
+func (r *UserRepo) GetUserById(id uint64) (*models.User, error) {
 	var user models.User
 
 	err := r.db.Db.QueryRow(
@@ -56,7 +53,7 @@ func (r *UserRepo) GetUserById(id uint64) (*models.User, *fiber.Error) {
 	return &user, nil
 }
 
-func (r *UserRepo) GetUserByFullname(fullname string) (*models.User, *fiber.Error) {
+func (r *UserRepo) GetUserByFullname(fullname string) (*models.User, error) {
 	var user models.User
 
 	err := r.db.Db.QueryRow(
@@ -75,7 +72,7 @@ func (r *UserRepo) GetUserByFullname(fullname string) (*models.User, *fiber.Erro
 	return &user, nil
 }
 
-func (r *UserRepo) GetUsersByRole(role string) ([]models.User, *fiber.Error) {
+func (r *UserRepo) GetUsersByRole(role string) ([]models.User, error) {
 	rows, err := r.db.Db.Query(
 		`SELECT user_id, user_fullname, user_role FROM users WHERE user_role = $1`,
 		role,

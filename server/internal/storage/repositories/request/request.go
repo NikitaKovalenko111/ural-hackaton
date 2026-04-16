@@ -25,7 +25,7 @@ func (r *RequestRepo) CreateRequest(message string, userId uint64) error {
 	return err
 }
 
-func (r *RequestRepo) GetRequestById(id uint64) (*models.Requests, *fiber.Error) {
+func (r *RequestRepo) GetRequestById(id uint64) (*models.Requests, error) {
 	var request models.Requests
 
 	err := r.db.Db.QueryRow(
@@ -44,7 +44,7 @@ func (r *RequestRepo) GetRequestById(id uint64) (*models.Requests, *fiber.Error)
 	return &request, nil
 }
 
-func (r *RequestRepo) GetRequestsByMessage(message string) ([]models.Requests, *fiber.Error) {
+func (r *RequestRepo) GetRequestsByMessage(message string) ([]models.Requests, error) {
 	rows, err := r.db.Db.Query(
 		`SELECT request_id, request_message, user_id FROM requests WHERE request_message = $1`,
 		message,
@@ -76,7 +76,7 @@ func (r *RequestRepo) GetRequestsByMessage(message string) ([]models.Requests, *
 	return requests, nil
 }
 
-func (r *RequestRepo) GetRequestsByUserId(userId uint64) ([]models.Requests, *fiber.Error) {
+func (r *RequestRepo) GetRequestsByUserId(userId uint64) ([]models.Requests, error) {
 	rows, err := r.db.Db.Query(
 		`SELECT request_id, request_message, user_id FROM requests WHERE user_id = $1`,
 		userId,
