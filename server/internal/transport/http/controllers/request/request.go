@@ -5,22 +5,16 @@ import (
 	"strconv"
 
 	requests_dto "ural-hackaton/internal/dto/request"
-	"ural-hackaton/internal/models"
+	request_service "ural-hackaton/internal/services/handlers/request"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-type RequestService interface {
-	CreateRequest(message string, userId uint64) error
-	GetRequestById(id uint64) (*models.Requests, error)
-	GetRequestsByUserId(userId uint64) ([]models.Requests, error)
-}
-
 type RequestController struct {
-	service RequestService
+	service *request_service.RequestService
 }
 
-func Init(service RequestService) *RequestController {
+func Init(service *request_service.RequestService) *RequestController {
 	return &RequestController{service: service}
 }
 

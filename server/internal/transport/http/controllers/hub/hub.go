@@ -4,25 +4,18 @@ import (
 	"database/sql"
 	"strconv"
 
-	hubs_dto "ural-hackaton/internal/dto/hub"
+	hub_dto "ural-hackaton/internal/dto/hub"
 	"ural-hackaton/internal/models"
+	hub_service "ural-hackaton/internal/services/handlers/hub"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-type HubService interface {
-	GetAllHubs() ([]*models.Hub, error)
-	GetHubById(id uint64) (*models.Hub, error)
-	CreateHub(hub *hubs_dto.CreateHubDto) (*models.Hub, error)
-	UpdateHub(hub *models.Hub) (*models.Hub, error)
-	DeleteHub(id uint64) error
-}
-
 type HubController struct {
-	service HubService
+	service *hub_service.HubService
 }
 
-func Init(service HubService) *HubController {
+func Init(service *hub_service.HubService) *HubController {
 	return &HubController{service: service}
 }
 
@@ -88,12 +81,12 @@ func (c *HubController) CreateHub(ctx *fiber.Ctx) error {
 		return serviceNotReady("hub")
 	}
 
-	var payload hubs_dto.CreateHubDto
+	var payload hub_dto.CreateHubDto
 	if err := ctx.BodyParser(&payload); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "invalid hub payload")
 	}
 
-	hub, err := c.service.CreateHub(&payload)
+	hub, err := c.service.CreateHub(payload.Name)
 	if err != nil {
 		return err
 	}
@@ -111,7 +104,7 @@ func (c *HubController) UpdateHub(ctx *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "invalid hub payload")
 	}
 
-	hub, err := c.service.UpdateHub(&payload)
+	hub, err := c.service.UpdateHub(payload.HubName, payload.Id)
 	if err != nil {
 		return err
 	}

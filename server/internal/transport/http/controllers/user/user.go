@@ -5,23 +5,16 @@ import (
 	"strconv"
 
 	user_dto "ural-hackaton/internal/dto/user"
-	"ural-hackaton/internal/models"
+	user_service "ural-hackaton/internal/services/handlers/user"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-type UserService interface {
-	CreateUser(fullname string, role string) error
-	GetUserById(id uint64) (*models.User, error)
-	GetUserByFullname(fullname string) (*models.User, error)
-	GetUsersByRole(role string) ([]models.User, error)
-}
-
 type UserController struct {
-	service UserService
+	service *user_service.UserService
 }
 
-func Init(service UserService) *UserController {
+func Init(service *user_service.UserService) *UserController {
 	return &UserController{service: service}
 }
 
