@@ -1,11 +1,9 @@
 package hubController
 
-import "github.com/gofiber/fiber/v2"
-
-type HTTP struct {
-	app                     *fiber.App
-	debtorController        *hubController.DebtorController
-	adminController         *userController.AdminController
-	deptorMessageController *requestController.DebtorMesController
-	authMiddleware          func(c *fiber.Ctx) error
-}
+// type HTTP struct {
+// 	app                     *fiber.App
+// 	debtorController        *hubController.HubController
+// 	adminController         *userController.UserController
+// 	deptorMessageController *requestController.RequestController
+// 	authMiddleware          func(c *fiber.Ctx) error
+// }

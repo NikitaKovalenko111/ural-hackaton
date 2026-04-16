@@ -2,30 +2,29 @@ package models
 
 const (
 	HUB_TABLE = `
-		CREATE TABLE IF NOT EXISTS hubs
-		(
-			hub_id SERIAL PRIMARY KEY,
-			hub_name character varying(64),
-			address character varying(64),
-			status character varying(64),
-		)	
+		CREATE TABLE hubs (
+		hub_id SERIAL PRIMARY KEY,
+		hub_name VARCHAR(50) NOT NULL UNIQUE,
+		address VARCHAR(100) NOT NULL UNIQUE,
+		status VARCHAR(32) NOT NULL
+	);
 		`
 
 	USERS_TABLE = `
-		CREATE TABLE IF NOT EXISTS users
-		(
-			user_id SERIAL PRIMARY KEY,
-			fullname character varying(64),
-			role character varying(64),
-		)	
+		CREATE TABLE users (
+		user_id SERIAL PRIMARY KEY,
+		user_fullname VARCHAR(50) UNIQUE NOT NULL,
+		user_role VARCHAR(6) NOT NULL
+	);	
 		`
 
 	REQUESTS_TABLE = `
-		CREATE TABLE IF NOT EXISTS requests
-		(
-			request_id SERIAL PRIMARY KEY,
-			request_message text,
-			adddress character varying(64),
-		)	
+		CREATE TABLE requests (
+		request_id SERIAL PRIMARY KEY,
+		request_message TEXT NOT NULL,HU
+		user_id INT,
+
+		FOREIGN KEY (user_id) REFERENCES users(user_id)
+	);
 		`
 )

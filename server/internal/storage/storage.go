@@ -34,8 +34,25 @@ func (storage *Storage) Prepare() {
 	)
 
 	if err != nil {
-		panic(fmt.Sprintf("Couldn't create tables! Error: %s", err.Error()))
+		panic(fmt.Sprintf("Couldn't create hubs table! Error: %s", err.Error()))
 	}
+
+	_, err = storage.Db.Exec(
+		models.USERS_TABLE,
+	)
+
+	if err != nil {
+		panic(fmt.Sprintf("Couldn't create users table! Error: %s", err.Error()))
+	}
+
+	_, err = storage.Db.Exec(
+		models.REQUESTS_TABLE,
+	)
+
+	if err != nil {
+		panic(fmt.Sprintf("Couldn't create reauests table! Error: %s", err.Error()))
+	}
+
 }
 
 func Init(db *sql.DB) *Storage {
