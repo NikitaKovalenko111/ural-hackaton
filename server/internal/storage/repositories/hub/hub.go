@@ -18,7 +18,7 @@ func Init(db *storage.Storage) *HubRepo {
 
 func (r *HubRepo) GetAllHubs() ([]models.Hub, error) {
 	rows, err := r.db.Db.Query(
-		`SELECT hub_id, hub_name, address, status FROM hubs`,
+		`SELECT hub_id, hub_name, address, status, city, description, schedule, occupancy FROM hubs`,
 	)
 
 	if err != nil {
@@ -32,7 +32,7 @@ func (r *HubRepo) GetAllHubs() ([]models.Hub, error) {
 	for rows.Next() {
 		var hub models.Hub
 
-		err = rows.Scan(&hub.Id, &hub.HubName, &hub.Address, &hub.Status)
+		err = rows.Scan(&hub.Id, &hub.HubName, &hub.Address, &hub.Status, &hub.City, &hub.Description, &hub.Schedule, &hub.Occupancy)
 
 		if err != nil {
 			return nil, err
@@ -48,9 +48,9 @@ func (r *HubRepo) GetHubById(id uint64) (*models.Hub, error) {
 	var hub models.Hub
 
 	err := r.db.Db.QueryRow(
-		`SELECT hub_id, hub_name, address, status FROM hubs WHERE hub_id = $1`,
+		`SELECT hub_id, hub_name, address, status, city, description, schedule, occupancy FROM hubs WHERE hub_id = $1`,
 		id,
-	).Scan(&hub.Id, &hub.HubName, &hub.Address, &hub.Status)
+	).Scan(&hub.Id, &hub.HubName, &hub.Address, &hub.Status, &hub.City, &hub.Description, &hub.Schedule, &hub.Occupancy)
 
 	if err != nil {
 		return nil, err
@@ -63,11 +63,17 @@ func (r *HubRepo) CreateHub(hub *hubsStorageDto.CreateHubDto) (*models.Hub, erro
 	var createdHub models.Hub
 
 	err := r.db.Db.QueryRow(
-		`INSERT INTO hubs (hub_name, address, status) VALUES ($1, $2, $3) RETURNING hub_id, hub_name, address, status`,
+		`INSERT INTO hubs (hub_name, address, status, city, description, schedule, occupancy)
+		 VALUES ($1, $2, $3, $4, $5, $6, $7)
+		 RETURNING hub_id, hub_name, address, status, city, description, schedule, occupancy`,
 		hub.Name,
 		hub.Address,
-		"opened",
-	).Scan(&createdHub.Id, &createdHub.HubName, &createdHub.Address, &createdHub.Status)
+		hub.Status,
+		hub.City,
+		hub.Description,
+		hub.Schedule,
+		hub.Occupancy,
+	).Scan(&createdHub.Id, &createdHub.HubName, &createdHub.Address, &createdHub.Status, &createdHub.City, &createdHub.Description, &createdHub.Schedule, &createdHub.Occupancy)
 
 	if err != nil {
 		return nil, err
@@ -80,9 +86,12 @@ func (r *HubRepo) UpdateHub(hub *models.Hub) (*models.Hub, error) {
 	var updatedHub models.Hub
 
 	err := r.db.Db.QueryRow(
-		`UPDATE hubs SET hub_name = $1, address = $2, status = $3 WHERE hub_id = $4 RETURNING hub_id, hub_name, address, status`,
-		hub.HubName, hub.Address, hub.Status, hub.Id,
-	).Scan(&updatedHub.Id, &updatedHub.HubName, &updatedHub.Address, &updatedHub.Status)
+		`UPDATE hubs
+		 SET hub_name = $1, address = $2, status = $3, city = $4, description = $5, schedule = $6, occupancy = $7
+		 WHERE hub_id = $8
+		 RETURNING hub_id, hub_name, address, status, city, description, schedule, occupancy`,
+		hub.HubName, hub.Address, hub.Status, hub.City, hub.Description, hub.Schedule, hub.Occupancy, hub.Id,
+	).Scan(&updatedHub.Id, &updatedHub.HubName, &updatedHub.Address, &updatedHub.Status, &updatedHub.City, &updatedHub.Description, &updatedHub.Schedule, &updatedHub.Occupancy)
 
 	if err != nil {
 		return nil, err

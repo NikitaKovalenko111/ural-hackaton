@@ -14,7 +14,11 @@ func Init(db *storage.Storage) *AdminRepo {
 }
 
 func (r *AdminRepo) GetAllAdmins() ([]admin_dto.AdminJoinUserDto, error) {
-	rows, err := r.db.Db.Query(`SELECT admin_id, fullname FROM admins JOIN users ON admins.user_id = users.user_id`)
+	rows, err := r.db.Db.Query(`
+		SELECT admins.admin_id, users.user_id, users.fullname, users.user_role, users.email, users.telegram, users.phone
+		FROM admins
+		JOIN users ON admins.user_id = users.user_id
+	`)
 	if err != nil {
 		return nil, err
 	}
@@ -23,7 +27,7 @@ func (r *AdminRepo) GetAllAdmins() ([]admin_dto.AdminJoinUserDto, error) {
 	var admins []admin_dto.AdminJoinUserDto
 	for rows.Next() {
 		var admin admin_dto.AdminJoinUserDto
-		err := rows.Scan(&admin.AdminId, &admin.FullName)
+		err := rows.Scan(&admin.AdminId, &admin.Id, &admin.FullName, &admin.Role, &admin.Email, &admin.Telegram, &admin.Phone)
 		if err != nil {
 			return nil, err
 		}
@@ -37,9 +41,18 @@ func (r *AdminRepo) GetAdminById(id uint64) (*admin_dto.AdminJoinUserDto, error)
 	var admin admin_dto.AdminJoinUserDto
 
 	err := r.db.Db.QueryRow(
+<<<<<<< HEAD
 		`SELECT admin_id FROM admins WHERE admin_id = $1`,
 		id,
 	).Scan(&admin.AdminId)
+=======
+		`SELECT admins.admin_id, users.user_id, users.fullname, users.user_role, users.email, users.telegram, users.phone
+		 FROM admins
+		 JOIN users ON admins.user_id = users.user_id
+		 WHERE admins.admin_id = $1`,
+		id,
+	).Scan(&admin.AdminId, &admin.Id, &admin.FullName, &admin.Role, &admin.Email, &admin.Telegram, &admin.Phone)
+>>>>>>> 99e69862683c0673a6a86170ad35b8c424f1a8d0
 
 	if err != nil {
 		return nil, err
@@ -76,12 +89,13 @@ func (r *AdminRepo) GetAdminByFullname(fullname string) (*admin_dto.AdminJoinUse
 	var admin admin_dto.AdminJoinUserDto
 
 	err := r.db.Db.QueryRow(
-		`SELECT admins.admin_id, users.user_id, users.user_fullname, users.user_role
+		`SELECT admins.admin_id, users.user_id, users.fullname, users.user_role, users.email, users.telegram, users.phone
 		 FROM admins
 		 JOIN users ON admins.user_id = users.user_id
-		 WHERE users.user_fullname = $1`,
+		 WHERE users.fullname = $1`,
 		fullname,
-	).Scan(&admin.Id, &admin.User.Id, &admin.User.FullName, &admin.User.Role)
+	).Scan(&admin.AdminId, &admin.Id, &admin.FullName, &admin.Role, &admin.Email, &admin.Telegram, &admin.Phone)
+
 	if err != nil {
 		return nil, err
 	}

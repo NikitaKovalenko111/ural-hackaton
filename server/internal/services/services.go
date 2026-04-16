@@ -3,8 +3,12 @@ package services
 import (
 	"ural-hackaton/internal/config"
 	admin_service "ural-hackaton/internal/services/handlers/admin"
+<<<<<<< HEAD
 	auth_service "ural-hackaton/internal/services/handlers/auth"
 	"ural-hackaton/internal/services/handlers/email"
+=======
+	booking_service "ural-hackaton/internal/services/handlers/booking"
+>>>>>>> 99e69862683c0673a6a86170ad35b8c424f1a8d0
 	event_service "ural-hackaton/internal/services/handlers/event"
 	hub_service "ural-hackaton/internal/services/handlers/hub"
 	mentor_service "ural-hackaton/internal/services/handlers/mentor"
@@ -20,7 +24,11 @@ type Services struct {
 	MentorService  *mentor_service.MentorService
 	RequestService *requests_service.RequestService
 	EventService   *event_service.EventService
+
 	AuthService    *auth_service.AuthService
+
+	BookingService *booking_service.BookingService
+
 }
 
 func Init(repos *repositories.Repositories, cfg *config.Config) *Services {
@@ -46,5 +54,6 @@ func Init(repos *repositories.Repositories, cfg *config.Config) *Services {
 		RequestService: requests_service.Init(repos.RequestRepository, cfg),
 		EventService:   event_service.Init(repos.EventRepository, cfg),
 		AuthService:    auth_service.Init(repos.UserRepository, repos.AuthTokenRepository, emailSender, []byte(cfg.SecretKey)),
+		BookingService: booking_service.Init(repos.BookingRepository, cfg),
 	}
 }

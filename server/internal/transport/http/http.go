@@ -29,4 +29,5 @@ func (h *Http) Start() {
 	h.controllers.HubController.RegisterRoutes(h.router)
 	h.controllers.EventController.RegisterRoutes(h.router)
 	h.controllers.AuthController.RegisterRoutes(h.router)
+	h.controllers.BookingController.RegisterRoutes(h.router)
 }
