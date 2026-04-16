@@ -18,16 +18,11 @@ type Controllers struct {
 }
 
 func Init(svc *services.Services) *Controllers {
-	var userService user_controller.UserService
-	if svc != nil {
-		userService = svc.UserService
-	}
-
 	return &Controllers{
-		AdminController:   admin_controller.Init(nil),
-		UserController:    user_controller.Init(userService),
-		MentorController:  mentor_controller.Init(nil),
-		HubController:     hub_controller.Init(nil),
-		RequestController: request_controller.Init(nil),
+		AdminController:   admin_controller.Init(svc.AdminService),
+		UserController:    user_controller.Init(svc.UserService),
+		MentorController:  mentor_controller.Init(svc.MentorService),
+		HubController:     hub_controller.Init(svc.HubService),
+		RequestController: request_controller.Init(svc.RequestService),
 	}
 }

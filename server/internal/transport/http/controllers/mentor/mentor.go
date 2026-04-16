@@ -5,22 +5,16 @@ import (
 	"strconv"
 
 	mentor_dto "ural-hackaton/internal/dto/mentor"
+	mentor_service "ural-hackaton/internal/services/handlers/mentor"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-type MentorService interface {
-	CreateMentor(mentor mentor_dto.CreateMentorDto) (*mentor_dto.MentorJoinUserDto, error)
-	GetMentorById(id uint64) (*mentor_dto.MentorJoinUserDto, error)
-	GetMentorsByFullname(fullname string) ([]*mentor_dto.MentorJoinUserDto, error)
-	GetMentorsByRole(role string) ([]*mentor_dto.MentorJoinUserDto, error)
-}
-
 type MentorController struct {
-	service MentorService
+	service *mentor_service.MentorService
 }
 
-func Init(service MentorService) *MentorController {
+func Init(service *mentor_service.MentorService) *MentorController {
 	return &MentorController{service: service}
 }
 
@@ -48,7 +42,7 @@ func (c *MentorController) CreateMentor(ctx *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "invalid mentor payload")
 	}
 
-	mentor, err := c.service.CreateMentor(payload)
+	mentor, err := c.service.CreateMentor(payload.UserId)
 	if err != nil {
 		return err
 	}
@@ -87,28 +81,7 @@ func (c *MentorController) GetMentorsByFullname(ctx *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "fullname query is required")
 	}
 
-	mentors, err := c.service.GetMentorsByFullname(fullname)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return fiber.NewError(fiber.StatusNotFound, "mentors not found")
-		}
-		return err
-	}
-
-	return ctx.JSON(mentors)
-}
-
-func (c *MentorController) GetMentorsByRole(ctx *fiber.Ctx) error {
-	if c.service == nil {
-		return serviceNotReady("mentor")
-	}
-
-	role := ctx.Query("role")
-	if role == "" {
-		return fiber.NewError(fiber.StatusBadRequest, "role query is required")
-	}
-
-	mentors, err := c.service.GetMentorsByRole(role)
+	mentors, err := c.service.GetMentorByFullname(fullname)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return fiber.NewError(fiber.StatusNotFound, "mentors not found")
