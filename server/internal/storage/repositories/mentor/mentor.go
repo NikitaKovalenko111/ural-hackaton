@@ -34,12 +34,12 @@ func (r *MentorRepo) GetMentorById(id uint64) (*mentor_dto.MentorJoinUserDto, er
 	var mentor mentor_dto.MentorJoinUserDto
 
 	err := r.db.Db.QueryRow(
-		`SELECT mentors.mentor_id, users.user_id, users.user_fullname, users.user_role
+		`SELECT mentors.mentor_id, users.user_id, users.fullname, users.user_role, users.email, users.telegram, users.phone
 		 FROM mentors
 		 JOIN users ON mentors.user_id = users.user_id
 		 WHERE mentors.mentor_id = $1`,
 		id,
-	).Scan(&mentor.MentorId, &mentor.Id, &mentor.FullName, &mentor.Role)
+	).Scan(&mentor.MentorId, &mentor.Id, &mentor.FullName, &mentor.Role, &mentor.Email, &mentor.Telegram, &mentor.Phone)
 
 	if err != nil {
 		return nil, err
@@ -52,12 +52,12 @@ func (r *MentorRepo) GetMentorByFullname(fullname string) (*mentor_dto.MentorJoi
 	var mentor mentor_dto.MentorJoinUserDto
 
 	err := r.db.Db.QueryRow(
-		`SELECT mentors.mentor_id, users.user_id, users.user_fullname, users.user_role
+		`SELECT mentors.mentor_id, users.user_id, users.fullname, users.user_role, users.email, users.telegram, users.phone
 		 FROM mentors
 		 JOIN users ON mentors.user_id = users.user_id
-		 WHERE users.user_fullname = $1`,
+		 WHERE users.fullname = $1`,
 		fullname,
-	).Scan(&mentor.MentorId, &mentor.Id, &mentor.FullName, &mentor.Role)
+	).Scan(&mentor.MentorId, &mentor.Id, &mentor.FullName, &mentor.Role, &mentor.Email, &mentor.Telegram, &mentor.Phone)
 
 	if err != nil {
 		return nil, err

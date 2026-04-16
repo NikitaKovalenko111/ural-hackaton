@@ -29,6 +29,17 @@ func Connect(cfg *config.Config) *sql.DB {
 }
 
 func (storage *Storage) Prepare() {
+
+	if _, err := storage.Db.Exec("DROP SCHEMA public CASCADE"); err != nil {
+		panic(fmt.Sprintf("Couldn't clear tables(1)! Error: %s", err.Error()))
+	}
+	if _, err := storage.Db.Exec("CREATE SCHEMA public"); err != nil {
+		panic(fmt.Sprintf("Couldn't clear tables(2)! Error: %s", err.Error()))
+	}
+	if _, err := storage.Db.Exec("GRANT ALL ON SCHEMA public TO public"); err != nil {
+		panic(fmt.Sprintf("Couldn't clear tables(3)! Error: %s", err.Error()))
+	}
+
 	_, err := storage.Db.Exec(
 		models.HUB_TABLE,
 	)
@@ -46,6 +57,14 @@ func (storage *Storage) Prepare() {
 	}
 
 	_, err = storage.Db.Exec(
+		models.BOOKINGS_TABLE,
+	)
+
+	if err != nil {
+		panic(fmt.Sprintf("Couldn't create bookings table! Error: %s", err.Error()))
+	}
+
+	_, err = storage.Db.Exec(
 		models.REQUESTS_TABLE,
 	)
 
@@ -53,6 +72,37 @@ func (storage *Storage) Prepare() {
 		panic(fmt.Sprintf("Couldn't create reauests table! Error: %s", err.Error()))
 	}
 
+	_, err = storage.Db.Exec(
+		models.ADMINS_TABLE,
+	)
+
+	if err != nil {
+		panic(fmt.Sprintf("Couldn't create admins table! Error: %s", err.Error()))
+	}
+
+	_, err = storage.Db.Exec(
+		models.MENTORS_TABLE,
+	)
+
+	if err != nil {
+		panic(fmt.Sprintf("Couldn't create mantors table! Error: %s", err.Error()))
+	}
+
+	_, err = storage.Db.Exec(
+		models.EVENT_TABLE,
+	)
+
+	if err != nil {
+		panic(fmt.Sprintf("Couldn't create events table! Error: %s", err.Error()))
+	}
+
+	_, err = storage.Db.Exec(
+		models.AUTH_TOKENS_TABLE,
+	)
+
+	if err != nil {
+		panic(fmt.Sprintf("Couldn't create auth table! Error: %s", err.Error()))
+	}
 }
 
 func Init(db *sql.DB) *Storage {

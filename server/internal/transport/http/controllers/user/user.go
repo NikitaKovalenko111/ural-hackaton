@@ -19,9 +19,11 @@ func Init(service *user_service.UserService) *UserController {
 }
 
 func (c *UserController) RegisterRoutes(router fiber.Router) {
-	router.Post("/users", c.CreateUser)
-	router.Get("/users/:id", c.GetUserById)
-	router.Get("/users/search", c.GetUserByFullname)
+	users := router.Group("/users")
+	users.Post("/", c.CreateUser)
+	users.Get("/search", c.GetUserByFullname)
+
+	users.Get("/:id", c.GetUserById)
 }
 
 func serviceNotReady(entity string) error {
@@ -48,7 +50,7 @@ func (c *UserController) CreateUser(ctx *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "invalid user payload")
 	}
 
-	if err := c.service.CreateUser(payload.Fullname, payload.Role); err != nil {
+	if err := c.service.CreateUser(payload.Fullname, payload.Role, payload.Email, payload.Telegram, payload.Phone); err != nil {
 		return err
 	}
 
@@ -116,4 +118,25 @@ func (c *UserController) GetUsersByRole(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.JSON(users)
+}
+
+func (c *UserController) GetUserByEmail(ctx *fiber.Ctx) error {
+	if c.service == nil {
+		return serviceNotReady("user")
+	}
+
+	fullname := ctx.Query("fullname")
+	if fullname == "" {
+		return fiber.NewError(fiber.StatusBadRequest, "fullname query is required")
+	}
+
+	user, err := c.service.GetUserByFullname(fullname)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return fiber.NewError(fiber.StatusNotFound, "user not found")
+		}
+		return err
+	}
+
+	return ctx.JSON(user)
 }

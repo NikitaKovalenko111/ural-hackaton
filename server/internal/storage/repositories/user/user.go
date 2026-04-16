@@ -2,12 +2,11 @@ package users_storage
 
 import (
 	"database/sql"
+	"fmt"
 
-	usersDto "ural-hackaton/internal/dto/user"
+	user_dto "ural-hackaton/internal/dto/user"
 	"ural-hackaton/internal/models"
 	"ural-hackaton/internal/storage"
-
-	"github.com/gofiber/fiber/v2"
 )
 
 type UserRepo struct {
@@ -20,15 +19,18 @@ func Init(db *storage.Storage) *UserRepo {
 	}
 }
 
-func (r *UserRepo) CreateUser(user *usersDto.CreateUserDto) error {
+func (r *UserRepo) CreateUser(user *user_dto.CreateUserDto) error {
 	_, err := r.db.Db.Exec(
-		`INSERT INTO users (fullname, user_role) VALUES ($1, $2)`,
+		`INSERT INTO users (fullname, user_role, email, telegram, phone) VALUES ($1, $2, $3, $4, $5)`,
 		user.Fullname,
 		user.Role,
+		user.Email,
+		user.Telegram,
+		user.Phone,
 	)
 
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, "Couldn't create user!")
+		return fmt.Errorf("couldn't create user: %w", err)
 	}
 
 	return nil
@@ -38,16 +40,16 @@ func (r *UserRepo) GetUserById(id uint64) (*models.User, error) {
 	var user models.User
 
 	err := r.db.Db.QueryRow(
-		`SELECT user_id, user_fullname, user_role FROM users WHERE user_id = $1`,
+		`SELECT user_id, fullname, user_role, email, telegram, phone FROM users WHERE user_id = $1`,
 		id,
-	).Scan(&user.Id, &user.FullName, &user.Role)
+	).Scan(&user.Id, &user.FullName, &user.Role, &user.Email, &user.Telegram, &user.Phone)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, fiber.NewError(fiber.StatusNotFound, "User with this id not found!")
+			return nil, fmt.Errorf("User with this id not found!")
 		}
 
-		return nil, fiber.NewError(fiber.StatusInternalServerError, "Couldn't get user by id!")
+		return nil, fmt.Errorf("Couldn't get user by id!")
 	}
 
 	return &user, nil
@@ -57,16 +59,16 @@ func (r *UserRepo) GetUserByFullname(fullname string) (*models.User, error) {
 	var user models.User
 
 	err := r.db.Db.QueryRow(
-		`SELECT user_id, user_fullname, user_role FROM users WHERE user_fullname = $1`,
+		`SELECT user_id, fullname, user_role, email, telegram, phone FROM users WHERE fullname = $1`,
 		fullname,
-	).Scan(&user.Id, &user.FullName, &user.Role)
+	).Scan(&user.Id, &user.FullName, &user.Role, &user.Email, &user.Telegram, &user.Phone)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, fiber.NewError(fiber.StatusNotFound, "User with this fullname not found!")
+			return nil, fmt.Errorf("User with this fullname not found!")
 		}
 
-		return nil, fiber.NewError(fiber.StatusInternalServerError, "Couldn't get user by fullname!")
+		return nil, fmt.Errorf("Couldn't get user by fullname!")
 	}
 
 	return &user, nil
@@ -74,32 +76,70 @@ func (r *UserRepo) GetUserByFullname(fullname string) (*models.User, error) {
 
 func (r *UserRepo) GetUsersByRole(role string) ([]models.User, error) {
 	rows, err := r.db.Db.Query(
-		`SELECT user_id, user_fullname, user_role FROM users WHERE user_role = $1`,
+		`SELECT user_id, fullname, user_role, email, telegram, phone FROM users WHERE user_role = $1`,
 		role,
 	)
 	if err != nil {
-		return nil, fiber.NewError(fiber.StatusInternalServerError, "Couldn't get users by role!")
+		return nil, fmt.Errorf("Couldn't get users by role!")
 	}
 	defer rows.Close()
 
 	users := make([]models.User, 0)
 	for rows.Next() {
 		var user models.User
-		err = rows.Scan(&user.Id, &user.FullName, &user.Role)
+		err = rows.Scan(&user.Id, &user.FullName, &user.Role, &user.Email, &user.Telegram, &user.Phone)
 		if err != nil {
-			return nil, fiber.NewError(fiber.StatusInternalServerError, "Couldn't parse users by role!")
+			return nil, fmt.Errorf("Couldn't parse users by role!")
 		}
 
 		users = append(users, user)
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, fiber.NewError(fiber.StatusInternalServerError, "Couldn't read users by role!")
+		return nil, fmt.Errorf("Couldn't read users by role!")
 	}
 
 	if len(users) == 0 {
-		return nil, fiber.NewError(fiber.StatusNotFound, "Users with this role not found!")
+		return nil, fmt.Errorf("Users with this role not found!")
 	}
 
 	return users, nil
+}
+
+func (r *UserRepo) GetUserByEmail(email string) (*models.User, error) {
+	var user models.User
+
+	err := r.db.Db.QueryRow(
+		`SELECT user_id, fullname, user_role, email, telegram, phone FROM users WHERE email = $1`,
+		email,
+	).Scan(&user.Id, &user.FullName, &user.Role, &user.Email, &user.Telegram, &user.Phone)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, sql.ErrNoRows
+		}
+
+		return nil, fmt.Errorf("couldn't get user by email: %w", err)
+	}
+
+	return &user, nil
+}
+
+func (r *UserRepo) GetUserByTelegram(telegram string) (*models.User, error) {
+	var user models.User
+
+	err := r.db.Db.QueryRow(
+		`SELECT user_id, fullname, user_role, email, telegram, phone FROM users WHERE telegram = $1`,
+		telegram,
+	).Scan(&user.Id, &user.FullName, &user.Role, &user.Email, &user.Telegram, &user.Phone)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("User with this fullname not found!")
+		}
+
+		return nil, fmt.Errorf("Couldn't get user by fullname!")
+	}
+
+	return &user, nil
 }

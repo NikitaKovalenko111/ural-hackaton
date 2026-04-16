@@ -14,23 +14,8 @@ type Config struct {
 	Storage    `yaml:"storage"`
 	HTTPServer `yaml:"http_server"`
 	SMTP       `yaml:"smtp"`
-	JWT        `yaml:"jwt"`
-	Redis      `yaml:"redis"`
-	Parser     `yaml:"parser"`
-}
-
-type Redis struct {
-	Address     string        `yaml:"redis_address" env-required:"true"`
-	Password    string        `yaml:"redis_password"`
-	User        string        `yaml:"redis_user" env-required:"true"`
-	Db          int           `yaml:"redis_db" env-default:"0"`
-	MaxRetries  int           `yaml:"redis_maxRetries" env-required:"true"`
-	DialTimeout time.Duration `yaml:"redis_dialTimeout" env-required:"true"`
-	Timeout     time.Duration `yaml:"redis_timeout" env-required:"true"`
-}
-
-type Parser struct {
-	Path string `yaml:"parser_path" env-required:"true"`
+	Auth       `yaml:"auth"`
+	// JWT        `yaml:"jwt"`
 }
 
 type Storage struct {
@@ -42,11 +27,13 @@ type Storage struct {
 }
 
 type SMTP struct {
-	Host     string `yaml:"smtp_host" env-required:"true"`
-	Port     int    `yaml:"smtp_port" env-required:"true"`
-	Username string `yaml:"username" env-required:"true"`
-	Password string `yaml:"password" env-required:"true"`
-	AppHost  string `yaml:"app_host" env-required:"true"`
+	Host      string `yaml:"smtp_host" env-required:"true"`
+	Port      int    `yaml:"smtp_port" env-required:"true"`
+	Username  string `yaml:"username" env-required:"true"`
+	Password  string `yaml:"password" env-required:"true"`
+	AppHost   string `yaml:"app_host" env-required:"true"`
+	FromEmail string `yaml:"from_email" env-required:"true"`
+	FromName  string `yaml:"from_name" env-required:"true"`
 }
 
 type HTTPServer struct {
@@ -55,10 +42,17 @@ type HTTPServer struct {
 	IdleTimeout time.Duration `yaml:"idle_timeout" env-default:"60s"`
 }
 
-type JWT struct {
-	JWT_ACCESS_SECRET  string `yaml:"jwt_access_secret" env-required:"true"`
-	JWT_REFRESH_SECRET string `yaml:"jwt_refresh_secret" env-required:"true"`
+type Auth struct {
+	SecretKey string `yaml:"secret_key" env-required:"true"`
+
+	AccessTokenTTL  time.Duration `yaml:"access_token_ttl" env-default:"15m"`
+	RefreshTokenTTL time.Duration `yaml:"refresh_token_ttl" env-default:"72h"`
 }
+
+// type JWT struct {
+// 	JWT_ACCESS_SECRET  string `yaml:"jwt_access_secret" env-required:"true"`
+// 	JWT_REFRESH_SECRET string `yaml:"jwt_refresh_secret" env-required:"true"`
+// }
 
 func MustLoad() *Config {
 	err := godotenv.Load()

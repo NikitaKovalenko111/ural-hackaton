@@ -1,4 +1,4 @@
-package hubs_service
+package hub_service
 
 import (
 	"ural-hackaton/internal/config"
@@ -19,9 +19,19 @@ func Init(hubRepo *hub_storage.HubRepo, cfg *config.Config) *HubService {
 	}
 }
 
-func (s *HubService) CreateHub(name string) (*models.Hub, error) {
+func (s *HubService) CreateHub(name string, address string, status string, city string, description string, schedule string, occupancy int) (*models.Hub, error) {
+	if status == "" {
+		status = "opened"
+	}
+
 	hubDto := &hub_dto.CreateHubDto{
-		Name: name,
+		Name:        name,
+		Address:     address,
+		Status:      status,
+		City:        city,
+		Description: description,
+		Schedule:    schedule,
+		Occupancy:   occupancy,
 	}
 
 	model, err := s.repo.CreateHub(hubDto)
@@ -50,10 +60,16 @@ func (s *HubService) GetHubById(id uint64) (*models.Hub, error) {
 	return model, nil
 }
 
-func (s *HubService) UpdateHub(hubName string, id uint64) (*models.Hub, error) {
+func (s *HubService) UpdateHub(hubName string, address string, status string, city string, description string, schedule string, occupancy int, id uint64) (*models.Hub, error) {
 	hubDto := &models.Hub{
-		Id:      id,
-		HubName: hubName,
+		Id:          id,
+		HubName:     hubName,
+		Address:     address,
+		Status:      status,
+		City:        city,
+		Description: description,
+		Schedule:    schedule,
+		Occupancy:   occupancy,
 	}
 
 	model, err := s.repo.UpdateHub(hubDto)
