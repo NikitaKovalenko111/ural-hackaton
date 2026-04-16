@@ -3,30 +3,27 @@ package admin_controller
 import (
 	"database/sql"
 	"strconv"
-
 	admin_dto "ural-hackaton/internal/dto/admin"
+	admin_service "ural-hackaton/internal/services/handlers/admin"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-type AdminService interface {
-	GetAllAdmins() ([]*admin_dto.AdminJoinUserDto, error)
-	GetAdminById(id uint64) (*admin_dto.AdminJoinUserDto, error)
-	CreateAdmin(admin admin_dto.CreateAdminDto) (*admin_dto.AdminJoinUserDto, error)
-	DeleteAdmin(id uint64) error
-	GetAdminsByFullname(fullname string) ([]*admin_dto.AdminJoinUserDto, error)
-}
-
 type AdminController struct {
-	service AdminService
+	service *admin_service.AdminService
 }
 
-func Init(service AdminService) *AdminController {
+func Init(service *admin_service.AdminService) *AdminController {
 	return &AdminController{service: service}
 }
 
-func serviceNotReady(entity string) error {
-	return fiber.NewError(fiber.StatusNotImplemented, entity+" service is not wired yet")
+func (c *AdminController) RegisterRoutes(router fiber.Router) {
+	admins := router.Group("/admins")
+	admins.Get("/", c.GetAllAdmins)
+	admins.Get("/:id", c.GetAdminById)
+	admins.Post("/", c.CreateAdmin)
+	admins.Delete("/:id", c.DeleteAdmin)
+	admins.Get("/search", c.GetAdminsByFullname)
 }
 
 func parseUintParam(c *fiber.Ctx, key string) (uint64, error) {
@@ -40,10 +37,6 @@ func parseUintParam(c *fiber.Ctx, key string) (uint64, error) {
 }
 
 func (c *AdminController) GetAllAdmins(ctx *fiber.Ctx) error {
-	if c.service == nil {
-		return serviceNotReady("admin")
-	}
-
 	admins, err := c.service.GetAllAdmins()
 	if err != nil {
 		return err
@@ -53,10 +46,6 @@ func (c *AdminController) GetAllAdmins(ctx *fiber.Ctx) error {
 }
 
 func (c *AdminController) GetAdminById(ctx *fiber.Ctx) error {
-	if c.service == nil {
-		return serviceNotReady("admin")
-	}
-
 	id, err := parseUintParam(ctx, "id")
 	if err != nil {
 		return err
@@ -74,16 +63,12 @@ func (c *AdminController) GetAdminById(ctx *fiber.Ctx) error {
 }
 
 func (c *AdminController) CreateAdmin(ctx *fiber.Ctx) error {
-	if c.service == nil {
-		return serviceNotReady("admin")
-	}
-
 	var payload admin_dto.CreateAdminDto
 	if err := ctx.BodyParser(&payload); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "invalid admin payload")
 	}
 
-	admin, err := c.service.CreateAdmin(payload)
+	admin, err := c.service.CreateAdmin(payload.UserId)
 	if err != nil {
 		return err
 	}
@@ -92,10 +77,6 @@ func (c *AdminController) CreateAdmin(ctx *fiber.Ctx) error {
 }
 
 func (c *AdminController) DeleteAdmin(ctx *fiber.Ctx) error {
-	if c.service == nil {
-		return serviceNotReady("admin")
-	}
-
 	id, err := parseUintParam(ctx, "id")
 	if err != nil {
 		return err
@@ -109,16 +90,12 @@ func (c *AdminController) DeleteAdmin(ctx *fiber.Ctx) error {
 }
 
 func (c *AdminController) GetAdminsByFullname(ctx *fiber.Ctx) error {
-	if c.service == nil {
-		return serviceNotReady("admin")
-	}
-
 	fullname := ctx.Query("fullname")
 	if fullname == "" {
 		return fiber.NewError(fiber.StatusBadRequest, "fullname query is required")
 	}
 
-	admins, err := c.service.GetAdminsByFullname(fullname)
+	admins, err := c.service.GetAdminByFullname(fullname)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return fiber.NewError(fiber.StatusNotFound, "admins not found")

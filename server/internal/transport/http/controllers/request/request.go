@@ -24,6 +24,12 @@ func Init(service RequestService) *RequestController {
 	return &RequestController{service: service}
 }
 
+func (c *RequestController) RegisterRoutes(router fiber.Router) {
+	router.Post("/requests", c.CreateRequest)
+	router.Get("/requests/:id", c.GetRequestById)
+	router.Get("/requests/user/:user_id", c.GetRequestsByUserId)
+}
+
 func serviceNotReady(entity string) error {
 	return fiber.NewError(fiber.StatusNotImplemented, entity+" service is not wired yet")
 }
