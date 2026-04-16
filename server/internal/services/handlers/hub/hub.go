@@ -2,7 +2,7 @@ package hubs_service
 
 import (
 	"ural-hackaton/internal/config"
-	hubsStorageDto "ural-hackaton/internal/dto/hub"
+	hubs_dto "ural-hackaton/internal/dto/hub"
 	"ural-hackaton/internal/models"
 	hub_storage "ural-hackaton/internal/storage/repositories/hub"
 )
@@ -20,7 +20,7 @@ func Init(hubRepo *hub_storage.HubRepo, cfg *config.Config) *HubService {
 }
 
 func (s *HubService) CreateHub(name string) (*models.Hub, error) {
-	hubDto := &hubsStorageDto.CreateHubDto{
+	hubDto := &hubs_dto.CreateHubDto{
 		Name: name,
 	}
 

@@ -13,21 +13,21 @@ func Init(db *storage.Storage) *AdminRepo {
 	return &AdminRepo{db: db}
 }
 
-func (r *AdminRepo) GetAllAdmins() ([]*admin_dto.AdminJoinUserDto, error) {
+func (r *AdminRepo) GetAllAdmins() ([]admin_dto.AdminJoinUserDto, error) {
 	rows, err := r.db.Db.Query(`SELECT admin_id, fullname FROM admins JOIN users ON admins.user_id = users.user_id`)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var admins []*admin_dto.AdminJoinUserDto
+	var admins []admin_dto.AdminJoinUserDto
 	for rows.Next() {
 		var admin admin_dto.AdminJoinUserDto
 		err := rows.Scan(&admin.AdminId, &admin.FullName)
 		if err != nil {
 			return nil, err
 		}
-		admins = append(admins, &admin)
+		admins = append(admins, admin)
 	}
 
 	return admins, nil
