@@ -1,8 +1,12 @@
 package email
 
 import (
+	"crypto/tls"
 	"fmt"
+	"net"
 	"net/smtp"
+	"strings"
+	"time"
 )
 
 type EmailSender struct {
@@ -39,8 +43,67 @@ func (s *EmailSender) SendMagicLink(email, token string) error {
 		"MIME-version: 1.0;\r\nContent-Type: text/html; charset=\"UTF-8\";\r\n\r\n%s",
 		s.FromName, s.FromEmail, email, subject, body)
 
-	addr := fmt.Sprintf("%s:%d", s.SMTPHost, s.SMTPPort)
-	auth := smtp.PlainAuth("", s.SMTPUser, s.SMTPPass, s.SMTPHost)
+	addr := net.JoinHostPort(s.SMTPHost, fmt.Sprintf("%d", s.SMTPPort))
 
-	return smtp.SendMail(addr, auth, s.FromEmail, []string{email}, []byte(msg))
+	conn, err := (&net.Dialer{Timeout: 10 * time.Second}).Dial("tcp", addr)
+	if err != nil {
+		return fmt.Errorf("dial smtp: %w", err)
+	}
+
+	_ = conn.SetDeadline(time.Now().Add(20 * time.Second))
+
+	client, err := smtp.NewClient(conn, s.SMTPHost)
+	if err != nil {
+		_ = conn.Close()
+		return fmt.Errorf("create smtp client: %w", err)
+	}
+
+	defer func() {
+		_ = client.Close()
+	}()
+
+	if ok, _ := client.Extension("STARTTLS"); ok {
+		if err := client.StartTLS(&tls.Config{ServerName: s.SMTPHost}); err != nil {
+			return fmt.Errorf("starttls: %w", err)
+		}
+	}
+
+	if ok, _ := client.Extension("AUTH"); ok {
+		auth := smtp.PlainAuth("", s.SMTPUser, normalizeSMTPPassword(s.SMTPPass), s.SMTPHost)
+		if err := client.Auth(auth); err != nil {
+			return fmt.Errorf("smtp auth: %w", err)
+		}
+	}
+
+	if err := client.Mail(s.FromEmail); err != nil {
+		return fmt.Errorf("smtp mail from: %w", err)
+	}
+
+	if err := client.Rcpt(email); err != nil {
+		return fmt.Errorf("smtp rcpt to: %w", err)
+	}
+
+	writer, err := client.Data()
+	if err != nil {
+		return fmt.Errorf("smtp data: %w", err)
+	}
+
+	if _, err := writer.Write([]byte(msg)); err != nil {
+		_ = writer.Close()
+		return fmt.Errorf("smtp write message: %w", err)
+	}
+
+	if err := writer.Close(); err != nil {
+		return fmt.Errorf("smtp close writer: %w", err)
+	}
+
+	if err := client.Quit(); err != nil {
+		return fmt.Errorf("smtp quit: %w", err)
+	}
+
+	return nil
+}
+
+func normalizeSMTPPassword(pass string) string {
+	return strings.Join(strings.Fields(pass), "")
 }

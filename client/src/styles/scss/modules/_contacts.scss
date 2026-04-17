@@ -37,6 +37,89 @@
     filter: sepia(0.5) hue-rotate(30deg);
 }
 
+.hub-overview {
+    align-items: stretch;
+
+    &__info {
+        background: linear-gradient(180deg, #ffffff 0%, #fffdf2 100%);
+    }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: $spacing-md;
+    }
+
+    &__card {
+        border: 1px solid $color-border;
+        border-radius: $radius-sm;
+        background: $color-bg;
+        padding: $spacing-md;
+    }
+
+    &__label {
+        @include font-label;
+        margin-bottom: $spacing-xs;
+    }
+
+    &__value {
+        @include font-base;
+        color: $color-text-main;
+        font-weight: $font-weight-semibold;
+    }
+
+    &__note {
+        @include font-small;
+        color: $color-text-secondary;
+        margin-top: $spacing-sm;
+        line-height: 1.5;
+    }
+
+    &__map {
+        min-height: 280px;
+    }
+
+    &__map-placeholder {
+        @include flex-column;
+        justify-content: flex-end;
+        align-items: flex-start;
+        gap: $spacing-sm;
+        padding: $spacing-lg;
+        position: relative;
+        filter: none;
+    }
+
+    &__map-placeholder::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.08) 30%, rgba(0, 0, 0, 0.55) 100%);
+    }
+
+    &__map-pin,
+    &__map-address,
+    .btn {
+        position: relative;
+        z-index: 1;
+    }
+
+    &__map-pin {
+        color: #fff;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-semibold;
+        background: rgba(0, 0, 0, 0.35);
+        border-radius: 999px;
+        padding: $spacing-xs $spacing-sm;
+    }
+
+    &__map-address {
+        color: #fff;
+        font-size: $font-size-lg;
+        font-weight: $font-weight-semibold;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    }
+}
+
 // CONTACTS RESPONSIVE
 // ============================================================================
 
@@ -48,5 +131,9 @@
 
     .contacts__map {
         height: 300px;
+    }
+
+    .hub-overview__grid {
+        grid-template-columns: 1fr;
     }
 }

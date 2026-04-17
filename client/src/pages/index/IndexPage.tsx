@@ -120,8 +120,11 @@ const IndexPage: React.FC = (): JSX.Element => {
     }
 
     const nearestEvent = hubEvents[0]
+    const hubDescription = hub.description?.trim() || "Описание хаба скоро появится"
 
     const statusText = hub.status === "open" ? "● Открыт" : hub.status === "busy" ? "● Высокая загрузка" : "● Закрыт"
+    const statusLabel = hub.status === "open" ? "Открыт" : hub.status === "busy" ? "Высокая загрузка" : "Закрыт"
+    const mapsQuery = encodeURIComponent(`${hub.city} ${hub.address}`)
 
     return (
         <main>
@@ -173,7 +176,7 @@ const IndexPage: React.FC = (): JSX.Element => {
                     </div>
                     <div className="hero__image-wrapper">
                         <div className="hero__image"></div>
-                        <div className="image-overlay">description</div>
+                        <div className="image-overlay">{hubDescription}</div>
                         <div className="wifi-badge">📶 Wi-Fi: free</div>
                     </div>
                 </div>
@@ -184,19 +187,38 @@ const IndexPage: React.FC = (): JSX.Element => {
                     <div className="section__header">
                         <div>
                             <h2 className="section__title">О хабе</h2>
-                            <p className="section__subtitle">{hub.desription}</p>
+                            <p className="section__subtitle">{hubDescription}</p>
                         </div>
                         <Link to="/hubs" className="btn btn--outline btn--sm">Все хабы</Link>
                     </div>
-                    <div className="contacts__wrapper">
-                        <div className="contacts__info">
-                            <div className="contacts__item">📍 {hub.address}</div>
-                            {/*<div className="contacts__item">📞 {hub.contacts.phone}</div>
-                            <div className="contacts__item">✉️ {hub.contacts.email}</div>
-                            <div className="contacts__item">✈️ {hub.contacts.telegram}</div>*/}
+                    <div className="contacts__wrapper hub-overview">
+                        <div className="contacts__info hub-overview__info">
+                            <div className="hub-overview__grid">
+                                <article className="hub-overview__card">
+                                    <p className="hub-overview__label">Локация</p>
+                                    <p className="hub-overview__value">📍 {hub.city}, {hub.address}</p>
+                                </article>
+                                <article className="hub-overview__card">
+                                    <p className="hub-overview__label">Режим работы</p>
+                                    <p className="hub-overview__value">🕒 {hub.schedule}</p>
+                                </article>
+                                <article className="hub-overview__card">
+                                    <p className="hub-overview__label">Статус</p>
+                                    <p className="hub-overview__value">{statusLabel}</p>
+                                </article>
+                                <article className="hub-overview__card">
+                                    <p className="hub-overview__label">Сейчас в хабе</p>
+                                    <p className="hub-overview__value">👥 {hub.occupancy} чел.</p>
+                                </article>
+                            </div>
+                            <p className="hub-overview__note">Лучше приходить вне пиковых часов: в утренние и дневные интервалы загрузка ниже.</p>
                         </div>
-                        <div className="contacts__map">
-                            <div className="map-placeholder"></div>
+                        <div className="contacts__map hub-overview__map">
+                            <div className="map-placeholder hub-overview__map-placeholder">
+                                <div className="hub-overview__map-pin">📍 {hub.city}</div>
+                                <p className="hub-overview__map-address">{hub.address}</p>
+                                <a className="btn btn--primary btn--sm" href={`https://yandex.ru/maps/?text=${mapsQuery}`} target="_blank" rel="noreferrer">Открыть на карте</a>
+                            </div>
                         </div>
                     </div>
                 </div>

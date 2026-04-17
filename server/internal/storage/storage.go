@@ -49,6 +49,22 @@ func (storage *Storage) Prepare() {
 	}
 
 	_, err = storage.Db.Exec(
+		models.USERS_ROLE_LENGTH_MIGRATION,
+	)
+
+	if err != nil {
+		panic(fmt.Sprintf("Couldn't migrate users role length! Error: %s", err.Error()))
+	}
+
+	_, err = storage.Db.Exec(
+		models.USERS_ROLE_NORMALIZATION_MIGRATION,
+	)
+
+	if err != nil {
+		panic(fmt.Sprintf("Couldn't normalize users roles! Error: %s", err.Error()))
+	}
+
+	_, err = storage.Db.Exec(
 		models.BOOKINGS_TABLE,
 	)
 

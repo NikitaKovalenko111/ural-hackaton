@@ -48,7 +48,7 @@ export interface IHub {
     address: string
     status: string
     city: string
-    desription: string
+    description: string
     schedule: string
     occupancy: number
 }

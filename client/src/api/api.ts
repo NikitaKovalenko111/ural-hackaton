@@ -9,12 +9,13 @@ const api = axios.create({
 })
 
 const authApiClient = axios.create({
-        baseURL: resolvedApiBaseUrl,
+    baseURL: resolvedApiBaseUrl,
     withCredentials: true,
 })
 
 type RequestMagicLinkResponse = {
     message: string
+    magic_link?: string
 }
 
 type VerifyMagicLinkResponse = {
@@ -99,9 +100,22 @@ type HubApiResponse = {
     address: string
     status: string
     city: string
-    description: string
+    description?: string | null
+    desription?: string | null
+    hub_description?: string | null
     schedule: string
     occupancy: number
+}
+
+const getHubDescription = (hub: HubApiResponse): string => {
+    const rawDescription = hub.description ?? hub.desription ?? hub.hub_description ?? ""
+    const normalizedDescription = typeof rawDescription === "string" ? rawDescription.trim() : ""
+
+    if (normalizedDescription) {
+        return normalizedDescription
+    }
+
+    return `Пространство ${hub.hub_name} в городе ${hub.city}.`
 }
 
 const normalizeHub = (hub: HubApiResponse): IHub => ({
@@ -110,7 +124,7 @@ const normalizeHub = (hub: HubApiResponse): IHub => ({
     address: hub.address,
     status: hub.status,
     city: hub.city,
-    desription: hub.description,
+    description: getHubDescription(hub),
     schedule: hub.schedule,
     occupancy: hub.occupancy,
 })
@@ -253,17 +267,20 @@ export const hubsApi = {
 export const requestsApi = {
     getRequests: async () => {
         const response = await api.get<RequestApiResponse[]>("/requests")
-        return response.data.map(normalizeRequest)
+        const data = Array.isArray(response.data) ? response.data : []
+        return data.map(normalizeRequest)
     },
 
     getRequestsByUserId: async (userId: number) => {
         const response = await api.get<RequestApiResponse[]>(`/requests/user/${userId}`)
-        return response.data.map(normalizeRequest)
+        const data = Array.isArray(response.data) ? response.data : []
+        return data.map(normalizeRequest)
     },
 
     getRequestsByMentorId: async (mentorId: number) => {
         const response = await api.get<RequestApiResponse[]>(`/requests/mentor/${mentorId}`)
-        return response.data.map(normalizeRequest)
+        const data = Array.isArray(response.data) ? response.data : []
+        return data.map(normalizeRequest)
     },
 
     saveRequest: async (request: any) => {
@@ -275,7 +292,8 @@ export const requestsApi = {
 export const bookingsApi = {
     getBookingsByUserId: async (userId: number) => {
         const response = await api.get<BookingApiResponse[]>(`/bookings/user/${userId}`)
-        return response.data.map(normalizeBooking)
+        const data = Array.isArray(response.data) ? response.data : []
+        return data.map(normalizeBooking)
     },
 
     saveBooking: async (booking: any) => {
@@ -308,6 +326,17 @@ export const mentorsApi = {
 
 export const authApi = {
     requestMagicLink: async (email: string): Promise<RequestMagicLinkResponse> => {
+        const useDevMagicLink = import.meta.env.DEV && import.meta.env.VITE_USE_DEV_MAGIC_LINK === "true"
+
+        if (useDevMagicLink) {
+            try {
+                const devResponse = await authApiClient.post("/auth/request/dev", { email })
+                return devResponse.data
+            } catch {
+                // Fallback to regular flow if dev endpoint is unavailable.
+            }
+        }
+
         const response = await authApiClient.post("/auth/request", { email })
         return response.data
     },

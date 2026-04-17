@@ -3,8 +3,8 @@ import { useEffect, useMemo, useState } from "react"
 import type React from "react"
 import type { ChangeEvent, FormEvent, JSX } from "react"
 import { useSelector } from "react-redux"
-import { Link } from "react-router-dom"
 import { eventsApi } from "../../api/api"
+import RegistrationModal from "../../components/registrationModal/RegistrationModal"
 import { selectUser } from "../../redux/features/users/userSlice"
 import type { IEvent } from "../../types"
 
@@ -51,6 +51,8 @@ const EventsPage: React.FC = (): JSX.Element => {
     const [events, setEvents] = useState<IEvent[]>([])
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [errorMessage, setErrorMessage] = useState<string>("")
+    const [isRegistrationOpen, setIsRegistrationOpen] = useState<boolean>(false)
+    const [selectedEventTitle, setSelectedEventTitle] = useState<string>("Выбранное событие")
 
     const [eventForm, setEventForm] = useState<EventFormState>(initialEventForm)
     const [eventSubmitMessage, setEventSubmitMessage] = useState<string>("")
@@ -90,6 +92,11 @@ const EventsPage: React.FC = (): JSX.Element => {
 
     const handleReset = (): void => {
         setQuery("")
+    }
+
+    const handleOpenRegistration = (eventTitle: string): void => {
+        setSelectedEventTitle(eventTitle)
+        setIsRegistrationOpen(true)
     }
 
     const handleCreateEvent = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
@@ -159,7 +166,9 @@ const EventsPage: React.FC = (): JSX.Element => {
                                 <p className="event-card__role">Хаб ID: {eventItem.hubId}</p>
                                 <p className="event-card__role">Ментор ID: {eventItem.mentorId ?? "не указан"}</p>
                                 <div className="mentor-card__actions">
-                                    <Link to="/profile" className="btn btn--primary btn--sm">Регистрация</Link>
+                                    <button type="button" className="btn btn--primary btn--sm" onClick={() => handleOpenRegistration(eventItem.name)}>
+                                        Регистрация
+                                    </button>
                                 </div>
                             </article>
                         ))}
@@ -256,6 +265,13 @@ const EventsPage: React.FC = (): JSX.Element => {
                     </div>
                 </section>
             ) : null}
+
+            <RegistrationModal
+                isOpen={isRegistrationOpen}
+                onClose={() => setIsRegistrationOpen(false)}
+                eventTitle={selectedEventTitle}
+                registrationType="event"
+            />
         </main>
     )
 }

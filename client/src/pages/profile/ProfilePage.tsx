@@ -119,7 +119,8 @@ const ProfilePage: React.FC = (): JSX.Element => {
                         return []
                     }
 
-                    throw error
+                    setRecordsError("Не удалось загрузить заявки к менторам")
+                    return []
                 })
 
                 const bookings = await bookingsApi.getBookingsByUserId(user.id).catch((error: unknown) => {
@@ -127,7 +128,8 @@ const ProfilePage: React.FC = (): JSX.Element => {
                         return []
                     }
 
-                    throw error
+                    setRecordsError((previous) => previous || "Не удалось загрузить регистрации на события")
+                    return []
                 })
 
                 setStudentRequests(requests)

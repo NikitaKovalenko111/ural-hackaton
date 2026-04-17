@@ -76,7 +76,7 @@ const HubsPage: React.FC = (): JSX.Element => {
                                 </div>
 
                                 <h3 className="hub-card__title">{hub.name}</h3>
-                                <p className="hub-card__description">{hub.desription}</p>
+                                <p className="hub-card__description">{hub.description}</p>
                                 <p className="hub-card__meta">📍 {hub.address}</p>
                                 <p className="hub-card__meta">🕒 Сегодня: {hub.schedule}</p>
 

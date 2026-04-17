@@ -37,6 +37,17 @@ const (
 	);
 		`
 
+	USERS_ROLE_LENGTH_MIGRATION = `
+	ALTER TABLE users
+	ALTER COLUMN user_role TYPE VARCHAR(20);
+	`
+
+	USERS_ROLE_NORMALIZATION_MIGRATION = `
+	UPDATE users
+	SET user_role = 'student'
+	WHERE user_role = 'user';
+	`
+
 	REQUESTS_TABLE = `
 	CREATE TABLE IF NOT EXISTS requests (
 		request_id SERIAL PRIMARY KEY,

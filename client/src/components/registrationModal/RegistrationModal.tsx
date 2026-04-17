@@ -2,8 +2,10 @@ import { isAxiosError } from "axios"
 import { useEffect, useState } from "react"
 import type React from "react"
 import type { ChangeEvent, FormEvent, JSX } from "react"
+import { useSelector } from "react-redux"
 import { bookingsApi, requestsApi, usersApi } from "../../api/api"
 import universityDomains from "../../data/domains.json"
+import { selectUser } from "../../redux/features/users/userSlice"
 
 type RegistrationModalProps = {
     isOpen: boolean
@@ -48,6 +50,7 @@ const buildAutoPhoneFromEmail = (email: string): string => {
 }
 
 const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, onClose, eventTitle, registrationType = "event", mentorId }): JSX.Element | null => {
+    const currentUser = useSelector(selectUser)
     const [form, setForm] = useState<FormState>(initialForm)
     const [isStudent, setIsStudent] = useState<boolean>(false)
     const [studentError, setStudentError] = useState<string>("")
@@ -81,6 +84,23 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, onClose, 
             setIsSubmitting(false)
         }
     }, [isOpen])
+
+    useEffect(() => {
+        if (!isOpen || !currentUser) {
+            return
+        }
+
+        setForm((previous) => ({
+            ...previous,
+            fullName: currentUser.fullname ?? "",
+            email: currentUser.email ?? "",
+            telegram: currentUser.telegram ?? "",
+        }))
+
+        if (currentUser.role?.toLowerCase() === "student") {
+            setIsStudent(true)
+        }
+    }, [currentUser, isOpen])
 
     useEffect(() => {
         if (!isStudent) {
@@ -129,6 +149,10 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, onClose, 
     }
 
     const ensureUserIdForRegistration = async (): Promise<number> => {
+        if (currentUser?.id) {
+            return currentUser.id
+        }
+
         const trimmedEmail = form.email.trim().toLowerCase()
         const trimmedFullName = form.fullName.trim()
         const trimmedTelegram = form.telegram.trim()
