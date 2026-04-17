@@ -22,10 +22,15 @@ func (c *AuthController) RegisterRoutes(router fiber.Router) {
 
 	// Запрос магической ссылки (ввод email)
 	auth.Post("/request", c.RequestMagicLink)
+	auth.Post("/request/dev", c.RequestMagicLinkDev)
 
 	// Верификация ссылки (переход по токену)
 	// GET, так как пользователь переходит по ссылке из письма
 	auth.Get("/verify", c.VerifyMagicLink)
+
+	// Восстановление сессии по cookie
+	auth.Get("/me", c.GetSessionUser)
+	auth.Post("/logout", c.Logout)
 }
 
 func serviceNotReady(entity string) error {
@@ -56,6 +61,29 @@ func (c *AuthController) RequestMagicLink(ctx *fiber.Ctx) error {
 	})
 }
 
+// RequestMagicLinkDev: POST /auth/request/dev
+// Только для local env (проверяется в сервисе). Возвращает ссылку входа в ответе.
+func (c *AuthController) RequestMagicLinkDev(ctx *fiber.Ctx) error {
+	if c.service == nil {
+		return serviceNotReady("auth")
+	}
+
+	var payload auth_dto.RequestMagicLinkDto
+	if err := ctx.BodyParser(&payload); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "invalid request payload")
+	}
+
+	link, err := c.service.RequestMagicLinkDev(payload.Email)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	return ctx.JSON(fiber.Map{
+		"message":    "success",
+		"magic_link": link,
+	})
+}
+
 // VerifyMagicLink: GET /auth/verify?token=xxx
 func (c *AuthController) VerifyMagicLink(ctx *fiber.Ctx) error {
 	if c.service == nil {
@@ -79,14 +107,15 @@ func (c *AuthController) VerifyMagicLink(ctx *fiber.Ctx) error {
 	}
 
 	// Устанавливаем куки с сессией (или возвращаем JWT в теле)
-	// HttpOnly: true — защита от XSS, Secure: true — только HTTPS
+	// Для localhost: Secure=false, иначе браузер не сохранит cookie на HTTP.
+	// SameSite=lax подходит для same-site запросов между localhost:517x и localhost:3000.
 	ctx.Cookie(&fiber.Cookie{
 		Name:     "session_token",
 		Value:    result.SessionToken,
 		Path:     "/",
-		MaxAge:   24 * 60 * 60, // 24 часа
+		MaxAge:   24 * 60 * 60,
 		HTTPOnly: true,
-		Secure:   ctx.Protocol() == "https",
+		Secure:   false,
 		SameSite: "lax",
 	})
 
@@ -99,6 +128,56 @@ func (c *AuthController) VerifyMagicLink(ctx *fiber.Ctx) error {
 			"fullname": result.Fullname,
 			"email":    result.Email,
 			"role":     result.Role,
+			"telegram": result.Telegram,
+			"phone":    result.Phone,
 		},
+	})
+}
+
+// GetSessionUser: GET /auth/me
+// Берет session_token из cookie и возвращает текущего пользователя
+func (c *AuthController) GetSessionUser(ctx *fiber.Ctx) error {
+	if c.service == nil {
+		return serviceNotReady("auth")
+	}
+
+	sessionToken := ctx.Cookies("session_token")
+	if sessionToken == "" {
+		return fiber.NewError(fiber.StatusUnauthorized, "unauthorized")
+	}
+
+	result, err := c.service.GetSessionUser(sessionToken)
+	if err != nil {
+		return fiber.NewError(fiber.StatusUnauthorized, err.Error())
+	}
+
+	return ctx.JSON(fiber.Map{
+		"message": "success",
+		"user": fiber.Map{
+			"id":       result.UserID,
+			"fullname": result.Fullname,
+			"email":    result.Email,
+			"role":     result.Role,
+			"telegram": result.Telegram,
+			"phone":    result.Phone,
+		},
+	})
+}
+
+// Logout: POST /auth/logout
+// Очищает session_token cookie на клиенте.
+func (c *AuthController) Logout(ctx *fiber.Ctx) error {
+	ctx.Cookie(&fiber.Cookie{
+		Name:     "session_token",
+		Value:    "",
+		Path:     "/",
+		MaxAge:   -1,
+		HTTPOnly: true,
+		Secure:   false,
+		SameSite: "lax",
+	})
+
+	return ctx.JSON(fiber.Map{
+		"message": "logged out",
 	})
 }

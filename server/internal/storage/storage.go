@@ -29,16 +29,8 @@ func Connect(cfg *config.Config) *sql.DB {
 }
 
 func (storage *Storage) Prepare() {
-
-	if _, err := storage.Db.Exec("DROP SCHEMA public CASCADE"); err != nil {
-		panic(fmt.Sprintf("Couldn't clear tables(1)! Error: %s", err.Error()))
-	}
-	if _, err := storage.Db.Exec("CREATE SCHEMA public"); err != nil {
-		panic(fmt.Sprintf("Couldn't clear tables(2)! Error: %s", err.Error()))
-	}
-	if _, err := storage.Db.Exec("GRANT ALL ON SCHEMA public TO public"); err != nil {
-		panic(fmt.Sprintf("Couldn't clear tables(3)! Error: %s", err.Error()))
-	}
+	// Do not drop schema on startup.
+	// Startup should be idempotent and preserve data in existing tables.
 
 	_, err := storage.Db.Exec(
 		models.HUB_TABLE,
@@ -89,11 +81,35 @@ func (storage *Storage) Prepare() {
 	}
 
 	_, err = storage.Db.Exec(
+		models.MENTORS_HUB_LINK_MIGRATION,
+	)
+
+	if err != nil {
+		panic(fmt.Sprintf("Couldn't migrate mentors hub relation! Error: %s", err.Error()))
+	}
+
+	_, err = storage.Db.Exec(
+		models.REQUESTS_MENTOR_LINK_MIGRATION,
+	)
+
+	if err != nil {
+		panic(fmt.Sprintf("Couldn't migrate requests mentor relation! Error: %s", err.Error()))
+	}
+
+	_, err = storage.Db.Exec(
 		models.EVENT_TABLE,
 	)
 
 	if err != nil {
 		panic(fmt.Sprintf("Couldn't create events table! Error: %s", err.Error()))
+	}
+
+	_, err = storage.Db.Exec(
+		models.EVENT_MENTOR_LINK_MIGRATION,
+	)
+
+	if err != nil {
+		panic(fmt.Sprintf("Couldn't migrate events mentor relation! Error: %s", err.Error()))
 	}
 
 	_, err = storage.Db.Exec(

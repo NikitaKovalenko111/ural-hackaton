@@ -47,6 +47,24 @@ const (
 	);
 		`
 
+	REQUESTS_MENTOR_LINK_MIGRATION = `
+	ALTER TABLE requests
+	ADD COLUMN IF NOT EXISTS mentor_id INT;
+
+	DO $$
+	BEGIN
+		IF NOT EXISTS (
+			SELECT 1
+			FROM pg_constraint
+			WHERE conname = 'requests_mentor_id_fkey'
+		) THEN
+			ALTER TABLE requests
+			ADD CONSTRAINT requests_mentor_id_fkey
+			FOREIGN KEY (mentor_id) REFERENCES mentors(mentor_id);
+		END IF;
+	END $$;
+	`
+
 	ADMINS_TABLE = `
 	CREATE TABLE IF NOT EXISTS admins (
 		admin_id SERIAL PRIMARY KEY,
@@ -60,10 +78,30 @@ const (
 	CREATE TABLE IF NOT EXISTS mentors (
 		mentor_id SERIAL PRIMARY KEY,
 		user_id INT,
+		hub_id INT,
 
-		FOREIGN KEY (user_id) REFERENCES users(user_id)
+		FOREIGN KEY (user_id) REFERENCES users(user_id),
+		FOREIGN KEY (hub_id) REFERENCES hubs(hub_id)
 	);
 		`
+
+	MENTORS_HUB_LINK_MIGRATION = `
+	ALTER TABLE mentors
+	ADD COLUMN IF NOT EXISTS hub_id INT;
+
+	DO $$
+	BEGIN
+		IF NOT EXISTS (
+			SELECT 1
+			FROM pg_constraint
+			WHERE conname = 'mentors_hub_id_fkey'
+		) THEN
+			ALTER TABLE mentors
+			ADD CONSTRAINT mentors_hub_id_fkey
+			FOREIGN KEY (hub_id) REFERENCES hubs(hub_id);
+		END IF;
+	END $$;
+	`
 
 	EVENT_TABLE = `
 	CREATE TABLE IF NOT EXISTS events (
@@ -73,10 +111,30 @@ const (
 		start_time TIMESTAMPTZ NOT NULL,
 		end_time TIMESTAMPTZ NOT NULL,
 		hub_id INT,
+		mentor_id INT,
 
 
-		FOREIGN KEY (hub_id) REFERENCES hubs(hub_id)
+		FOREIGN KEY (hub_id) REFERENCES hubs(hub_id),
+		FOREIGN KEY (mentor_id) REFERENCES mentors(mentor_id)
 	);
+	`
+
+	EVENT_MENTOR_LINK_MIGRATION = `
+	ALTER TABLE events
+	ADD COLUMN IF NOT EXISTS mentor_id INT;
+
+	DO $$
+	BEGIN
+		IF NOT EXISTS (
+			SELECT 1
+			FROM pg_constraint
+			WHERE conname = 'events_mentor_id_fkey'
+		) THEN
+			ALTER TABLE events
+			ADD CONSTRAINT events_mentor_id_fkey
+			FOREIGN KEY (mentor_id) REFERENCES mentors(mentor_id);
+		END IF;
+	END $$;
 	`
 
 	AUTH_TOKENS_TABLE = `
@@ -91,7 +149,7 @@ const (
 	);
 
 	-- Индексы для быстрого поиска
-	CREATE INDEX idx_auth_tokens_email ON auth_tokens(email);
-	CREATE INDEX idx_auth_tokens_token_hash ON auth_tokens(token_hash);
+	CREATE INDEX IF NOT EXISTS idx_auth_tokens_email ON auth_tokens(email);
+	CREATE INDEX IF NOT EXISTS idx_auth_tokens_token_hash ON auth_tokens(token_hash);
 	`
 )

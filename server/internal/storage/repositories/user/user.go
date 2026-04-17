@@ -19,21 +19,24 @@ func Init(db *storage.Storage) *UserRepo {
 	}
 }
 
-func (r *UserRepo) CreateUser(user *user_dto.CreateUserDto) error {
-	_, err := r.db.Db.Exec(
-		`INSERT INTO users (fullname, user_role, email, telegram, phone) VALUES ($1, $2, $3, $4, $5)`,
+func (r *UserRepo) CreateUser(user *user_dto.CreateUserDto) (uint64, error) {
+	var userID uint64
+	err := r.db.Db.QueryRow(
+		`INSERT INTO users (fullname, user_role, email, telegram, phone)
+		 VALUES ($1, $2, $3, $4, $5)
+		 RETURNING user_id`,
 		user.Fullname,
 		user.Role,
 		user.Email,
 		user.Telegram,
 		user.Phone,
-	)
+	).Scan(&userID)
 
 	if err != nil {
-		return fmt.Errorf("couldn't create user: %w", err)
+		return 0, fmt.Errorf("couldn't create user: %w", err)
 	}
 
-	return nil
+	return userID, nil
 }
 
 func (r *UserRepo) GetUserById(id uint64) (*models.User, error) {

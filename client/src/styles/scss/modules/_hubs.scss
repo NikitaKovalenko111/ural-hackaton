@@ -101,10 +101,14 @@
 }
 
 .section--hubs-overview {
-    padding-top: 0;
+    padding: $spacing-3xl 0 $spacing-4xl;
 }
 
 @include responsive-md {
+    .section--hubs-overview {
+        padding: $spacing-2xl 0;
+    }
+
     .hubs-grid {
         grid-template-columns: 1fr;
     }

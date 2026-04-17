@@ -22,6 +22,7 @@ func Init(service *hub_service.HubService) *HubController {
 func (c *HubController) RegisterRoutes(router fiber.Router) {
 	hubs := router.Group("/hubs")
 	hubs.Get("/", c.GetAllHubs)
+	hubs.Get("/search", c.SearchHubs)
 	hubs.Get("/:id", c.GetHubById)
 	hubs.Post("/", c.CreateHub)
 	hubs.Put("/", c.UpdateHub)
@@ -48,6 +49,24 @@ func (c *HubController) GetAllHubs(ctx *fiber.Ctx) error {
 	}
 
 	hubs, err := c.service.GetAllHubs()
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(hubs)
+}
+
+func (c *HubController) SearchHubs(ctx *fiber.Ctx) error {
+	if c.service == nil {
+		return serviceNotReady("hub")
+	}
+
+	query := ctx.Query("q")
+	if query == "" {
+		return fiber.NewError(fiber.StatusBadRequest, "q query is required")
+	}
+
+	hubs, err := c.service.SearchHubs(query)
 	if err != nil {
 		return err
 	}

@@ -21,6 +21,7 @@ func Init(service *request_service.RequestService) *RequestController {
 func (c *RequestController) RegisterRoutes(router fiber.Router) {
 	router.Post("/requests", c.CreateRequest)
 	router.Get("/requests/user/:user_id", c.GetRequestsByUserId)
+	router.Get("/requests/mentor/:mentor_id", c.GetRequestsByMentorId)
 
 	router.Get("/requests/:id", c.GetRequestById)
 }
@@ -49,7 +50,7 @@ func (c *RequestController) CreateRequest(ctx *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "invalid request payload")
 	}
 
-	if err := c.service.CreateRequest(payload.Message, payload.UserId); err != nil {
+	if err := c.service.CreateRequest(payload.Message, payload.UserId, payload.MentorId); err != nil {
 		return err
 	}
 
@@ -88,6 +89,27 @@ func (c *RequestController) GetRequestsByUserId(ctx *fiber.Ctx) error {
 	}
 
 	requests, err := c.service.GetRequestsByUserId(userId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return fiber.NewError(fiber.StatusNotFound, "requests not found")
+		}
+		return err
+	}
+
+	return ctx.JSON(requests)
+}
+
+func (c *RequestController) GetRequestsByMentorId(ctx *fiber.Ctx) error {
+	if c.service == nil {
+		return serviceNotReady("request")
+	}
+
+	mentorId, err := parseUintParam(ctx, "mentor_id")
+	if err != nil {
+		return err
+	}
+
+	requests, err := c.service.GetRequestsByMentorId(mentorId)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return fiber.NewError(fiber.StatusNotFound, "requests not found")

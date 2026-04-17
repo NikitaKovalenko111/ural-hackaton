@@ -20,7 +20,7 @@ func Init(userRepo *event_storage.EventRepo, cfg *config.Config) *EventService {
 	}
 }
 
-func (s *EventService) CreateEvent(name string, description string, start time.Time, end time.Time, hub_id uint64) error {
+func (s *EventService) CreateEvent(name string, description string, start time.Time, end time.Time, hub_id uint64, mentorId *uint64) error {
 
 	eventDto := &event_dto.CreateEventDto{
 		Name:        name,
@@ -28,6 +28,7 @@ func (s *EventService) CreateEvent(name string, description string, start time.T
 		StartTime:   start,
 		EndTime:     end,
 		HubId:       hub_id,
+		MentorId:    mentorId,
 	}
 
 	err := s.repo.CreateEvent(eventDto)
@@ -74,7 +75,16 @@ func (s *EventService) GetAllEvents() ([]models.Event, error) {
 	return model, nil
 }
 
-func (s *EventService) UpdateEvent(eventName string, description string, start time.Time, end time.Time, hubId uint64, id uint64) (*models.Event, error) {
+func (s *EventService) SearchEventsByName(query string) ([]models.Event, error) {
+	model, err := s.repo.SearchEventsByName(query)
+	if err != nil {
+		return nil, err
+	}
+
+	return model, nil
+}
+
+func (s *EventService) UpdateEvent(eventName string, description string, start time.Time, end time.Time, hubId uint64, mentorId *uint64, id uint64) (*models.Event, error) {
 	eventDto := &models.Event{
 		Id:          id,
 		EventName:   eventName,
@@ -82,6 +92,7 @@ func (s *EventService) UpdateEvent(eventName string, description string, start t
 		StartTime:   start,
 		EndTime:     end,
 		HubId:       hubId,
+		MentorId:    mentorId,
 	}
 
 	model, err := s.repo.UpdateEvent(eventDto)

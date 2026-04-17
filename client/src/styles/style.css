@@ -147,6 +147,8 @@ input[type=search],
 input[type=url],
 input[type=number],
 input[type=date],
+input[type=time],
+input[type=datetime-local],
 textarea {
   font-family: inherit;
   font-size: inherit;
@@ -162,12 +164,14 @@ input[type=search]:focus,
 input[type=url]:focus,
 input[type=number]:focus,
 input[type=date]:focus,
+input[type=time]:focus,
+input[type=datetime-local]:focus,
 textarea:focus {
   outline: none;
   border-color: #FFD600;
   box-shadow: 0 0 0 3px rgba(255, 214, 0, 0.1);
 }
-input[type=text]::-moz-placeholder, input[type=email]::-moz-placeholder, input[type=password]::-moz-placeholder, input[type=search]::-moz-placeholder, input[type=url]::-moz-placeholder, input[type=number]::-moz-placeholder, input[type=date]::-moz-placeholder, textarea::-moz-placeholder {
+input[type=text]::-moz-placeholder, input[type=email]::-moz-placeholder, input[type=password]::-moz-placeholder, input[type=search]::-moz-placeholder, input[type=url]::-moz-placeholder, input[type=number]::-moz-placeholder, input[type=date]::-moz-placeholder, input[type=time]::-moz-placeholder, input[type=datetime-local]::-moz-placeholder, textarea::-moz-placeholder {
   color: #86868B;
 }
 input[type=text]::placeholder,
@@ -177,6 +181,8 @@ input[type=search]::placeholder,
 input[type=url]::placeholder,
 input[type=number]::placeholder,
 input[type=date]::placeholder,
+input[type=time]::placeholder,
+input[type=datetime-local]::placeholder,
 textarea::placeholder {
   color: #86868B;
 }
@@ -1522,6 +1528,29 @@ select:focus {
   line-height: 1.5;
   margin-bottom: 15px;
 }
+.profile__admin-panel {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #E5E5E5;
+}
+.profile__admin-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 15px;
+}
+.profile__admin-tabs .btn {
+  white-space: nowrap;
+}
+.profile__admin-form {
+  margin-bottom: 20px;
+}
+.profile__admin-form .btn {
+  margin-top: 12px;
+}
+.profile__actions {
+  margin-top: 20px;
+}
 
 .info-grid {
   display: grid;
@@ -1571,6 +1600,9 @@ select:focus {
     flex-direction: column;
   }
   .actions-row .btn {
+    width: 100%;
+  }
+  .profile__admin-tabs .btn {
     width: 100%;
   }
 }
@@ -1763,10 +1795,13 @@ select:focus {
 }
 
 .section--hubs-overview {
-  padding-top: 0;
+  padding: 40px 0 60px;
 }
 
 @media (max-width: 768px) {
+  .section--hubs-overview {
+    padding: 30px 0;
+  }
   .hubs-grid {
     grid-template-columns: 1fr;
   }
@@ -1785,6 +1820,8 @@ select:focus {
 .booking__grid--single {
   grid-template-columns: 1fr;
   max-width: 760px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .booking-card {
@@ -1812,6 +1849,10 @@ select:focus {
   color: #33691E;
   font-size: 14px;
   font-weight: 500;
+}
+.booking-card--event-create {
+  max-width: 980px;
+  margin: 0 auto;
 }
 
 .booking-form {
@@ -1902,6 +1943,9 @@ select:focus {
 .booking-form .btn[disabled] {
   opacity: 0.55;
   cursor: not-allowed;
+}
+.booking-form--event-create {
+  gap: 12px;
 }
 
 @media (max-width: 768px) {

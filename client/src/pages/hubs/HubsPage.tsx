@@ -1,14 +1,43 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import type React from "react"
 import type { ChangeEvent, JSX } from "react"
-import { useSelector } from "react-redux"
+import { isAxiosError } from "axios"
 import { Link } from "react-router-dom"
-import type { RootState } from "../../redux/store"
-import { selectHubs } from "../../redux/features/hubs/hubSlice"
+import { hubsApi } from "../../api/api"
+import type { IHub } from "../../types"
 
 const HubsPage: React.FC = (): JSX.Element => {
     const [query, setQuery] = useState<string>("")
-    const hubs = useSelector((state: RootState) => selectHubs(state))
+    const [hubs, setHubs] = useState<IHub[]>([])
+    const [isLoading, setIsLoading] = useState<boolean>(true)
+    const [errorMessage, setErrorMessage] = useState<string>("")
+
+    useEffect(() => {
+        const loadHubs = async (): Promise<void> => {
+            setIsLoading(true)
+            setErrorMessage("")
+
+            try {
+                const normalizedQuery = query.trim()
+                const data = normalizedQuery
+                    ? await hubsApi.searchHubs(normalizedQuery)
+                    : await hubsApi.getHubs()
+
+                setHubs(data)
+            } catch (error) {
+                if (isAxiosError(error) && typeof error.response?.data?.message === "string") {
+                    setErrorMessage(error.response.data.message)
+                } else {
+                    setErrorMessage("Не удалось загрузить хабы")
+                }
+                setHubs([])
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        void loadHubs()
+    }, [query])
 
     const handleQueryChange = (event: ChangeEvent<HTMLInputElement>): void => {
         setQuery(event.target.value)
@@ -58,8 +87,18 @@ const HubsPage: React.FC = (): JSX.Element => {
                         ))}
                     </div>
 
-                    {hubs.length === 0 ? (
-                        <p className="hubs-search__empty">Хабы не найдены</p>
+                    {isLoading ? (
+                        <p className="hubs-search__empty">Загрузка хабов...</p>
+                    ) : null}
+
+                    {errorMessage ? (
+                        <p className="hubs-search__empty">{errorMessage}</p>
+                    ) : null}
+
+                    {!isLoading && !errorMessage && hubs.length === 0 ? (
+                        <p className="hubs-search__empty">
+                            {query.trim() ? "По вашему запросу хабы не найдены" : "Хабы не найдены"}
+                        </p>
                     ) : null}
                 </div>
             </section>

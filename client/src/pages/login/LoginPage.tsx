@@ -130,7 +130,7 @@ const LoginPage: React.FC = (): JSX.Element => {
                         ) : null}
 
                         <div className="auth-card__links">
-                            <Link to="/profile" className="link--text">Нет аккаунта? Заполнить профиль</Link>
+                            <Link to="/register" className="link--text">Нет аккаунта? Зарегистрироваться</Link>
                             <Link to="/hubs" className="link--small">Вернуться к списку хабов</Link>
                         </div>
                     </div>

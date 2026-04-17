@@ -19,11 +19,34 @@ func Init(service *mentor_service.MentorService) *MentorController {
 }
 
 func (c *MentorController) RegisterRoutes(router fiber.Router) {
-	router.Post("/mentors", c.CreateMentor)
-	router.Get("/mentors/search", c.GetMentorsByFullname)
+	mentors := router.Group("/mentors")
+	mentors.Get("/", c.GetAllMentors)
+	mentors.Post("/", c.CreateMentor)
+	mentors.Get("/search", c.GetMentorsByFullname)
+	mentors.Get("/user/:user_id", c.GetMentorByUserId)
+	mentors.Get("/:id", c.GetMentorById)
 
-	router.Get("/mentors/:id", c.GetMentorById)
+}
 
+func (c *MentorController) GetMentorByUserId(ctx *fiber.Ctx) error {
+	if c.service == nil {
+		return serviceNotReady("mentor")
+	}
+
+	userId, err := parseUintParam(ctx, "user_id")
+	if err != nil {
+		return err
+	}
+
+	mentor, err := c.service.GetMentorByUserId(userId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return fiber.NewError(fiber.StatusNotFound, "mentor not found")
+		}
+		return err
+	}
+
+	return ctx.JSON(mentor)
 }
 
 func serviceNotReady(entity string) error {
@@ -50,12 +73,25 @@ func (c *MentorController) CreateMentor(ctx *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "invalid mentor payload")
 	}
 
-	mentor, err := c.service.CreateMentor(payload.UserId)
+	mentor, err := c.service.CreateMentor(payload.UserId, payload.HubId)
 	if err != nil {
 		return err
 	}
 
 	return ctx.Status(fiber.StatusCreated).JSON(mentor)
+}
+
+func (c *MentorController) GetAllMentors(ctx *fiber.Ctx) error {
+	if c.service == nil {
+		return serviceNotReady("mentor")
+	}
+
+	mentors, err := c.service.GetAllMentors()
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(mentors)
 }
 
 func (c *MentorController) GetMentorById(ctx *fiber.Ctx) error {

@@ -22,6 +22,7 @@ func (c *UserController) RegisterRoutes(router fiber.Router) {
 	users := router.Group("/users")
 	users.Post("/", c.CreateUser)
 	users.Get("/search", c.GetUserByFullname)
+	users.Get("/email", c.GetUserByEmail)
 
 	users.Get("/:id", c.GetUserById)
 }
@@ -50,7 +51,7 @@ func (c *UserController) CreateUser(ctx *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "invalid user payload")
 	}
 
-	if err := c.service.CreateUser(payload.Fullname, payload.Role, payload.Email, payload.Telegram, payload.Phone); err != nil {
+	if err := c.service.CreateUser(payload.Fullname, payload.Role, payload.Email, payload.Telegram, payload.Phone, payload.HubId); err != nil {
 		return err
 	}
 
@@ -125,12 +126,12 @@ func (c *UserController) GetUserByEmail(ctx *fiber.Ctx) error {
 		return serviceNotReady("user")
 	}
 
-	fullname := ctx.Query("fullname")
-	if fullname == "" {
-		return fiber.NewError(fiber.StatusBadRequest, "fullname query is required")
+	email := ctx.Query("email")
+	if email == "" {
+		return fiber.NewError(fiber.StatusBadRequest, "email query is required")
 	}
 
-	user, err := c.service.GetUserByFullname(fullname)
+	user, err := c.service.GetUserByEmail(email)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return fiber.NewError(fiber.StatusNotFound, "user not found")

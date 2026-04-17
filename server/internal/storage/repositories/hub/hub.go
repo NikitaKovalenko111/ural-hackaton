@@ -44,6 +44,39 @@ func (r *HubRepo) GetAllHubs() ([]models.Hub, error) {
 	return hubs, nil
 }
 
+func (r *HubRepo) SearchHubs(query string) ([]models.Hub, error) {
+	rows, err := r.db.Db.Query(
+		`SELECT hub_id, hub_name, address, status, city, description, schedule, occupancy
+		 FROM hubs
+		 WHERE hub_name ILIKE $1
+		    OR city ILIKE $1
+		    OR address ILIKE $1
+		    OR description ILIKE $1
+		 ORDER BY hub_name`,
+		"%"+query+"%",
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	hubs := make([]models.Hub, 0)
+	for rows.Next() {
+		var hub models.Hub
+		if err = rows.Scan(&hub.Id, &hub.HubName, &hub.Address, &hub.Status, &hub.City, &hub.Description, &hub.Schedule, &hub.Occupancy); err != nil {
+			return nil, err
+		}
+
+		hubs = append(hubs, hub)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return hubs, nil
+}
+
 func (r *HubRepo) GetHubById(id uint64) (*models.Hub, error) {
 	var hub models.Hub
 

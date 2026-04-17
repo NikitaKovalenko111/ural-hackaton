@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"ural-hackaton/internal/config"
 	"ural-hackaton/internal/logger/sl"
 	"ural-hackaton/internal/middleware"
@@ -17,7 +18,7 @@ import (
 // @in header
 // @name Authorization
 // @description Type "Bearer" followed by a space and JWT token.
-func Run(cfg *config.Config) {
+func Run(cfg *config.Config) error {
 	logger := sl.InitLogger(cfg.Env)
 
 	logger.Info("Logger is enabled")
@@ -50,7 +51,10 @@ func Run(cfg *config.Config) {
 	})
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://localhost:3000",
+		AllowOrigins:     "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174,http://localhost:3000,http://127.0.0.1:3000",
+		AllowMethods:     "GET,POST,PUT,PATCH,DELETE,OPTIONS",
+		AllowHeaders:     "Origin,Content-Type,Accept,Authorization",
+		ExposeHeaders:    "Content-Length,Content-Type",
 		AllowCredentials: true,
 	}))
 
@@ -60,5 +64,10 @@ func Run(cfg *config.Config) {
 
 	http.Start()
 
-	app.Listen(cfg.HTTPServer.Address)
+	logger.Info("Starting server on " + cfg.HTTPServer.Address)
+	if err := app.Listen(cfg.HTTPServer.Address); err != nil {
+		return fmt.Errorf("fiber listen failed on %s: %w", cfg.HTTPServer.Address, err)
+	}
+
+	return nil
 }

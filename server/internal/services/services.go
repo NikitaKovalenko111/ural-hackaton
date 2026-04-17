@@ -43,13 +43,13 @@ func Init(repos *repositories.Repositories, cfg *config.Config) *Services {
 	}
 
 	return &Services{
-		UserService:    user_service.Init(repos.UserRepository, cfg),
+		UserService:    user_service.Init(repos.UserRepository, repos.AdminRepository, repos.MentorRepository, cfg),
 		HubService:     hub_service.Init(repos.HubRepository, cfg),
 		AdminService:   admin_service.Init(repos.AdminRepository, cfg),
 		MentorService:  mentor_service.Init(repos.MentorRepository, cfg),
 		RequestService: requests_service.Init(repos.RequestRepository, cfg),
 		EventService:   event_service.Init(repos.EventRepository, cfg),
-		AuthService:    auth_service.Init(repos.UserRepository, repos.AuthTokenRepository, emailSender, []byte(cfg.SecretKey)),
+		AuthService:    auth_service.Init(repos.UserRepository, repos.AuthTokenRepository, emailSender, []byte(cfg.Auth.SecretKey), cfg.Env == "local"),
 		BookingService: booking_service.Init(repos.BookingRepository, cfg),
 	}
 }

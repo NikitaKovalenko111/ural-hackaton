@@ -51,6 +51,15 @@ func (s *HubService) GetAllHubs() ([]models.Hub, error) {
 	return model, nil
 }
 
+func (s *HubService) SearchHubs(query string) ([]models.Hub, error) {
+	model, err := s.repo.SearchHubs(query)
+	if err != nil {
+		return nil, err
+	}
+
+	return model, nil
+}
+
 func (s *HubService) GetHubById(id uint64) (*models.Hub, error) {
 	model, err := s.repo.GetHubById(id)
 

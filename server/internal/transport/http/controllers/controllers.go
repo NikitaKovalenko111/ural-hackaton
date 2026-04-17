@@ -30,7 +30,7 @@ func Init(svc *services.Services) *Controllers {
 		MentorController:  mentor_controller.Init(svc.MentorService),
 		HubController:     hub_controller.Init(svc.HubService),
 		RequestController: request_controller.Init(svc.RequestService),
-		EventController:   event_controller.Init(svc.EventService),
+		EventController:   event_controller.Init(svc.EventService, svc.AuthService, svc.MentorService),
 		AuthController:    auth_controller.Init(svc.AuthService),
 		BookingController: booking_controller.Init(svc.BookingService),
 	}

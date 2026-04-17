@@ -35,8 +35,8 @@ const AuthVerifyPage: React.FC = (): JSX.Element => {
                     fullname: response.user.fullname,
                     email: response.user.email,
                     role: response.user.role,
-                    telegram: "",
-                    phone: "",
+                    telegram: response.user.telegram ?? "",
+                    phone: response.user.phone ?? "",
                 }))
 
                 setStatus("success")

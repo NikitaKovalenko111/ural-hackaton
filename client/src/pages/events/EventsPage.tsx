@@ -1,115 +1,128 @@
-import { useEffect, useState } from "react"
+import { isAxiosError } from "axios"
+import { useEffect, useMemo, useState } from "react"
 import type React from "react"
-import type { ChangeEvent, FormEvent, JSX, MouseEvent } from "react"
+import type { ChangeEvent, FormEvent, JSX } from "react"
+import { useSelector } from "react-redux"
 import { Link } from "react-router-dom"
-import RegistrationModal from "../../components/registrationModal/RegistrationModal"
-import universityDomains from "../../data/domains.json"
+import { eventsApi } from "../../api/api"
+import { selectUser } from "../../redux/features/users/userSlice"
+import type { IEvent } from "../../types"
+
+type EventFormState = {
+    name: string
+    description: string
+    startTime: string
+    endTime: string
+    hubId: string
+    mentorId: string
+}
+
+const initialEventForm: EventFormState = {
+    name: "",
+    description: "",
+    startTime: "",
+    endTime: "",
+    hubId: "",
+    mentorId: "",
+}
+
+const formatEventDateTime = (value: string): string => {
+    const date = new Date(value)
+    if (Number.isNaN(date.getTime())) {
+        return value
+    }
+
+    return new Intl.DateTimeFormat("ru-RU", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+    }).format(date)
+}
 
 const EventsPage: React.FC = (): JSX.Element => {
-    const [hubSuccess, setHubSuccess] = useState<string>("")
-    const [isRegistrationOpen, setIsRegistrationOpen] = useState<boolean>(false)
-    const [selectedEventTitle, setSelectedEventTitle] = useState<string>("Выбранное событие")
+    const user = useSelector(selectUser)
+    const isMentor = user?.role?.toLowerCase() === "mentor"
+    const isAdmin = user?.role?.toLowerCase() === "admin"
+    const canCreateEvent = isMentor || isAdmin
 
-    const [hubForm, setHubForm] = useState({
-        fullName: "",
-        email: "",
-        university: "",
-        date: "",
-        period: "",
-        zone: "",
-        seats: "1",
-    })
-    const [hubIsStudent, setHubIsStudent] = useState<boolean>(false)
-    const [hubStudentError, setHubStudentError] = useState<string>("Регистрация на мероприятия доступна только студентам.")
+    const [query, setQuery] = useState<string>("")
+    const [events, setEvents] = useState<IEvent[]>([])
+    const [isLoading, setIsLoading] = useState<boolean>(true)
+    const [errorMessage, setErrorMessage] = useState<string>("")
 
-    const getDomainFromEmail = (email: string): string => {
-        const atIndex = email.lastIndexOf("@")
-        if (atIndex === -1) {
-            return ""
+    const [eventForm, setEventForm] = useState<EventFormState>(initialEventForm)
+    const [eventSubmitMessage, setEventSubmitMessage] = useState<string>("")
+    const [eventSubmitError, setEventSubmitError] = useState<string>("")
+    const [isSubmittingEvent, setIsSubmittingEvent] = useState<boolean>(false)
+
+    const normalizedQuery = useMemo(() => query.trim(), [query])
+
+    const loadEvents = async (searchValue: string): Promise<void> => {
+        setIsLoading(true)
+        setErrorMessage("")
+
+        try {
+            const data = searchValue
+                ? await eventsApi.searchEvents(searchValue)
+                : await eventsApi.getEvents()
+            setEvents(data)
+        } catch (error) {
+            setEvents([])
+            if (isAxiosError(error) && typeof error.response?.data?.message === "string") {
+                setErrorMessage(error.response.data.message)
+            } else {
+                setErrorMessage("Не удалось загрузить события")
+            }
+        } finally {
+            setIsLoading(false)
         }
-
-        return email.slice(atIndex + 1).trim().toLowerCase()
     }
 
     useEffect(() => {
-        if (!hubIsStudent) {
-            setHubStudentError("Регистрация на мероприятия доступна только студентам.")
-            if (hubForm.university) {
-                setHubForm((previous) => ({ ...previous, university: "" }))
-            }
-            return
-        }
+        void loadEvents(normalizedQuery)
+    }, [normalizedQuery])
 
-        const domain = getDomainFromEmail(hubForm.email)
-        if (!domain) {
-            setHubStudentError("Укажите студенческую почту университета.")
-            if (hubForm.university) {
-                setHubForm((previous) => ({ ...previous, university: "" }))
-            }
-            return
-        }
-
-        const foundUniversity = (universityDomains as Record<string, string>)[domain]
-        if (!foundUniversity) {
-            setHubStudentError("Домен не найден в списке вузов РФ. Используйте студенческую почту университета.")
-            if (hubForm.university) {
-                setHubForm((previous) => ({ ...previous, university: "" }))
-            }
-            return
-        }
-
-        setHubStudentError("")
-        if (hubForm.university !== foundUniversity) {
-            setHubForm((previous) => ({ ...previous, university: foundUniversity }))
-        }
-    }, [hubForm.email, hubForm.university, hubIsStudent])
-
-    const handleHubChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
-        const { name, value } = event.target
-        if (name === "university") {
-            return
-        }
-
-        setHubForm((previous) => ({ ...previous, [name]: value }))
+    const handleQueryChange = (event: ChangeEvent<HTMLInputElement>): void => {
+        setQuery(event.target.value)
     }
 
-    const handleHubStudentToggle = (event: ChangeEvent<HTMLInputElement>): void => {
-        setHubIsStudent(event.target.checked)
+    const handleReset = (): void => {
+        setQuery("")
     }
 
-    const handleHubSubmit = (event: FormEvent<HTMLFormElement>): void => {
+    const handleCreateEvent = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
         event.preventDefault()
+        setEventSubmitMessage("")
+        setEventSubmitError("")
+        setIsSubmittingEvent(true)
 
-        if (!hubIsStudent) {
-            setHubStudentError("Регистрация на мероприятия доступна только студентам.")
-            return
+        try {
+            const startIso = new Date(eventForm.startTime).toISOString()
+            const endIso = new Date(eventForm.endTime).toISOString()
+
+            await eventsApi.saveEvent({
+                name: eventForm.name.trim(),
+                description: eventForm.description.trim(),
+                start_time: startIso,
+                end_time: endIso,
+                hub_id: Number(eventForm.hubId),
+                mentor_id: eventForm.mentorId ? Number(eventForm.mentorId) : undefined,
+            })
+
+            setEventForm(initialEventForm)
+            setEventSubmitMessage("Событие создано")
+            await loadEvents(normalizedQuery)
+        } catch (error) {
+            if (isAxiosError(error) && typeof error.response?.data?.message === "string") {
+                setEventSubmitError(error.response.data.message)
+            } else {
+                setEventSubmitError("Не удалось создать событие")
+            }
+        } finally {
+            setIsSubmittingEvent(false)
         }
-
-        if (!hubForm.university) {
-            setHubStudentError("Не удалось определить университет по домену email.")
-            return
-        }
-
-        setHubSuccess(`Бронь в зоне «${hubForm.zone}» на ${hubForm.date} (${hubForm.period}) для ${hubForm.university} принята.`)
-        setHubForm({
-            fullName: "",
-            email: "",
-            university: "",
-            date: "",
-            period: "",
-            zone: "",
-            seats: "1",
-        })
-        setHubIsStudent(false)
-        setHubStudentError("")
-    }
-
-    const handleRegistrationClick = (event: MouseEvent<HTMLAnchorElement>): void => {
-        event.preventDefault()
-        const eventCard = event.currentTarget.closest(".event-card")
-        const titleElement = eventCard?.querySelector(".event-card__title")
-        setSelectedEventTitle(titleElement?.textContent ?? "Выбранное событие")
-        setIsRegistrationOpen(true)
     }
 
     return (
@@ -119,265 +132,132 @@ const EventsPage: React.FC = (): JSX.Element => {
                     <div className="section__header">
                         <div>
                             <h2 className="section__title">События</h2>
-                            <p className="section__subtitle">Мастер-классы, встречи, лайв-кодинги и практикумы. Выберите удобные даты.</p>
+                            <p className="section__subtitle">События загружаются с сервера. Используйте поиск по названию.</p>
                         </div>
-                        <button className="btn btn--sm btn--outline">Сбросить</button>
+                        <button type="button" className="btn btn--sm btn--outline" onClick={handleReset}>Сбросить</button>
                     </div>
+
+                    <div className="hubs-search">
+                        <label className="hubs-search__label" htmlFor="events-search-input">Поиск событий по названию</label>
+                        <input
+                            id="events-search-input"
+                            type="search"
+                            value={query}
+                            onChange={handleQueryChange}
+                            placeholder="Например: FastAPI"
+                        />
+                    </div>
+
                     <div className="events-grid">
-                        <div className="event-card">
-                            <div className="event-card__header">
-                                <span className="event-card__time">🕒 25.04.2026 19:00–21:00</span>
-                            </div>
-                            <h3 className="event-card__title">Практикум: Введение в FastAPI</h3>
-                            <p className="event-card__description">Быстрый старт с FastAPI: структура проекта, валидация схем и
-                                тестирование.</p>
-                            <p className="event-card__role">Наставник: Алексей Смирнов</p>
-                            <div className="mentor-card__actions">
-                                <Link to="/profile" onClick={handleRegistrationClick} className="btn btn--primary btn--sm">Регистрация</Link>
-                            </div>
-                        </div>
-                        <div className="event-card">
-                            <div className="event-card__header">
-                                <span className="event-card__time">10.05.2026 18:30–20:00</span>
-                            </div>
-                            <h3 className="event-card__title">Круглый стол: Архитектура микросервисов</h3>
-                            <p className="event-card__description">Плюсы и минусы микросервисов, границы сервисов, коммуникации и
-                                наблюдаемость.</p>
-                            <p className="event-card__role">Наставники: Ольга Романова, Никита Лебедев</p>
-                            <div className="mentor-card__actions">
-                                <Link to="/profile" onClick={handleRegistrationClick} className="btn btn--primary btn--sm">Регистрация</Link>
-                            </div>
-                        </div>
-                        <div className="event-card">
-                            <div className="event-card__header">
-                                <span className="event-card__time">🕒 03.06.2026 20:00–21:30</span>
-                            </div>
-                            <h3 className="event-card__title">Лайв-кодинг: React + TypeScript</h3>
-                            <p className="event-card__description">Пишем приложение с управлением состоянием, формами и оптимизациями
-                                рендеринга.</p>
-                            <p className="event-card__role">Наставник: Светлана Яковлева</p>
-                            <div className="mentor-card__actions">
-                                <Link to="/profile" onClick={handleRegistrationClick} className="btn btn--primary btn--sm">Регистрация</Link>
-                            </div>
-                        </div>
-                        <div className="event-card">
-                            <div className="event-card__header">
-                                <span className="event-card__time">🕒 22.05.2026 19:00–21:00</span>
-                            </div>
-                            <h3 className="event-card__title">Workshop: Profiling Go-сервисов</h3>
-                            <p className="event-card__description">CPU/Memory профили, pprof, flamegraph и поиск узких мест в проде.</p>
-                            <p className="event-card__role">Наставник: Екатерина Зайцева</p>
-                            <div className="mentor-card__actions">
-                                <Link to="/profile" onClick={handleRegistrationClick} className="btn btn--primary btn--sm">Регистрация</Link>
-                            </div>
-                        </div>
-                        <div className="event-card">
-                            <div className="event-card__header">
-                                <span className="event-card__time">🕒 30.04.2026 18:00–19:00</span>
-                            </div>
-                            <h3 className="event-card__title">Q&A с Solution Architect</h3>
-                            <p className="event-card__description">Ответы на вопросы об архитектуре, интеграциях и безопасности приложений.
-                            </p>
-                            <p className="event-card__role">Наставник: Татьяна Соколова</p>
-                            <div className="mentor-card__actions">
-                                <Link to="/profile" onClick={handleRegistrationClick} className="btn btn--primary btn--sm">Регистрация</Link>
-                            </div>
-                        </div>
-                        <div className="event-card">
-                            <div className="event-card__header">
-                                <span className="event-card__time">🕒 12.07.2026 11:00–15:00</span>
-                            </div>
-                            <h3 className="event-card__title">Интенсив: Docker для разработчиков</h3>
-                            <p className="event-card__description">Сборка образов, оптимизация Dockerfile, многоконтейнерные окружения и
-                                best practices.</p>
-                            <p className="event-card__role">Наставник: Игорь Кузнецов</p>
-                            <div className="mentor-card__actions">
-                                <Link to="/profile" onClick={handleRegistrationClick} className="btn btn--primary btn--sm">Регистрация</Link>
-                            </div>
-                        </div>
-                        <div className="event-card">
-                            <div className="event-card__header">
-                                <span className="event-card__time">05.05.2026 17:00–18:30</span>
-                            </div>
-                            <h3 className="event-card__title">AMA: Карьера в Data Science</h3>
-                            <p className="event-card__description">Рынок, навыки, собесы и портфолио. Живые ответы на вопросы участников.
-                            </p>
-                            <p className="event-card__role">Наставник: Мария Орлова</p>
-                            <div className="mentor-card__actions">
-                                <Link to="/profile" onClick={handleRegistrationClick} className="btn btn--primary btn--sm">Регистрация</Link>
-                            </div>
-                        </div>
-                        <div className="event-card">
-                            <div className="event-card__header">
-                                <span className="event-card__time">🕒 18.06.2026 19:00–21:00</span>
-                            </div>
-                            <h3 className="event-card__title">Практикум: CI/CD с GitHub Actions</h3>
-                            <p className="event-card__description">Сборка, тесты, релизы и деплой. Секреты, матрицы, кеширование и
-                                артефакты.</p>
-                            <p className="event-card__role">Наставник: Денис Пак</p>
-                            <div className="mentor-card__actions">
-                                <Link to="/profile" onClick={handleRegistrationClick} className="btn btn--primary btn--sm">Регистрация</Link>
-                            </div>
-                        </div>
-                        <div className="event-card">
-                            <div className="event-card__header">
-                                <span className="event-card__time">🕒 15.04.2026 18:00–19:00</span>
-                            </div>
-                            <h3 className="event-card__title">Разбор резюме и портфолио</h3>
-                            <p className="event-card__description">Как структурировать опыт, выбрать проекты и выделиться в откликах.</p>
-                            <p className="event-card__role">Ведущий: Команда «Студент и Т»</p>
-                            <div className="mentor-card__actions">
-                                <Link to="/profile" onClick={handleRegistrationClick} className="btn btn--primary btn--sm">Регистрация</Link>
-                            </div>
-                        </div>
+                        {events.map((eventItem) => (
+                            <article className="event-card" key={eventItem.id}>
+                                <div className="event-card__header">
+                                    <span className="event-card__time">🕒 {formatEventDateTime(eventItem.start)} - {formatEventDateTime(eventItem.end)}</span>
+                                </div>
+                                <h3 className="event-card__title">{eventItem.name}</h3>
+                                <p className="event-card__description">{eventItem.description}</p>
+                                <p className="event-card__role">Хаб ID: {eventItem.hubId}</p>
+                                <p className="event-card__role">Ментор ID: {eventItem.mentorId ?? "не указан"}</p>
+                                <div className="mentor-card__actions">
+                                    <Link to="/profile" className="btn btn--primary btn--sm">Регистрация</Link>
+                                </div>
+                            </article>
+                        ))}
                     </div>
 
-                    <section className="booking" aria-label="Форма бронирования места в хабе">
-                        <div className="section__header booking__header">
-                            <div>
-                                <h2 className="section__title">Бронирование</h2>
-                                <p className="section__subtitle">Забронируйте место для работы в хабе. Бронирование доступно только студентам с университетской почтой.</p>
-                            </div>
-                        </div>
-
-                        <div className="booking__grid booking__grid--single">
-                            <article className="booking-card">
-                                <h3 className="booking-card__title">Бронирование места в хабе</h3>
-                                <p className="booking-card__subtitle">Выберите дату, зону и количество мест для команды.</p>
-
-                                <form className="booking-form" onSubmit={handleHubSubmit}>
-                                    <label className="booking-form__label" htmlFor="hub-fullName">Контактное лицо</label>
-                                    <input
-                                        id="hub-fullName"
-                                        name="fullName"
-                                        type="text"
-                                        value={hubForm.fullName}
-                                        onChange={handleHubChange}
-                                        placeholder="Петрова Анна"
-                                        required
-                                    />
-
-                                    <label className="booking-form__label" htmlFor="hub-email">Email</label>
-                                    <input
-                                        id="hub-email"
-                                        name="email"
-                                        type="email"
-                                        value={hubForm.email}
-                                        onChange={handleHubChange}
-                                        placeholder="student@university.ru"
-                                        required
-                                    />
-
-                                    <label className="booking-form__student-toggle" htmlFor="hub-isStudent">
-                                        <input
-                                            id="hub-isStudent"
-                                            name="isStudent"
-                                            type="checkbox"
-                                            className="booking-form__student-input"
-                                            checked={hubIsStudent}
-                                            onChange={handleHubStudentToggle}
-                                        />
-                                        <span className="booking-form__student-box" aria-hidden="true" />
-                                        <span className="booking-form__student-text">Я студент</span>
-                                    </label>
-
-                                    <label className="booking-form__label" htmlFor="hub-university">Университет</label>
-                                    <input
-                                        id="hub-university"
-                                        name="university"
-                                        type="text"
-                                        value={hubForm.university}
-                                        onChange={handleHubChange}
-                                        placeholder="Определится автоматически по домену email"
-                                        readOnly
-                                        required
-                                    />
-
-                                    {hubStudentError ? <p className="booking-form__error">{hubStudentError}</p> : null}
-
-                                    <div className="booking-form__row">
-                                        <div className="booking-form__field">
-                                            <label className="booking-form__label" htmlFor="hub-date">Дата</label>
-                                            <input
-                                                id="hub-date"
-                                                name="date"
-                                                type="date"
-                                                value={hubForm.date}
-                                                onChange={handleHubChange}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="booking-form__field">
-                                            <label className="booking-form__label" htmlFor="hub-period">Время</label>
-                                            <select
-                                                id="hub-period"
-                                                name="period"
-                                                value={hubForm.period}
-                                                onChange={handleHubChange}
-                                                required
-                                            >
-                                                <option value="">Выберите слот</option>
-                                                <option value="09:00–13:00">09:00–13:00</option>
-                                                <option value="13:00–17:00">13:00–17:00</option>
-                                                <option value="17:00–21:00">17:00–21:00</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div className="booking-form__row">
-                                        <div className="booking-form__field">
-                                            <label className="booking-form__label" htmlFor="hub-zone">Зона</label>
-                                            <select
-                                                id="hub-zone"
-                                                name="zone"
-                                                value={hubForm.zone}
-                                                onChange={handleHubChange}
-                                                required
-                                            >
-                                                <option value="">Выберите зону</option>
-                                                <option value="Опен-спейс">Опен-спейс</option>
-                                                <option value="Переговорная">Переговорная</option>
-                                                <option value="Тихая зона">Тихая зона</option>
-                                            </select>
-                                        </div>
-                                        <div className="booking-form__field">
-                                            <label className="booking-form__label" htmlFor="hub-seats">Мест</label>
-                                            <select
-                                                id="hub-seats"
-                                                name="seats"
-                                                value={hubForm.seats}
-                                                onChange={handleHubChange}
-                                                required
-                                            >
-                                                <option value="1">1</option>
-                                                <option value="2">2</option>
-                                                <option value="3">3</option>
-                                                <option value="4">4</option>
-                                                <option value="5">5</option>
-                                                <option value="6">6</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <button type="submit" className="btn btn--primary" disabled={!hubIsStudent || !!hubStudentError}>Забронировать место</button>
-                                </form>
-
-                                {hubSuccess ? <p className="booking-card__success">{hubSuccess}</p> : null}
-                            </article>
-                        </div>
-                    </section>
+                    {isLoading ? <p className="hubs-search__empty">Загрузка событий...</p> : null}
+                    {errorMessage ? <p className="hubs-search__empty">{errorMessage}</p> : null}
+                    {!isLoading && !errorMessage && events.length === 0 ? (
+                        <p className="hubs-search__empty">{normalizedQuery ? "События по запросу не найдены" : "События не найдены"}</p>
+                    ) : null}
                 </div>
             </section>
 
-            <RegistrationModal
-                isOpen={isRegistrationOpen}
-                onClose={() => setIsRegistrationOpen(false)}
-                eventTitle={selectedEventTitle}
-            />
+            {canCreateEvent ? (
+                <section className="section section--contacts">
+                    <div className="container">
+                        <div className="section__header">
+                            <div>
+                                <h2 className="section__title">Создание события</h2>
+                                <p className="section__subtitle">Форма доступна ментору и администратору.</p>
+                            </div>
+                        </div>
+
+                        <article className="booking-card booking-card--event-create">
+                            <form className="booking-form booking-form--event-create" onSubmit={handleCreateEvent}>
+                                <label className="booking-form__label" htmlFor="event-name">Название</label>
+                                <input
+                                    id="event-name"
+                                    type="text"
+                                    value={eventForm.name}
+                                    onChange={(e) => setEventForm((prev) => ({ ...prev, name: e.target.value }))}
+                                    required
+                                />
+
+                                <label className="booking-form__label" htmlFor="event-description">Описание</label>
+                                <input
+                                    id="event-description"
+                                    type="text"
+                                    value={eventForm.description}
+                                    onChange={(e) => setEventForm((prev) => ({ ...prev, description: e.target.value }))}
+                                    required
+                                />
+
+                                <label className="booking-form__label" htmlFor="event-start">Начало</label>
+                                <input
+                                    id="event-start"
+                                    type="datetime-local"
+                                    value={eventForm.startTime}
+                                    onChange={(e) => setEventForm((prev) => ({ ...prev, startTime: e.target.value }))}
+                                    required
+                                />
+
+                                <label className="booking-form__label" htmlFor="event-end">Окончание</label>
+                                <input
+                                    id="event-end"
+                                    type="datetime-local"
+                                    value={eventForm.endTime}
+                                    onChange={(e) => setEventForm((prev) => ({ ...prev, endTime: e.target.value }))}
+                                    required
+                                />
+
+                                <label className="booking-form__label" htmlFor="event-hub-id">ID хаба</label>
+                                <input
+                                    id="event-hub-id"
+                                    type="number"
+                                    min={1}
+                                    value={eventForm.hubId}
+                                    onChange={(e) => setEventForm((prev) => ({ ...prev, hubId: e.target.value }))}
+                                    required
+                                />
+
+                                {isAdmin ? (
+                                    <>
+                                        <label className="booking-form__label" htmlFor="event-mentor-id">ID ментора</label>
+                                        <input
+                                            id="event-mentor-id"
+                                            type="number"
+                                            min={1}
+                                            value={eventForm.mentorId}
+                                            onChange={(e) => setEventForm((prev) => ({ ...prev, mentorId: e.target.value }))}
+                                            required
+                                        />
+                                    </>
+                                ) : null}
+
+                                <button type="submit" className="btn btn--primary btn--sm" disabled={isSubmittingEvent}>
+                                    {isSubmittingEvent ? "Сохраняем..." : "Создать событие"}
+                                </button>
+                            </form>
+
+                            {eventSubmitMessage ? <p className="booking-card__success">{eventSubmitMessage}</p> : null}
+                            {eventSubmitError ? <p className="booking-form__error">{eventSubmitError}</p> : null}
+                        </article>
+                    </div>
+                </section>
+            ) : null}
         </main>
     )
 }
 
 export default EventsPage
-
-

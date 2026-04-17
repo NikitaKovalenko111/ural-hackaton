@@ -1,19 +1,99 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import type { JSX } from "react"
 import type React from "react"
-import { useSelector } from "react-redux"
+import { isAxiosError } from "axios"
 import { Link, Navigate } from "react-router-dom"
 import { useParams } from "react-router-dom"
 import RegistrationModal from "../../components/registrationModal/RegistrationModal"
-import type { RootState } from "../../redux/store"
-import { selectHubs } from "../../redux/features/hubs/hubSlice"
+import { eventsApi, hubsApi, mentorsApi } from "../../api/api"
+import type { IEvent, IHub, IMentor } from "../../types"
 
 const IndexPage: React.FC = (): JSX.Element => {
     const { hubId } = useParams<{ hubId: string }>()
-    const hubs = useSelector((state: RootState) => selectHubs(state))
+    const parsedHubId = Number(hubId)
     const [isRegistrationOpen, setIsRegistrationOpen] = useState<boolean>(false)
     const [selectedEventTitle, setSelectedEventTitle] = useState<string>("Ближайшее событие хаба")
-    const hub = hubs.find((hubItem) => hubItem.id === parseInt(hubId as string)) ?? hubs[0]
+    const [hub, setHub] = useState<IHub | null>(null)
+    const [hubEvents, setHubEvents] = useState<IEvent[]>([])
+    const [hubMentors, setHubMentors] = useState<IMentor[]>([])
+    const [isLoading, setIsLoading] = useState<boolean>(true)
+    const [isNotFound, setIsNotFound] = useState<boolean>(false)
+    const [errorMessage, setErrorMessage] = useState<string>("")
+
+    useEffect(() => {
+        if (!Number.isFinite(parsedHubId) || parsedHubId <= 0) {
+            setIsLoading(false)
+            setIsNotFound(true)
+            return
+        }
+
+        const loadHub = async (): Promise<void> => {
+            setIsLoading(true)
+            setIsNotFound(false)
+            setErrorMessage("")
+
+            try {
+                const [hubData, eventsData, mentorsData] = await Promise.all([
+                    hubsApi.getHubById(parsedHubId),
+                    eventsApi.getEvents(),
+                    mentorsApi.getMentors(),
+                ])
+
+                const hubEventsData = eventsData
+                    .filter((event) => event.hubId === parsedHubId)
+                    .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
+
+                const hubMentorsData = mentorsData.filter((mentor) => mentor.hubId === parsedHubId)
+
+                setHub(hubData)
+                setHubEvents(hubEventsData)
+                setHubMentors(hubMentorsData)
+            } catch (error) {
+                setHub(null)
+                setHubEvents([])
+                setHubMentors([])
+
+                if (isAxiosError(error) && error.response?.status === 404) {
+                    setIsNotFound(true)
+                } else {
+                    setErrorMessage("Не удалось загрузить страницу хаба")
+                }
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        void loadHub()
+    }, [parsedHubId])
+
+    if (isLoading) {
+        return (
+            <main>
+                <section className="section section--hubs-overview">
+                    <div className="container">
+                        <p className="hubs-search__empty">Загрузка страницы хаба...</p>
+                    </div>
+                </section>
+            </main>
+        )
+    }
+
+    if (isNotFound) {
+        return <Navigate to="/hubs" replace />
+    }
+
+    if (errorMessage) {
+        return (
+            <main>
+                <section className="section section--hubs-overview">
+                    <div className="container">
+                        <p className="hubs-search__empty">{errorMessage}</p>
+                        <Link to="/hubs" className="btn btn--outline btn--sm">Вернуться к списку хабов</Link>
+                    </div>
+                </section>
+            </main>
+        )
+    }
 
     if (!hub) {
         return <Navigate to="/hubs" replace />
@@ -23,6 +103,23 @@ const IndexPage: React.FC = (): JSX.Element => {
         setSelectedEventTitle(eventTitle)
         setIsRegistrationOpen(true)
     }
+
+    const formatEventDateTime = (value: string): string => {
+        const date = new Date(value)
+        if (Number.isNaN(date.getTime())) {
+            return value
+        }
+
+        return new Intl.DateTimeFormat("ru-RU", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+        }).format(date)
+    }
+
+    const nearestEvent = hubEvents[0]
 
     const statusText = hub.status === "open" ? "● Открыт" : hub.status === "busy" ? "● Высокая загрузка" : "● Закрыт"
 
@@ -51,14 +148,22 @@ const IndexPage: React.FC = (): JSX.Element => {
                                     <span>Ближайшее событие</span>
                                     <Link to="/events" className="link--small">Все события</Link>
                                 </div>
-                                {/*<div className="event-box__details">
-                                    <h3>{hub.nearestEvent.title}</h3>
-                                    <p>Начало: {hub.nearestEvent.time}</p>
-                                </div>*/}
+                                {nearestEvent ? (
+                                    <div className="event-box__details">
+                                        <h3>{nearestEvent.name}</h3>
+                                        <p>Начало: {formatEventDateTime(nearestEvent.start)}</p>
+                                    </div>
+                                ) : (
+                                    <div className="event-box__details">
+                                        <h3>Событий пока нет</h3>
+                                        <p>Следите за обновлениями расписания</p>
+                                    </div>
+                                )}
                                 <button
                                     type="button"
                                     className="btn btn--primary"
-                                    onClick={() => openRegistrationModal("Ближайшее событие хаба")}
+                                    onClick={() => openRegistrationModal(nearestEvent?.name ?? "Ближайшее событие хаба")}
+                                    disabled={!nearestEvent}
                                 >
                                     Записаться
                                 </button>
@@ -107,31 +212,23 @@ const IndexPage: React.FC = (): JSX.Element => {
                         <Link to="/events" className="btn btn--primary btn--sm">Все события</Link>
                     </div>
                     <div className="events-grid">
-                        <div className="event-card">
-                            <div className="event-card__header">
-                                <span className="event-card__time">🕒 18:00</span>
-                                <span className="event-card__date">сегодня</span>
-                            </div>
-                            <h3 className="event-card__title">Нетворкинг: Проекты сообщества</h3>
-                            <p className="event-card__description">Открытый круг знакомств и обмена идеями.</p>
-                        </div>
-                        <div className="event-card">
-                            <div className="event-card__header">
-                                <span className="event-card__time">🕒 19:00</span>
-                                <span className="event-card__date">сегодня</span>
-                            </div>
-                            <h3 className="event-card__title">Мастер-класс: Веб-дизайн</h3>
-                            <p className="event-card__description">Практика UI-решений и прототипирование.</p>
-                        </div>
-                        <div className="event-card">
-                            <div className="event-card__header">
-                                <span className="event-card__time">🕒 20:30</span>
-                                <span className="event-card__date">сегодня</span>
-                            </div>
-                            <h3 className="event-card__title">Кинопоказ + обсуждение</h3>
-                            <p className="event-card__description">Вдохновляющее кино и разговор после.</p>
-                        </div>
+                        {hubEvents.map((eventItem) => (
+                            <article className="event-card" key={eventItem.id}>
+                                <div className="event-card__header">
+                                    <span className="event-card__time">🕒 {formatEventDateTime(eventItem.start)}</span>
+                                </div>
+                                <h3 className="event-card__title">{eventItem.name}</h3>
+                                <p className="event-card__description">{eventItem.description}</p>
+                                <p className="event-card__role">Окончание: {formatEventDateTime(eventItem.end)}</p>
+                                <div className="mentor-card__actions">
+                                    <button type="button" className="btn btn--primary btn--sm" onClick={() => openRegistrationModal(eventItem.name)}>
+                                        Записаться
+                                    </button>
+                                </div>
+                            </article>
+                        ))}
                     </div>
+                    {hubEvents.length === 0 ? <p className="hubs-search__empty">В этом хабе пока нет событий.</p> : null}
                 </div>
             </section>
 
@@ -145,43 +242,21 @@ const IndexPage: React.FC = (): JSX.Element => {
                         <Link to="/mentors" className="btn btn--primary btn--sm">Стать ментором</Link>
                     </div>
                     <div className="mentors-grid">
-                        <div className="mentor-card">
-                            <div className="mentor-card__top">
-                                <span className="tag">👤 UI/UX</span>
-                                <span className="rating">рейтинг 4.9</span>
-                            </div>
-                            <h3 className="mentor-card__title">Александр Петров</h3>
-                            <p className="mentor-card__role">Продуктовый дизайнер • 8 лет опыта</p>
-                            <div className="mentor-card__actions">
-                                <Link to="/mentors" className="btn btn--primary btn--sm">Подробнее</Link>
-                                <Link to="/mentors" className="link--text">Портфолио</Link>
-                            </div>
-                        </div>
-                        <div className="mentor-card">
-                            <div className="mentor-card__top">
-                                <span className="tag">&lt;/&gt; Frontend</span>
-                                <span className="rating">рейтинг 4.8</span>
-                            </div>
-                            <h3 className="mentor-card__title">Мария Орлова</h3>
-                            <p className="mentor-card__role">Senior Frontend • React, TypeScript</p>
-                            <div className="mentor-card__actions">
-                                <Link to="/mentors" className="btn btn--primary btn--sm">Подробнее</Link>
-                                <Link to="/mentors" className="link--text">Расписание</Link>
-                            </div>
-                        </div>
-                        <div className="mentor-card">
-                            <div className="mentor-card__top">
-                                <span className="tag">📊 Data</span>
-                                <span className="rating">рейтинг 5.0</span>
-                            </div>
-                            <h3 className="mentor-card__title">Илья Громов</h3>
-                            <p className="mentor-card__role">ML/Analytics • Python, SQL, DS</p>
-                            <div className="mentor-card__actions">
-                                <Link to="/mentors" className="btn btn--primary btn--sm">Подробнее</Link>
-                                <Link to="/mentors" className="link--text">Консультация</Link>
-                            </div>
-                        </div>
+                        {hubMentors.map((mentor) => (
+                            <article className="mentor-card" key={mentor.mentorId ?? mentor.id}>
+                                <div className="mentor-card__top">
+                                    <span className="tag">👤 Ментор</span>
+                                    <span className="rating">ID: {mentor.mentorId ?? "-"}</span>
+                                </div>
+                                <h3 className="mentor-card__title">{mentor.fullname}</h3>
+                                <p className="mentor-card__role">{mentor.email}</p>
+                                <div className="mentor-card__actions">
+                                    <Link to="/mentors" className="btn btn--primary btn--sm">Подробнее</Link>
+                                </div>
+                            </article>
+                        ))}
                     </div>
+                    {hubMentors.length === 0 ? <p className="hubs-search__empty">В этом хабе пока нет менторов.</p> : null}
                 </div>
             </section>
 

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"ural-hackaton/internal/app"
 	"ural-hackaton/internal/config"
 )
@@ -8,5 +9,7 @@ import (
 func main() {
 	cfg := config.MustLoad()
 
-	app.Run(cfg)
+	if err := app.Run(cfg); err != nil {
+		log.Fatal(err)
+	}
 }

@@ -1,6 +1,8 @@
+import { isAxiosError } from "axios"
 import { useEffect, useState } from "react"
 import type React from "react"
 import type { ChangeEvent, FormEvent, JSX } from "react"
+import { bookingsApi, requestsApi, usersApi } from "../../api/api"
 import universityDomains from "../../data/domains.json"
 
 type RegistrationModalProps = {
@@ -8,6 +10,7 @@ type RegistrationModalProps = {
     onClose: () => void
     eventTitle?: string
     registrationType?: "event" | "mentor"
+    mentorId?: number
 }
 
 type FormState = {
@@ -35,11 +38,22 @@ const getDomainFromEmail = (email: string): string => {
     return email.slice(atIndex + 1).trim().toLowerCase()
 }
 
-const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, onClose, eventTitle, registrationType = "event" }): JSX.Element | null => {
+const buildAutoPhoneFromEmail = (email: string): string => {
+    let hash = 0
+    for (let index = 0; index < email.length; index += 1) {
+        hash = ((hash * 31) + email.charCodeAt(index)) >>> 0
+    }
+
+    return `u${hash.toString(16).padStart(8, "0")}`
+}
+
+const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, onClose, eventTitle, registrationType = "event", mentorId }): JSX.Element | null => {
     const [form, setForm] = useState<FormState>(initialForm)
     const [isStudent, setIsStudent] = useState<boolean>(false)
     const [studentError, setStudentError] = useState<string>("")
     const [successMessage, setSuccessMessage] = useState<string>("")
+    const [submitError, setSubmitError] = useState<string>("")
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const isMentorRegistration = registrationType === "mentor"
 
     useEffect(() => {
@@ -63,6 +77,8 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, onClose, 
             setIsStudent(false)
             setStudentError("")
             setSuccessMessage("")
+            setSubmitError("")
+            setIsSubmitting(false)
         }
     }, [isOpen])
 
@@ -112,8 +128,36 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, onClose, 
         setIsStudent(event.target.checked)
     }
 
-    const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
+    const ensureUserIdForRegistration = async (): Promise<number> => {
+        const trimmedEmail = form.email.trim().toLowerCase()
+        const trimmedFullName = form.fullName.trim()
+        const trimmedTelegram = form.telegram.trim()
+
+        try {
+            const existingUser = await usersApi.getUserByEmail(trimmedEmail)
+            return existingUser.id
+        } catch (error) {
+            if (!(isAxiosError(error) && error.response?.status === 404)) {
+                throw error
+            }
+        }
+
+        await usersApi.saveUser({
+            fullname: trimmedFullName,
+            user_role: "student",
+            email: trimmedEmail,
+            telegram: trimmedTelegram,
+            phone: buildAutoPhoneFromEmail(trimmedEmail),
+        })
+
+        const createdUser = await usersApi.getUserByEmail(trimmedEmail)
+        return createdUser.id
+    }
+
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
         event.preventDefault()
+        setSubmitError("")
+        setSuccessMessage("")
 
         if (!isStudent) {
             setStudentError("Регистрация на мероприятия доступна только студентам.")
@@ -125,11 +169,57 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, onClose, 
             return
         }
 
-        const subjectText = isMentorRegistration ? "к ментору" : "на мероприятие"
-        setSuccessMessage(`Заявка отправлена ${subjectText}${eventTitle ? ` «${eventTitle}»` : ""}. Мы свяжемся с вами по email ${form.email}.`)
-        setForm(initialForm)
-        setIsStudent(false)
-        setStudentError("")
+        if (!form.fullName.trim() || !form.email.trim() || !form.telegram.trim()) {
+            setSubmitError("Заполните обязательные поля.")
+            return
+        }
+
+        setIsSubmitting(true)
+
+        try {
+            const userId = await ensureUserIdForRegistration()
+
+            if (isMentorRegistration) {
+                if (!mentorId) {
+                    throw new Error("mentor_id is required")
+                }
+
+                const requestMessage = [
+                    `Запись к ментору${eventTitle ? `: ${eventTitle}` : ""}`,
+                    `ФИО: ${form.fullName.trim()}`,
+                    `Email: ${form.email.trim()}`,
+                    `Telegram: ${form.telegram.trim()}`,
+                    `Комментарий: ${form.comment.trim() || "без комментария"}`,
+                ].join("\n")
+
+                await requestsApi.saveRequest({
+                    request_message: requestMessage,
+                    user_id: userId,
+                    mentor_id: mentorId,
+                })
+            } else {
+                await bookingsApi.saveBooking({
+                    booking_date: new Date().toISOString(),
+                    booking_zone: eventTitle ? `Событие: ${eventTitle}` : "Бронь на мероприятие",
+                    booking_slots: 1,
+                    user_id: userId,
+                })
+            }
+
+            const subjectText = isMentorRegistration ? "к ментору" : "на мероприятие"
+            setSuccessMessage(`Заявка отправлена ${subjectText}${eventTitle ? ` «${eventTitle}»` : ""}. Мы свяжемся с вами по email ${form.email}.`)
+            setForm(initialForm)
+            setIsStudent(false)
+            setStudentError("")
+        } catch (error) {
+            if (isAxiosError(error) && typeof error.response?.data?.message === "string") {
+                setSubmitError(error.response.data.message)
+            } else {
+                setSubmitError("Не удалось оформить запись. Попробуйте еще раз.")
+            }
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     if (!isOpen) {
@@ -229,7 +319,11 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, onClose, 
                         onChange={handleChange}
                     />
 
-                    <button type="submit" className="btn btn--primary btn--block" disabled={!isStudent || !!studentError}>Отправить заявку</button>
+                    {submitError ? <p className="registration-modal__error">{submitError}</p> : null}
+
+                    <button type="submit" className="btn btn--primary btn--block" disabled={!isStudent || !!studentError || isSubmitting}>
+                        {isSubmitting ? "Отправляем..." : "Отправить заявку"}
+                    </button>
                 </form>
 
                 {successMessage ? <p className="registration-modal__success">{successMessage}</p> : null}

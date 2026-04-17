@@ -12,5 +12,7 @@ type VerifyMagicLinkResponse struct {
 	Fullname     string
 	Email        string
 	Role         string
+	Telegram     string
+	Phone        string
 	SessionToken string // или JWT
 }

@@ -18,9 +18,10 @@ func Init(hubRepo *mentor_storage.MentorRepo, cfg *config.Config) *MentorService
 	}
 }
 
-func (s *MentorService) CreateMentor(userId uint64) (*mentor_dto.MentorJoinUserDto, error) {
+func (s *MentorService) CreateMentor(userId uint64, hubId *uint64) (*mentor_dto.MentorJoinUserDto, error) {
 	mentorDto := mentor_dto.CreateMentorDto{
 		UserId: userId,
+		HubId:  hubId,
 	}
 
 	mentor, err := s.repo.CreateMentor(mentorDto)
@@ -47,4 +48,22 @@ func (s *MentorService) GetMentorByFullname(fullname string) (*mentor_dto.Mentor
 		return nil, err
 	}
 	return mentor, nil
+}
+
+func (s *MentorService) GetMentorByUserId(userId uint64) (*mentor_dto.MentorJoinUserDto, error) {
+	mentor, err := s.repo.GetMentorByUserId(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	return mentor, nil
+}
+
+func (s *MentorService) GetAllMentors() ([]mentor_dto.MentorJoinUserDto, error) {
+	mentors, err := s.repo.GetAllMentors()
+	if err != nil {
+		return nil, err
+	}
+
+	return mentors, nil
 }

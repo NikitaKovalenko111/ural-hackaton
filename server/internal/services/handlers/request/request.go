@@ -18,9 +18,9 @@ func Init(requestRepo *request_storage.RequestRepo, cfg *config.Config) *Request
 	}
 }
 
-func (s *RequestService) CreateRequest(message string, userId uint64) error {
+func (s *RequestService) CreateRequest(message string, userId uint64, mentorId *uint64) error {
 
-	err := s.repo.CreateRequest(message, userId)
+	err := s.repo.CreateRequest(message, userId, mentorId)
 
 	if err != nil {
 		return err
@@ -51,6 +51,16 @@ func (s *RequestService) GetRequestsByMessage(message string) ([]models.Requests
 func (s *RequestService) GetRequestsByUserId(userId uint64) ([]models.Requests, error) {
 
 	request, err := s.repo.GetRequestsByUserId(userId)
+
+	if err != nil {
+		return nil, err
+	}
+	return request, nil
+}
+
+func (s *RequestService) GetRequestsByMentorId(mentorId uint64) ([]models.Requests, error) {
+
+	request, err := s.repo.GetRequestsByMentorId(mentorId)
 
 	if err != nil {
 		return nil, err

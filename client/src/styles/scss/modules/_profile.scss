@@ -70,6 +70,35 @@
         line-height: 1.5;
         margin-bottom: $spacing-lg;
     }
+
+    &__admin-panel {
+        margin-top: $spacing-xl;
+        padding-top: $spacing-lg;
+        border-top: 1px solid $color-border;
+    }
+
+    &__admin-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: $spacing-sm;
+        margin: $spacing-md 0 $spacing-lg;
+
+        .btn {
+            white-space: nowrap;
+        }
+    }
+
+    &__admin-form {
+        margin-bottom: $spacing-xl;
+
+        .btn {
+            margin-top: $spacing-md;
+        }
+    }
+
+    &__actions {
+        margin-top: $spacing-xl;
+    }
 }
 
 // INFO GRID
@@ -132,6 +161,12 @@
     .actions-row {
         flex-direction: column;
 
+        .btn {
+            width: 100%;
+        }
+    }
+
+    .profile__admin-tabs {
         .btn {
             width: 100%;
         }
