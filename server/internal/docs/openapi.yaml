@@ -1,0 +1,583 @@
+openapi: 3.0.3
+info:
+    title: ural-hackaton API
+    version: 1.0.0
+    description: API documentation for the ural-hackaton project.
+servers:
+    - url: http://localhost:8080
+      description: Local development server
+
+tags:
+    - name: Users
+    - name: Admins
+    - name: Mentors
+    - name: Hubs
+    - name: Events
+    - name: Requests
+    - name: Bookings
+
+paths:
+    /users:
+        post:
+            tags: [Users]
+            summary: Create user
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/CreateUserDto"
+            responses:
+                "201":
+                    description: User created
+                "400":
+                    description: Invalid payload
+    /users/{id}:
+        get:
+            tags: [Users]
+            summary: Get user by id
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                "200":
+                    description: User found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/User"
+                "404":
+                    description: User not found
+    /users/search:
+        get:
+            tags: [Users]
+            summary: Get user by fullname
+            parameters:
+                - in: query
+                  name: fullname
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: User found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/User"
+    /admins:
+        get:
+            tags: [Admins]
+            summary: Get all admins
+            responses:
+                "200":
+                    description: Admin list
+        post:
+            tags: [Admins]
+            summary: Create admin
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/CreateAdminDto"
+            responses:
+                "201":
+                    description: Admin created
+    /admins/{id}:
+        get:
+            tags: [Admins]
+            summary: Get admin by id
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                "200":
+                    description: Admin found
+                "404":
+                    description: Admin not found
+        delete:
+            tags: [Admins]
+            summary: Delete admin
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                "204":
+                    description: Deleted
+    /admins/search:
+        get:
+            tags: [Admins]
+            summary: Get admin by fullname
+            parameters:
+                - in: query
+                  name: fullname
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Admin found
+    /mentors:
+        post:
+            tags: [Mentors]
+            summary: Create mentor relation
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/CreateMentorDto"
+            responses:
+                "201":
+                    description: Mentor created
+    /mentors/{id}:
+        get:
+            tags: [Mentors]
+            summary: Get mentor by id
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                "200":
+                    description: Mentor found
+                "404":
+                    description: Mentor not found
+    /mentors/search:
+        get:
+            tags: [Mentors]
+            summary: Get mentor by fullname
+            parameters:
+                - in: query
+                  name: fullname
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Mentor found
+    /hubs:
+        get:
+            tags: [Hubs]
+            summary: Get all hubs
+            responses:
+                "200":
+                    description: Hub list
+        post:
+            tags: [Hubs]
+            summary: Create hub
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/CreateHubDto"
+            responses:
+                "201":
+                    description: Hub created
+    /hubs/{id}:
+        get:
+            tags: [Hubs]
+            summary: Get hub by id
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                "200":
+                    description: Hub found
+                "404":
+                    description: Hub not found
+        put:
+            tags: [Hubs]
+            summary: Update hub
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Hub"
+            responses:
+                "200":
+                    description: Hub updated
+        delete:
+            tags: [Hubs]
+            summary: Delete hub
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                "204":
+                    description: Deleted
+    /events:
+        get:
+            tags: [Events]
+            summary: Get all events
+            responses:
+                "200":
+                    description: Event list
+        post:
+            tags: [Events]
+            summary: Create event
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/CreateEventDto"
+            responses:
+                "201":
+                    description: Event created
+        put:
+            tags: [Events]
+            summary: Update event
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Event"
+            responses:
+                "200":
+                    description: Event updated
+    /events/{id}:
+        get:
+            tags: [Events]
+            summary: Get event by id
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                "200":
+                    description: Event found
+                "404":
+                    description: Event not found
+        delete:
+            tags: [Events]
+            summary: Delete event
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                "204":
+                    description: Deleted
+    /requests:
+        post:
+            tags: [Requests]
+            summary: Create request
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/CreateRequestDto"
+            responses:
+                "201":
+                    description: Request created
+    /requests/{id}:
+        get:
+            tags: [Requests]
+            summary: Get request by id
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                "200":
+                    description: Request found
+                "404":
+                    description: Request not found
+    /requests/user/{user_id}:
+        get:
+            tags: [Requests]
+            summary: Get requests by user id
+            parameters:
+                - in: path
+                  name: user_id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                "200":
+                    description: Request list
+    /bookings:
+        get:
+            tags: [Bookings]
+            summary: Get all bookings
+            responses:
+                "200":
+                    description: Booking list
+        post:
+            tags: [Bookings]
+            summary: Create booking
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/CreateBookingDto"
+            responses:
+                "201":
+                    description: Booking created
+        put:
+            tags: [Bookings]
+            summary: Update booking
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Booking"
+            responses:
+                "200":
+                    description: Booking updated
+    /bookings/{id}:
+        get:
+            tags: [Bookings]
+            summary: Get booking by id
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                "200":
+                    description: Booking found
+                "404":
+                    description: Booking not found
+        delete:
+            tags: [Bookings]
+            summary: Delete booking
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                "204":
+                    description: Deleted
+    /bookings/user/{user_id}:
+        get:
+            tags: [Bookings]
+            summary: Get bookings by user id
+            parameters:
+                - in: path
+                  name: user_id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                "200":
+                    description: Booking list
+
+components:
+    schemas:
+        CreateUserDto:
+            type: object
+            required: [user_fullname, user_role, email, telegram]
+            properties:
+                user_fullname:
+                    type: string
+                user_role:
+                    type: string
+                email:
+                    type: string
+                    format: email
+                telegram:
+                    type: string
+                phone:
+                    type: string
+        User:
+            type: object
+            properties:
+                user_id:
+                    type: integer
+                    format: int64
+                user_fullname:
+                    type: string
+                user_role:
+                    type: string
+                email:
+                    type: string
+                telegram:
+                    type: string
+                phone:
+                    type: string
+        CreateAdminDto:
+            type: object
+            required: [user_id]
+            properties:
+                user_id:
+                    type: integer
+                    format: int64
+        CreateMentorDto:
+            type: object
+            required: [user_id]
+            properties:
+                user_id:
+                    type: integer
+                    format: int64
+        CreateHubDto:
+            type: object
+            required: [hub_name, address]
+            properties:
+                hub_name:
+                    type: string
+                address:
+                    type: string
+                status:
+                    type: string
+                city:
+                    type: string
+                description:
+                    type: string
+                schedule:
+                    type: string
+                occupancy:
+                    type: integer
+        Hub:
+            type: object
+            properties:
+                hub_id:
+                    type: integer
+                    format: int64
+                hub_name:
+                    type: string
+                address:
+                    type: string
+                status:
+                    type: string
+                city:
+                    type: string
+                description:
+                    type: string
+                schedule:
+                    type: string
+                occupancy:
+                    type: integer
+        CreateEventDto:
+            type: object
+            required: [name, description, start_time, end_time, hub_id]
+            properties:
+                name:
+                    type: string
+                description:
+                    type: string
+                start_time:
+                    type: string
+                    format: date-time
+                end_time:
+                    type: string
+                    format: date-time
+                hub_id:
+                    type: integer
+                    format: int64
+        Event:
+            type: object
+            properties:
+                event_id:
+                    type: integer
+                    format: int64
+                name:
+                    type: string
+                description:
+                    type: string
+                start_time:
+                    type: string
+                    format: date-time
+                end_time:
+                    type: string
+                    format: date-time
+                hub_id:
+                    type: integer
+                    format: int64
+        CreateRequestDto:
+            type: object
+            required: [request_message, user_id]
+            properties:
+                request_message:
+                    type: string
+                user_id:
+                    type: integer
+                    format: int64
+        Request:
+            type: object
+            properties:
+                request_id:
+                    type: integer
+                    format: int64
+                request_message:
+                    type: string
+                user_id:
+                    type: integer
+                    format: int64
+        CreateBookingDto:
+            type: object
+            required: [booking_date, booking_zone, booking_slots, user_id]
+            properties:
+                booking_date:
+                    type: string
+                    format: date-time
+                booking_zone:
+                    type: string
+                booking_slots:
+                    type: integer
+                user_id:
+                    type: integer
+                    format: int64
+        Booking:
+            type: object
+            properties:
+                booking_id:
+                    type: integer
+                    format: int64
+                booking_date:
+                    type: string
+                    format: date-time
+                booking_zone:
+                    type: string
+                booking_slots:
+                    type: integer
+                user_id:
+                    type: integer
+                    format: int64

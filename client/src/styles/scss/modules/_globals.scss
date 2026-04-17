@@ -1,0 +1,146 @@
+// ============================================================================
+// Global & Base Styles
+// ============================================================================
+
+// CONTAINER
+// ============================================================================
+
+.container {
+    @include container;
+}
+
+// SCROLLBAR STYLING
+// ============================================================================
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: $color-bg-light;
+}
+
+::-webkit-scrollbar-thumb {
+    background: $color-border;
+    border-radius: $radius-sm;
+
+    &:hover {
+        background: $color-text-secondary;
+    }
+}
+
+// SELECTION STYLING
+// ============================================================================
+
+::selection {
+    background: $color-bg-yellow;
+    color: $color-text-main;
+}
+
+::-moz-selection {
+    background: $color-bg-yellow;
+    color: $color-text-main;
+}
+
+// FOCUS STYLES
+// ============================================================================
+
+:focus-visible {
+    @include focus-outline;
+}
+
+// INPUT RESET
+// ============================================================================
+
+input[type='text'],
+input[type='email'],
+input[type='password'],
+input[type='search'],
+input[type='url'],
+input[type='number'],
+input[type='date'],
+input[type='time'],
+input[type='datetime-local'],
+textarea {
+    font-family: inherit;
+    font-size: inherit;
+    padding: $spacing-md;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    transition: border-color $transition-fast;
+
+    &:focus {
+        outline: none;
+        border-color: $color-primary-yellow;
+        box-shadow: 0 0 0 3px rgba($color-primary-yellow, 0.1);
+    }
+
+    &::placeholder {
+        color: $color-text-secondary;
+    }
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+// SELECT RESET
+// ============================================================================
+
+select {
+    font-family: inherit;
+    font-size: inherit;
+    padding: $spacing-md;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    background: $color-bg;
+    cursor: pointer;
+
+    &:focus {
+        outline: none;
+        border-color: $color-primary-yellow;
+    }
+}
+
+// DISABLED STATES
+// ============================================================================
+
+:disabled,
+.disabled {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+}
+
+// PRINT STYLES
+// ============================================================================
+
+@media print {
+    * {
+        background: transparent !important;
+        color: black !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+}

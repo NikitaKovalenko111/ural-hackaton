@@ -1,0 +1,73 @@
+// ============================================================================
+// Footer Component
+// ============================================================================
+
+.footer {
+    padding: $spacing-3xl 0;
+    text-align: center;
+    border-top: 1px solid $color-border;
+    margin-top: $spacing-3xl;
+
+    &__content {
+        margin-bottom: $spacing-md;
+    }
+
+    &__nav {
+        justify-content: center;
+        margin-top: $spacing-md;
+    }
+}
+
+// TOAST
+// ============================================================================
+
+.toast--checklist {
+    position: fixed;
+    bottom: $spacing-lg;
+    left: $spacing-lg;
+    background: $color-toast-bg;
+    color: white;
+    padding: $spacing-md $spacing-xl;
+    border-radius: $radius-sm;
+    font-size: $font-size-base;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: $spacing-lg;
+    z-index: $z-index-toast;
+    transition: opacity $transition-base;
+    box-shadow: $shadow-lg;
+
+    &::before {
+        content: '';
+        display: block;
+        width: 20px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.4);
+        border-radius: $radius-sm;
+    }
+
+    &:hover {
+        opacity: 0.9;
+    }
+}
+
+// FOOTER RESPONSIVE
+// ============================================================================
+
+@include responsive-md {
+    .footer {
+        padding: $spacing-2xl 0;
+        margin-top: $spacing-2xl;
+    }
+}
+
+@include responsive-sm {
+    .toast--checklist {
+        bottom: auto;
+        top: $spacing-lg;
+        left: $spacing-sm;
+        right: $spacing-sm;
+        width: calc(100% - $spacing-lg);
+    }
+}

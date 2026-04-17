@@ -1,0 +1,35 @@
+env: "local" #local, dev, prod
+# storage_path: "./storage/storage.db"
+storage:
+    db_host: "localhost"
+    db_user: "postgres"
+    db_pass: "vuigxuishgbgiufs"
+    db_port: 5432
+    db_name: "ural-hackaton"
+    ssl_mode: "disable"
+http_server:
+    address: "localhost:3000"
+    timeout: 4s
+    idle_timeout: 60s
+    cors_origins: "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174,http://localhost:3000,http://127.0.0.1:3000"
+# jwt:
+#   jwt_access_secret: df923c2e4874
+#   jwt_refresh_secret: 5f5f925ed3d2
+smtp:
+    smtp_host: smtp.gmail.com
+    smtp_port: 587
+    username: "nikitakovalenko7119@gmail.com"
+    password: "hrkn ncos soje oedt"
+    app_host: http://localhost:5173 # Куда ведёт ссылка из письма (фронтенд)
+    from_email: "nikitakovalenko7119@gmail.com"
+    from_name: UralHackaton
+
+# 🔐 Авторизация
+auth:
+    # Сгенерируйте ключ командой: openssl rand -base64 64
+    # Пример: K7gNU3sdo+OL0wNhqoVWhr3g6s1xYv72ol/pe/Unols=
+    secret_key: "NlGi8NiL66Pp3SEldv4+tpKRWgQNF8AiDME8I43Oqtv4z1aAysbVLx5PwlAMTZxmZKaBFAITRTv1qj8wIu0u3g=="
+
+    # Время жизни токенов (опционально)
+    access_token_ttl: 15m
+    refresh_token_ttl: 72h

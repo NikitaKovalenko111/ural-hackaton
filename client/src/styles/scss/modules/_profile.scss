@@ -1,0 +1,174 @@
+// ============================================================================
+// Profile Page Component
+// ============================================================================
+
+.profile {
+    &__layout {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: $spacing-2xl;
+        padding: $spacing-3xl 0;
+    }
+
+    &__card {
+        @include card-style;
+        padding: $spacing-2xl;
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        gap: $spacing-xl;
+        margin-bottom: $spacing-lg;
+    }
+
+    &__avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: $color-bg-yellow;
+        @include flexbox-center;
+        font-size: $font-size-2xl;
+        border: 2px solid $color-primary-yellow;
+        flex-shrink: 0;
+    }
+
+    &__meta {
+        h2 {
+            margin: 0;
+            font-size: $font-size-2xl;
+            font-weight: $font-weight-bold;
+        }
+
+        p {
+            color: $color-text-secondary;
+            margin: $spacing-sm 0 0;
+            @include font-base;
+        }
+    }
+
+    &__status-badge {
+        display: inline-block;
+        background: $color-success-bg;
+        color: $color-success-text;
+        padding: $spacing-xs $spacing-sm;
+        border-radius: 20px;
+        font-size: $font-size-xs;
+        font-weight: $font-weight-semibold;
+        margin-top: $spacing-sm;
+    }
+
+    &__section-title {
+        margin: 0 0 $spacing-sm;
+        font-size: $font-size-lg;
+        font-weight: $font-weight-semibold;
+    }
+
+    &__bio {
+        color: $color-text-secondary;
+        @include font-small;
+        line-height: 1.5;
+        margin-bottom: $spacing-lg;
+    }
+
+    &__admin-panel {
+        margin-top: $spacing-xl;
+        padding-top: $spacing-lg;
+        border-top: 1px solid $color-border;
+    }
+
+    &__admin-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: $spacing-sm;
+        margin: $spacing-md 0 $spacing-lg;
+
+        .btn {
+            white-space: nowrap;
+        }
+    }
+
+    &__admin-form {
+        margin-bottom: $spacing-xl;
+
+        .btn {
+            margin-top: $spacing-md;
+        }
+    }
+
+    &__actions {
+        margin-top: $spacing-xl;
+    }
+}
+
+// INFO GRID
+// ============================================================================
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-lg;
+    margin: $spacing-lg 0;
+    padding: $spacing-lg;
+    background: $color-bg-light;
+    border-radius: $radius-sm;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+
+    &__label {
+        @include font-label;
+    }
+
+    &__value {
+        @include font-base;
+        font-weight: $font-weight-medium;
+        word-break: break-all;
+    }
+}
+
+// ACTIONS ROW
+// ============================================================================
+
+.actions-row {
+    display: flex;
+    gap: $spacing-md;
+    margin-top: auto;
+}
+
+// PROFILE RESPONSIVE
+// ============================================================================
+
+@include responsive-lg {
+    .profile__layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@include responsive-sm {
+    .profile__header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .actions-row {
+        flex-direction: column;
+
+        .btn {
+            width: 100%;
+        }
+    }
+
+    .profile__admin-tabs {
+        .btn {
+            width: 100%;
+        }
+    }
+}

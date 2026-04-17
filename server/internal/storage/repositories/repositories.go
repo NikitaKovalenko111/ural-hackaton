@@ -1,0 +1,40 @@
+package repositories
+
+import (
+	"ural-hackaton/internal/storage"
+	admin_storage "ural-hackaton/internal/storage/repositories/admin"
+
+	auth_storage "ural-hackaton/internal/storage/repositories/auth"
+
+	booking_storage "ural-hackaton/internal/storage/repositories/booking"
+
+	event_storage "ural-hackaton/internal/storage/repositories/event"
+	hub_storage "ural-hackaton/internal/storage/repositories/hub"
+	mentor_storage "ural-hackaton/internal/storage/repositories/mentor"
+	requests_storage "ural-hackaton/internal/storage/repositories/request"
+	user_storage "ural-hackaton/internal/storage/repositories/user"
+)
+
+type Repositories struct {
+	UserRepository      *user_storage.UserRepo
+	HubRepository       *hub_storage.HubRepo
+	AdminRepository     *admin_storage.AdminRepo
+	RequestRepository   *requests_storage.RequestRepo
+	MentorRepository    *mentor_storage.MentorRepo
+	EventRepository     *event_storage.EventRepo
+	AuthTokenRepository *auth_storage.AuthTokenRepo
+	BookingRepository   *booking_storage.BookingRepo
+}
+
+func InitRepositories(db *storage.Storage) *Repositories {
+	return &Repositories{
+		UserRepository:      user_storage.Init(db),
+		HubRepository:       hub_storage.Init(db),
+		AdminRepository:     admin_storage.Init(db),
+		RequestRepository:   requests_storage.Init(db),
+		MentorRepository:    mentor_storage.Init(db),
+		EventRepository:     event_storage.Init(db),
+		AuthTokenRepository: auth_storage.Init(db),
+		BookingRepository:   booking_storage.Init(db),
+	}
+}

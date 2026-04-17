@@ -1,0 +1,115 @@
+// ============================================================================
+// Hubs Page
+// ============================================================================
+
+.section--hubs {
+    padding: $spacing-4xl 0;
+}
+
+.hubs-search {
+    @include card-style;
+    padding: $spacing-lg;
+    margin-bottom: $spacing-xl;
+    background: linear-gradient(180deg, #ffffff 0%, #fffdf2 100%);
+
+    &__label {
+        display: block;
+        margin-bottom: $spacing-sm;
+        @include font-label;
+        font-weight: $font-weight-semibold;
+    }
+
+    input {
+        width: 100%;
+    }
+
+    &__empty {
+        color: $color-text-secondary;
+        text-align: center;
+        margin-top: $spacing-xl;
+        @include font-base;
+    }
+}
+
+.hubs-grid {
+    @include grid(3, $spacing-lg);
+}
+
+.hub-card {
+    @include card-style;
+    @include card-hover;
+    padding: $spacing-lg;
+    display: flex;
+    flex-direction: column;
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $spacing-md;
+        gap: $spacing-sm;
+    }
+
+    &__status {
+        padding: $spacing-xs $spacing-sm;
+        border-radius: 18px;
+        font-size: $font-size-xs;
+        font-weight: $font-weight-semibold;
+
+        &--open {
+            background: $color-success-bg;
+            color: $color-success-text;
+        }
+
+        &--busy {
+            background: $color-bg-yellow;
+            color: $color-text-main;
+        }
+
+        &--closed {
+            background: #fbe9e7;
+            color: #b23c17;
+        }
+    }
+
+    &__city {
+        @include font-label;
+    }
+
+    &__title {
+        font-size: $font-size-lg;
+        font-weight: $font-weight-semibold;
+        margin-bottom: $spacing-sm;
+    }
+
+    &__description {
+        color: $color-text-secondary;
+        margin-bottom: $spacing-md;
+        @include font-small;
+    }
+
+    &__meta {
+        @include font-small;
+        margin-bottom: $spacing-sm;
+        color: $color-text-main;
+    }
+
+    &__actions {
+        margin-top: auto;
+        padding-top: $spacing-md;
+    }
+}
+
+.section--hubs-overview {
+    padding: $spacing-3xl 0 $spacing-4xl;
+}
+
+@include responsive-md {
+    .section--hubs-overview {
+        padding: $spacing-2xl 0;
+    }
+
+    .hubs-grid {
+        grid-template-columns: 1fr;
+    }
+}
